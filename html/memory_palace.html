@@ -1,0 +1,3654 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Palace Journey -- Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .room-section {
+        margin-bottom: 3.5rem;
+      }
+      .station-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+      .station-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        transition:
+          border-color var(--transition),
+          box-shadow var(--transition);
+      }
+      .station-card:hover {
+        border-color: var(--border-light);
+        box-shadow: var(--shadow);
+      }
+      .station-card .station-num {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        border-radius: 50%;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+      .station-card h4 {
+        margin-top: 0.25rem;
+      }
+      .station-scene {
+        font-size: 0.88rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: var(--bg-secondary);
+        border-radius: var(--radius);
+        border-left: 3px solid var(--accent-purple);
+      }
+      .station-concept {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+      .station-concept strong {
+        color: var(--accent-cyan);
+      }
+      .station-why {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 0.4rem;
+      }
+      .practice-item {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
+      }
+      .practice-item p {
+        margin-bottom: 0.5rem;
+      }
+      .practice-answer {
+        display: none;
+        padding: 0.5rem 0.75rem;
+        background: var(--bg-secondary);
+        border-radius: var(--radius);
+        font-size: 0.88rem;
+        color: var(--accent-green);
+        margin-top: 0.5rem;
+      }
+      .practice-answer.show {
+        display: block;
+      }
+      .reveal-btn {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--accent-blue);
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-family: var(--font-sans);
+        transition: all var(--transition);
+      }
+      .reveal-btn:hover {
+        background: var(--border);
+        border-color: var(--border-light);
+      }
+      .room-label-tag {
+        display: inline-block;
+        padding: 0.15rem 0.65rem;
+        border-radius: 99px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Memory Palace Journey</h1>
+          <p>
+            The <strong>Method of Loci</strong> (Greek journey method) is the
+            most powerful memorization technique ever devised. Ancient orators
+            used it to deliver hours-long speeches from memory. The principle:
+            attach abstract concepts to
+            <strong>vivid, bizarre scenes</strong> at familiar physical
+            locations. The more absurd and sensory the image, the stronger the
+            memory.
+          </p>
+          <p>
+            This page maps the <strong>entire Staff SDE curriculum</strong> onto
+            a building you will walk through mentally. Each room contains
+            stations -- specific objects or locations -- and each station
+            encodes a key concept through a vivid scene.
+          </p>
+
+          <hr />
+
+          <!-- ===== FLOOR PLAN SVG ===== -->
+          <h2>The Building Floor Plan</h2>
+          <p>
+            Your memory palace is a two-story building. Memorize the layout,
+            then walk through it daily.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Memory Palace Floor Plan</div>
+            <svg viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg">
+              <!-- GROUND FLOOR -->
+              <text
+                x="410"
+                y="22"
+                class="label-text"
+                font-size="16"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Ground Floor
+              </text>
+
+              <!-- Front Door -->
+              <rect
+                x="360"
+                y="35"
+                width="100"
+                height="55"
+                rx="6"
+                fill="rgba(188,140,255,0.15)"
+                stroke="#bc8cff"
+                stroke-width="2.5"
+              />
+              <text
+                x="410"
+                y="58"
+                class="label-text"
+                font-size="11"
+                fill="#bc8cff"
+              >
+                Front Door
+              </text>
+              <text
+                x="410"
+                y="74"
+                font-size="9"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                Mental Models
+              </text>
+              <!-- Door icon -->
+              <rect
+                x="398"
+                y="85"
+                width="24"
+                height="8"
+                rx="2"
+                fill="#bc8cff"
+                opacity="0.5"
+              />
+
+              <!-- Hallway connecting door to living room -->
+              <rect
+                x="398"
+                y="90"
+                width="24"
+                height="18"
+                fill="rgba(72,79,88,0.3)"
+                stroke="none"
+              />
+
+              <!-- Living Room (largest) -->
+              <rect
+                x="220"
+                y="108"
+                width="380"
+                height="170"
+                rx="8"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="2.5"
+              />
+              <text
+                x="410"
+                y="135"
+                class="label-text"
+                font-size="14"
+                fill="#58a6ff"
+                font-weight="700"
+              >
+                Living Room
+              </text>
+              <text
+                x="410"
+                y="155"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                16 Algorithm Patterns
+              </text>
+              <text
+                x="410"
+                y="170"
+                font-size="9"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                (core room -- most stations)
+              </text>
+              <!-- Furniture hints -->
+              <rect
+                x="240"
+                y="200"
+                width="60"
+                height="25"
+                rx="4"
+                fill="rgba(88,166,255,0.08)"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+              <text
+                x="270"
+                y="217"
+                font-size="8"
+                fill="#484f58"
+                text-anchor="middle"
+              >
+                Window
+              </text>
+              <rect
+                x="320"
+                y="230"
+                width="80"
+                height="20"
+                rx="4"
+                fill="rgba(88,166,255,0.08)"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+              <text
+                x="360"
+                y="244"
+                font-size="8"
+                fill="#484f58"
+                text-anchor="middle"
+              >
+                Couch
+              </text>
+              <rect
+                x="500"
+                y="200"
+                width="50"
+                height="40"
+                rx="4"
+                fill="rgba(88,166,255,0.08)"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+              <text
+                x="525"
+                y="224"
+                font-size="8"
+                fill="#484f58"
+                text-anchor="middle"
+              >
+                Shelf
+              </text>
+              <rect
+                x="430"
+                y="200"
+                width="50"
+                height="35"
+                rx="4"
+                fill="rgba(88,166,255,0.08)"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+              <text
+                x="455"
+                y="222"
+                font-size="8"
+                fill="#484f58"
+                text-anchor="middle"
+              >
+                Table
+              </text>
+
+              <!-- Kitchen (left of living room) -->
+              <rect
+                x="30"
+                y="108"
+                width="180"
+                height="105"
+                rx="8"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="120"
+                y="140"
+                class="label-text"
+                font-size="13"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                Kitchen
+              </text>
+              <text
+                x="120"
+                y="158"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                Sorting Algorithms
+              </text>
+              <!-- Connection -->
+              <line
+                x1="210"
+                y1="160"
+                x2="220"
+                y2="160"
+                stroke="#484f58"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- Dining Room (right of living room) -->
+              <rect
+                x="610"
+                y="108"
+                width="180"
+                height="105"
+                rx="8"
+                fill="rgba(210,153,34,0.1)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="700"
+                y="140"
+                class="label-text"
+                font-size="13"
+                fill="#d29922"
+                font-weight="600"
+              >
+                Dining Room
+              </text>
+              <text
+                x="700"
+                y="158"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                Data Structures
+              </text>
+              <!-- Connection -->
+              <line
+                x1="600"
+                y1="160"
+                x2="610"
+                y2="160"
+                stroke="#484f58"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- Study/Library (below living room, left) -->
+              <rect
+                x="30"
+                y="290"
+                width="240"
+                height="110"
+                rx="8"
+                fill="rgba(57,210,192,0.1)"
+                stroke="#39d2c0"
+                stroke-width="2"
+              />
+              <text
+                x="150"
+                y="325"
+                class="label-text"
+                font-size="13"
+                fill="#39d2c0"
+                font-weight="600"
+              >
+                Study / Library
+              </text>
+              <text
+                x="150"
+                y="345"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                Systems Design
+              </text>
+              <!-- Connection -->
+              <line
+                x1="150"
+                y1="278"
+                x2="150"
+                y2="290"
+                stroke="#484f58"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- Workshop/Garage (below living room, right) -->
+              <rect
+                x="290"
+                y="290"
+                width="240"
+                height="110"
+                rx="8"
+                fill="rgba(247,120,186,0.1)"
+                stroke="#f778ba"
+                stroke-width="2"
+              />
+              <text
+                x="410"
+                y="325"
+                class="label-text"
+                font-size="13"
+                fill="#f778ba"
+                font-weight="600"
+              >
+                Workshop / Garage
+              </text>
+              <text
+                x="410"
+                y="345"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                Software Engineering
+              </text>
+              <!-- Connection -->
+              <line
+                x1="410"
+                y1="278"
+                x2="410"
+                y2="290"
+                stroke="#484f58"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- Server Room / Basement (bottom) -->
+              <rect
+                x="550"
+                y="290"
+                width="240"
+                height="110"
+                rx="8"
+                fill="rgba(248,81,73,0.1)"
+                stroke="#f85149"
+                stroke-width="2"
+              />
+              <text
+                x="670"
+                y="320"
+                class="label-text"
+                font-size="13"
+                fill="#f85149"
+                font-weight="600"
+              >
+                Server Room
+              </text>
+              <text
+                x="670"
+                y="338"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                CS Fundamentals
+              </text>
+              <text
+                x="670"
+                y="354"
+                font-size="9"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                (Basement)
+              </text>
+              <!-- Connection -->
+              <line
+                x1="670"
+                y1="278"
+                x2="670"
+                y2="290"
+                stroke="#484f58"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- UPSTAIRS -->
+              <text
+                x="410"
+                y="440"
+                class="label-text"
+                font-size="16"
+                font-weight="700"
+                fill="#bc8cff"
+              >
+                Upstairs
+              </text>
+
+              <!-- Upstairs Office -->
+              <rect
+                x="250"
+                y="455"
+                width="320"
+                height="55"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="2.5"
+              />
+              <text
+                x="410"
+                y="480"
+                class="label-text"
+                font-size="14"
+                fill="#bc8cff"
+                font-weight="700"
+              >
+                Upstairs Office
+              </text>
+              <text
+                x="410"
+                y="498"
+                font-size="10"
+                fill="#6e7681"
+                text-anchor="middle"
+              >
+                Staff-Level Skills (elevated perspective)
+              </text>
+              <!-- Stairs -->
+              <line
+                x1="410"
+                y1="400"
+                x2="410"
+                y2="430"
+                stroke="#bc8cff"
+                stroke-width="2"
+                stroke-dasharray="3,3"
+              />
+              <text x="430" y="418" font-size="9" fill="#bc8cff">stairs</text>
+              <line
+                x1="405"
+                y1="408"
+                x2="415"
+                y2="408"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <line
+                x1="405"
+                y1="415"
+                x2="415"
+                y2="415"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <line
+                x1="405"
+                y1="422"
+                x2="415"
+                y2="422"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+
+              <!-- Walk order arrows -->
+              <text
+                x="410"
+                y="100"
+                font-size="10"
+                fill="#484f58"
+                text-anchor="middle"
+              >
+                enter
+              </text>
+            </svg>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Walking Order</div>
+            <p>
+              Always walk the same route: <strong>Front Door</strong> (Mental
+              Models) &rarr; <strong>Living Room</strong> (Algorithm Patterns)
+              &rarr; <strong>Kitchen</strong> (Sorting) &rarr;
+              <strong>Dining Room</strong> (Data Structures) &rarr;
+              <strong>Study</strong> (Systems Design) &rarr;
+              <strong>Workshop</strong> (Software Engineering) &rarr;
+              <strong>Server Room</strong> (CS Fundamentals) &rarr;
+              <strong>Upstairs Office</strong> (Staff-Level Skills). Same order,
+              every time.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ===== FRONT DOOR ===== -->
+          <section class="room-section" id="room-front-door">
+            <h2>
+              Front Door
+              <span class="room-label-tag badge-purple">Mental Models</span>
+            </h2>
+            <p>
+              You stand at the front door. Six objects hang on or near the door.
+              These are the 6 mental model shifts you must internalize before
+              entering the house.
+            </p>
+
+            <div class="diagram-container">
+              <div class="diagram-title">
+                Front Door -- 6 Mental Model Stations
+              </div>
+              <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+                <!-- Door frame -->
+                <rect
+                  x="200"
+                  y="30"
+                  width="200"
+                  height="250"
+                  rx="8"
+                  fill="rgba(188,140,255,0.08)"
+                  stroke="#bc8cff"
+                  stroke-width="3"
+                />
+                <rect
+                  x="215"
+                  y="45"
+                  width="170"
+                  height="220"
+                  rx="4"
+                  fill="rgba(188,140,255,0.04)"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <!-- Doorknob -->
+                <circle
+                  cx="365"
+                  cy="160"
+                  r="8"
+                  fill="rgba(188,140,255,0.3)"
+                  stroke="#bc8cff"
+                  stroke-width="2"
+                />
+                <!-- Station 1: Light switch (left of door) -->
+                <rect
+                  x="130"
+                  y="80"
+                  width="50"
+                  height="30"
+                  rx="4"
+                  fill="rgba(210,153,34,0.2)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="155"
+                  y="100"
+                  font-size="9"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  switch
+                </text>
+                <text
+                  x="100"
+                  y="100"
+                  font-size="8"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  1
+                </text>
+                <!-- Station 2: Lego blocks (left of door, lower) -->
+                <rect
+                  x="120"
+                  y="140"
+                  width="25"
+                  height="15"
+                  rx="2"
+                  fill="rgba(88,166,255,0.3)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <rect
+                  x="135"
+                  y="130"
+                  width="25"
+                  height="15"
+                  rx="2"
+                  fill="rgba(63,185,80,0.3)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <rect
+                  x="150"
+                  y="140"
+                  width="25"
+                  height="15"
+                  rx="2"
+                  fill="rgba(248,81,73,0.3)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <text
+                  x="100"
+                  y="150"
+                  font-size="8"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  2
+                </text>
+                <!-- Station 3: Tangled wire (left, lower) -->
+                <path
+                  d="M130,200 C140,185 145,215 155,195 C165,175 135,210 160,200"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <text
+                  x="100"
+                  y="200"
+                  font-size="8"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  3
+                </text>
+                <!-- Station 4: Traffic light (right of door) -->
+                <rect
+                  x="420"
+                  y="60"
+                  width="22"
+                  height="60"
+                  rx="4"
+                  fill="rgba(72,79,88,0.4)"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="431"
+                  cy="75"
+                  r="7"
+                  fill="rgba(248,81,73,0.6)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="431"
+                  cy="93"
+                  r="7"
+                  fill="rgba(210,153,34,0.6)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="431"
+                  cy="111"
+                  r="7"
+                  fill="rgba(63,185,80,0.6)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <text
+                  x="465"
+                  y="93"
+                  font-size="8"
+                  fill="#8b949e"
+                  text-anchor="start"
+                >
+                  4
+                </text>
+                <!-- Station 5: Layer stack (right, middle) -->
+                <rect
+                  x="420"
+                  y="145"
+                  width="55"
+                  height="10"
+                  rx="2"
+                  fill="rgba(248,81,73,0.2)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <rect
+                  x="420"
+                  y="135"
+                  width="55"
+                  height="10"
+                  rx="2"
+                  fill="rgba(210,153,34,0.2)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <rect
+                  x="420"
+                  y="125"
+                  width="55"
+                  height="10"
+                  rx="2"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <text
+                  x="490"
+                  y="143"
+                  font-size="8"
+                  fill="#8b949e"
+                  text-anchor="start"
+                >
+                  5
+                </text>
+                <!-- Station 6: Three bridges (right, lower) -->
+                <line
+                  x1="420"
+                  y1="220"
+                  x2="480"
+                  y2="220"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <line
+                  x1="420"
+                  y1="230"
+                  x2="480"
+                  y2="230"
+                  stroke="#f85149"
+                  stroke-width="2"
+                  stroke-dasharray="4,3"
+                />
+                <line
+                  x1="420"
+                  y1="240"
+                  x2="480"
+                  y2="240"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="490"
+                  y="233"
+                  font-size="8"
+                  fill="#8b949e"
+                  text-anchor="start"
+                >
+                  6
+                </text>
+                <!-- Legend -->
+                <text
+                  x="300"
+                  y="295"
+                  font-size="10"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  6 objects around the front door = 6 mental model shifts
+                </text>
+              </svg>
+            </div>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-orange)">
+                  Light Switch vs. Sunrise
+                </h4>
+                <div class="station-scene">
+                  A light switch on the wall. Flip it -- instant light. Next to
+                  it, a tiny window showing a sunrise gradually brightening.
+                  Both produce light, but via different paths.
+                </div>
+                <p class="station-concept">
+                  <strong>Deterministic vs. Eventually Consistent.</strong>
+                  Hardware: global clock, instant propagation. Software: no
+                  global clock, eventual convergence.
+                </p>
+                <p class="station-why">
+                  Why it works: The physical switch gives you immediate,
+                  deterministic feedback -- just like a synchronous bus. The
+                  sunrise takes time to reach full brightness -- just like
+                  eventual consistency.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(88, 166, 255, 0.2); color: #58a6ff"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-blue)">
+                  Lego Blocks vs. ASIC Chip
+                </h4>
+                <div class="station-scene">
+                  On the doorstep, colorful Lego blocks labeled "DB", "Cache",
+                  "Auth" snap together easily. Beside them, a single complex
+                  chip with 200 pins sits alone -- impressive but immovable.
+                </div>
+                <p class="station-concept">
+                  <strong>Composition over Construction.</strong> Staff
+                  engineers compose proven components; they do not build
+                  everything from scratch.
+                </p>
+                <p class="station-why">
+                  Why it works: Legos are modular, reconfigurable, and labeled.
+                  The ASIC is powerful but fixed. Software should be Legos.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  Tangled Wire vs. Breadboard
+                </h4>
+                <div class="station-scene">
+                  A ball of tangled wire hanging on a nail -- it works but
+                  nobody can trace a signal. Below it, a neat breadboard with
+                  color-coded, labeled traces. A happy face drawn next to the
+                  breadboard, a confused face next to the tangle.
+                </div>
+                <p class="station-concept">
+                  <strong>Optimization-First vs. Clarity-First.</strong> Code is
+                  read 10x more than written. Clarity beats cleverness.
+                </p>
+                <p class="station-why">
+                  Why it works: You have debugged tangled wires before. You know
+                  which one you would rather inherit.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(63, 185, 80, 0.2); color: #3fb950"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-green)">Traffic Light</h4>
+                <div class="station-scene">
+                  A miniature traffic light mounted next to the door. Red,
+                  yellow, green -- with arrows showing the transition order. It
+                  never goes from red to green without passing through its
+                  defined transitions.
+                </div>
+                <p class="station-concept">
+                  <strong>State Machines Everywhere.</strong> Use explicit enums
+                  with defined transitions, not boolean flag soup.
+                </p>
+                <p class="station-why">
+                  Why it works: Traffic lights are the universal state machine.
+                  Every software object has a lifecycle just like this.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >5</span
+                >
+                <h4 style="color: var(--accent-purple)">Layer Cake</h4>
+                <div class="station-scene">
+                  A cross-section of geological layers in a frame on the wall.
+                  Bottom to top: Hardware, OS, Runtime, Framework, App, User.
+                  Each layer is a different color. A drill tries to go straight
+                  through -- it cracks everything.
+                </div>
+                <p class="station-concept">
+                  <strong>Abstraction Layers.</strong> Each layer talks only to
+                  the layer directly below. Never skip layers.
+                </p>
+                <p class="station-why">
+                  Why it works: Like a PCB stackup -- you never route a signal
+                  through the wrong layer.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >6</span
+                >
+                <h4 style="color: var(--accent-cyan)">Three Bridges</h4>
+                <div class="station-scene">
+                  Three parallel bridges over a small stream by the doorstep.
+                  One bridge has collapsed (red X). Traffic flows smoothly over
+                  the other two. A sign reads: "Redundancy saves lives."
+                </div>
+                <p class="station-concept">
+                  <strong>Failure is Normal.</strong> Design for failure with
+                  retries, fallbacks, circuit breakers, and redundancy.
+                </p>
+                <p class="station-why">
+                  Why it works: Like redundant power supplies -- you expect one
+                  to fail, so you have three.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== LIVING ROOM ===== -->
+          <section class="room-section" id="room-living-room">
+            <h2>
+              Living Room
+              <span class="room-label-tag badge-blue"
+                >Algorithm Patterns (16)</span
+              >
+            </h2>
+            <p>
+              The largest room in the house. You spend the most time here. Each
+              of the 16 algorithm patterns is mapped to a specific object or
+              location in this room. Walk clockwise from the window.
+            </p>
+
+            <div class="diagram-container">
+              <div class="diagram-title">
+                Living Room -- 16 Pattern Stations
+              </div>
+              <svg viewBox="0 0 740 440" xmlns="http://www.w3.org/2000/svg">
+                <!-- Room outline -->
+                <rect
+                  x="30"
+                  y="30"
+                  width="680"
+                  height="380"
+                  rx="10"
+                  fill="rgba(88,166,255,0.05)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <!-- Door opening at top center -->
+                <rect
+                  x="335"
+                  y="25"
+                  width="70"
+                  height="12"
+                  fill="var(--bg-primary)"
+                  stroke="none"
+                />
+                <text
+                  x="370"
+                  y="20"
+                  font-size="9"
+                  fill="#484f58"
+                  text-anchor="middle"
+                >
+                  door
+                </text>
+
+                <!-- Station objects arranged around the room -->
+                <!-- 1. Window (top left) -->
+                <rect
+                  x="60"
+                  y="45"
+                  width="80"
+                  height="50"
+                  rx="4"
+                  fill="rgba(88,166,255,0.12)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <line
+                  x1="100"
+                  y1="45"
+                  x2="100"
+                  y2="95"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  opacity="0.5"
+                />
+                <line
+                  x1="60"
+                  y1="70"
+                  x2="140"
+                  y2="70"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  opacity="0.5"
+                />
+                <text
+                  x="100"
+                  y="115"
+                  font-size="10"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  1. Window
+                </text>
+                <text
+                  x="100"
+                  y="128"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Sliding Window
+                </text>
+
+                <!-- 2. Couch (top center-left) -->
+                <rect
+                  x="170"
+                  y="60"
+                  width="100"
+                  height="35"
+                  rx="6"
+                  fill="rgba(63,185,80,0.12)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="185"
+                  cy="77"
+                  r="8"
+                  fill="rgba(63,185,80,0.25)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="255"
+                  cy="77"
+                  r="8"
+                  fill="rgba(63,185,80,0.25)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="220"
+                  y="115"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  2. Couch
+                </text>
+                <text
+                  x="220"
+                  y="128"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Two Pointers
+                </text>
+
+                <!-- 3. Bookshelf (top right) -->
+                <rect
+                  x="580"
+                  y="45"
+                  width="80"
+                  height="60"
+                  rx="4"
+                  fill="rgba(210,153,34,0.12)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="580"
+                  y1="60"
+                  x2="660"
+                  y2="60"
+                  stroke="#d29922"
+                  stroke-width="1"
+                  opacity="0.5"
+                />
+                <line
+                  x1="580"
+                  y1="75"
+                  x2="660"
+                  y2="75"
+                  stroke="#d29922"
+                  stroke-width="1"
+                  opacity="0.5"
+                />
+                <line
+                  x1="580"
+                  y1="90"
+                  x2="660"
+                  y2="90"
+                  stroke="#d29922"
+                  stroke-width="1"
+                  opacity="0.5"
+                />
+                <text
+                  x="620"
+                  y="120"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  3. Bookshelf
+                </text>
+                <text
+                  x="620"
+                  y="133"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Binary Search
+                </text>
+
+                <!-- 4. Fish tank (right wall, upper) -->
+                <rect
+                  x="620"
+                  y="155"
+                  width="60"
+                  height="45"
+                  rx="6"
+                  fill="rgba(88,166,255,0.15)"
+                  stroke="#58a6ff"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="650"
+                  cy="175"
+                  r="5"
+                  fill="none"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  opacity="0.6"
+                />
+                <circle
+                  cx="650"
+                  cy="175"
+                  r="10"
+                  fill="none"
+                  stroke="#58a6ff"
+                  stroke-width="0.8"
+                  opacity="0.4"
+                />
+                <circle
+                  cx="650"
+                  cy="175"
+                  r="15"
+                  fill="none"
+                  stroke="#58a6ff"
+                  stroke-width="0.6"
+                  opacity="0.2"
+                />
+                <text
+                  x="650"
+                  y="215"
+                  font-size="10"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  4. Fish Tank
+                </text>
+                <text
+                  x="650"
+                  y="228"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  BFS (ripples)
+                </text>
+
+                <!-- 5. Cat corner (right wall, lower) -->
+                <path
+                  d="M640,260 L655,245 L670,260"
+                  stroke="#bc8cff"
+                  stroke-width="2"
+                  fill="rgba(188,140,255,0.15)"
+                />
+                <circle
+                  cx="655"
+                  cy="270"
+                  r="10"
+                  fill="rgba(188,140,255,0.12)"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="655"
+                  y="295"
+                  font-size="10"
+                  fill="#bc8cff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  5. Cat
+                </text>
+                <text
+                  x="655"
+                  y="308"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  DFS (explore deep)
+                </text>
+
+                <!-- 6. Christmas lights (bottom right) -->
+                <circle
+                  cx="580"
+                  cy="360"
+                  r="5"
+                  fill="rgba(63,185,80,0.5)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <line
+                  x1="585"
+                  y1="360"
+                  x2="605"
+                  y2="360"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="610"
+                  cy="360"
+                  r="5"
+                  fill="rgba(210,153,34,0.5)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <line
+                  x1="615"
+                  y1="360"
+                  x2="635"
+                  y2="360"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="640"
+                  cy="360"
+                  r="5"
+                  fill="rgba(248,81,73,0.5)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <line
+                  x1="645"
+                  y1="360"
+                  x2="665"
+                  y2="360"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="670"
+                  cy="360"
+                  r="5"
+                  fill="rgba(88,166,255,0.5)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <text
+                  x="625"
+                  y="385"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  6. Lights
+                </text>
+                <text
+                  x="625"
+                  y="398"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Topological Sort
+                </text>
+
+                <!-- 7. Coffee table with spreadsheet (center) -->
+                <rect
+                  x="310"
+                  y="195"
+                  width="120"
+                  height="70"
+                  rx="6"
+                  fill="rgba(57,210,192,0.1)"
+                  stroke="#39d2c0"
+                  stroke-width="1.5"
+                />
+                <!-- Grid lines -->
+                <line
+                  x1="340"
+                  y1="195"
+                  x2="340"
+                  y2="265"
+                  stroke="#39d2c0"
+                  stroke-width="0.5"
+                  opacity="0.4"
+                />
+                <line
+                  x1="370"
+                  y1="195"
+                  x2="370"
+                  y2="265"
+                  stroke="#39d2c0"
+                  stroke-width="0.5"
+                  opacity="0.4"
+                />
+                <line
+                  x1="400"
+                  y1="195"
+                  x2="400"
+                  y2="265"
+                  stroke="#39d2c0"
+                  stroke-width="0.5"
+                  opacity="0.4"
+                />
+                <line
+                  x1="310"
+                  y1="215"
+                  x2="430"
+                  y2="215"
+                  stroke="#39d2c0"
+                  stroke-width="0.5"
+                  opacity="0.4"
+                />
+                <line
+                  x1="310"
+                  y1="235"
+                  x2="430"
+                  y2="235"
+                  stroke="#39d2c0"
+                  stroke-width="0.5"
+                  opacity="0.4"
+                />
+                <line
+                  x1="310"
+                  y1="255"
+                  x2="430"
+                  y2="255"
+                  stroke="#39d2c0"
+                  stroke-width="0.5"
+                  opacity="0.4"
+                />
+                <text
+                  x="370"
+                  y="283"
+                  font-size="10"
+                  fill="#39d2c0"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  7. Table (DP)
+                </text>
+                <text
+                  x="370"
+                  y="296"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Dynamic Programming
+                </text>
+
+                <!-- 8. Buffet cart (center left) -->
+                <rect
+                  x="160"
+                  y="210"
+                  width="70"
+                  height="40"
+                  rx="6"
+                  fill="rgba(210,153,34,0.12)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="180"
+                  cy="230"
+                  r="8"
+                  fill="rgba(210,153,34,0.2)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="205"
+                  cy="225"
+                  r="6"
+                  fill="rgba(210,153,34,0.15)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <text
+                  x="195"
+                  y="265"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  8. Buffet
+                </text>
+                <text
+                  x="195"
+                  y="278"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Greedy
+                </text>
+
+                <!-- 9. Maze on wall (left wall, middle) -->
+                <rect
+                  x="45"
+                  y="175"
+                  width="65"
+                  height="55"
+                  rx="4"
+                  fill="rgba(248,81,73,0.08)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M55,185 L55,210 L90,210 L90,195 L70,195 L70,220"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <text
+                  x="77"
+                  y="245"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  9. Maze
+                </text>
+                <text
+                  x="77"
+                  y="258"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Backtracking
+                </text>
+
+                <!-- 10. Trophy shelf (left wall, lower) -->
+                <rect
+                  x="45"
+                  y="290"
+                  width="65"
+                  height="50"
+                  rx="4"
+                  fill="rgba(247,120,186,0.12)"
+                  stroke="#f778ba"
+                  stroke-width="1.5"
+                />
+                <polygon
+                  points="60,330 78,300 96,330"
+                  fill="rgba(247,120,186,0.2)"
+                  stroke="#f778ba"
+                  stroke-width="1"
+                />
+                <text
+                  x="77"
+                  y="355"
+                  font-size="10"
+                  fill="#f778ba"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  10. Trophies
+                </text>
+                <text
+                  x="77"
+                  y="368"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Heap
+                </text>
+
+                <!-- 11. Stack of plates (bottom left) -->
+                <rect
+                  x="160"
+                  y="330"
+                  width="50"
+                  height="10"
+                  rx="2"
+                  fill="rgba(188,140,255,0.2)"
+                  stroke="#bc8cff"
+                  stroke-width="1"
+                />
+                <rect
+                  x="165"
+                  y="320"
+                  width="40"
+                  height="10"
+                  rx="2"
+                  fill="rgba(188,140,255,0.15)"
+                  stroke="#bc8cff"
+                  stroke-width="1"
+                />
+                <rect
+                  x="170"
+                  y="310"
+                  width="30"
+                  height="10"
+                  rx="2"
+                  fill="rgba(188,140,255,0.1)"
+                  stroke="#bc8cff"
+                  stroke-width="1"
+                />
+                <text
+                  x="185"
+                  y="358"
+                  font-size="10"
+                  fill="#bc8cff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  11. Plates
+                </text>
+                <text
+                  x="185"
+                  y="371"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Monotonic Stack
+                </text>
+
+                <!-- 12. Photo albums (bottom center-left) -->
+                <rect
+                  x="260"
+                  y="330"
+                  width="30"
+                  height="40"
+                  rx="3"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="295"
+                  y="330"
+                  width="30"
+                  height="40"
+                  rx="3"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <path d="M290,350 L295,350" stroke="#3fb950" stroke-width="2" />
+                <text
+                  x="293"
+                  y="385"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  12. Albums
+                </text>
+                <text
+                  x="293"
+                  y="398"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Union Find
+                </text>
+
+                <!-- 13. Phone tree chart (bottom center) -->
+                <circle
+                  cx="400"
+                  cy="330"
+                  r="5"
+                  fill="rgba(57,210,192,0.3)"
+                  stroke="#39d2c0"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="397"
+                  y1="335"
+                  x2="390"
+                  y2="345"
+                  stroke="#39d2c0"
+                  stroke-width="1"
+                />
+                <line
+                  x1="403"
+                  y1="335"
+                  x2="410"
+                  y2="345"
+                  stroke="#39d2c0"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="388"
+                  cy="349"
+                  r="4"
+                  fill="rgba(57,210,192,0.2)"
+                  stroke="#39d2c0"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="412"
+                  cy="349"
+                  r="4"
+                  fill="rgba(57,210,192,0.2)"
+                  stroke="#39d2c0"
+                  stroke-width="1"
+                />
+                <text
+                  x="400"
+                  y="370"
+                  font-size="10"
+                  fill="#39d2c0"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  13. Phone Tree
+                </text>
+                <text
+                  x="400"
+                  y="383"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Trie
+                </text>
+
+                <!-- 14. Odometer (bottom center-right) -->
+                <rect
+                  x="455"
+                  y="325"
+                  width="65"
+                  height="30"
+                  rx="4"
+                  fill="rgba(210,153,34,0.12)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="487"
+                  y="345"
+                  font-size="11"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-family="var(--font-mono)"
+                >
+                  04738
+                </text>
+                <text
+                  x="487"
+                  y="370"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  14. Odometer
+                </text>
+                <text
+                  x="487"
+                  y="383"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Prefix Sum
+                </text>
+
+                <!-- 15. Coat rack (top center-right) -->
+                <line
+                  x1="460"
+                  y1="50"
+                  x2="460"
+                  y2="90"
+                  stroke="#f778ba"
+                  stroke-width="2"
+                />
+                <line
+                  x1="445"
+                  y1="60"
+                  x2="475"
+                  y2="60"
+                  stroke="#f778ba"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="445"
+                  cy="65"
+                  r="5"
+                  fill="rgba(247,120,186,0.2)"
+                  stroke="#f778ba"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="475"
+                  cy="65"
+                  r="5"
+                  fill="rgba(247,120,186,0.2)"
+                  stroke="#f778ba"
+                  stroke-width="1"
+                />
+                <text
+                  x="460"
+                  y="115"
+                  font-size="10"
+                  fill="#f778ba"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  15. Coat Rack
+                </text>
+                <text
+                  x="460"
+                  y="128"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Hash Map
+                </text>
+
+                <!-- 16. GPS device (right wall, middle-lower) -->
+                <rect
+                  x="620"
+                  y="310"
+                  width="60"
+                  height="40"
+                  rx="6"
+                  fill="rgba(88,166,255,0.12)"
+                  stroke="#58a6ff"
+                  stroke-width="1.5"
+                />
+                <circle cx="635" cy="330" r="3" fill="#58a6ff" />
+                <path
+                  d="M638,330 L660,320 L655,340"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  fill="none"
+                />
+                <text
+                  x="650"
+                  y="365"
+                  font-size="10"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  16. GPS
+                </text>
+                <text
+                  x="650"
+                  y="378"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Dijkstra
+                </text>
+              </svg>
+            </div>
+
+            <div class="station-grid">
+              <!-- Station 1 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(88, 166, 255, 0.2); color: #58a6ff"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-blue)">
+                  The Window (Sliding Window)
+                </h4>
+                <div class="station-scene">
+                  A large window with curtains that slide open and close.
+                  Through the glass, a continuous stream of numbers flows past
+                  like a news ticker. The curtain frame is exactly 3 numbers
+                  wide -- it slides right, one number enters, one exits.
+                </div>
+                <p class="station-concept">
+                  <strong>Sliding Window:</strong> Maintain a window of fixed or
+                  variable size over a contiguous subarray. Move right edge to
+                  expand, left edge to shrink.
+                </p>
+                <p class="station-why">
+                  A literal sliding window. The curtains are your left and right
+                  pointers.
+                </p>
+              </div>
+
+              <!-- Station 2 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(63, 185, 80, 0.2); color: #3fb950"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-green)">
+                  The Couch (Two Pointers)
+                </h4>
+                <div class="station-scene">
+                  Two people sit at opposite ends of the couch. They stand up
+                  and walk toward each other, one step at a time. They meet in
+                  the middle, shake hands, and sit back down.
+                </div>
+                <p class="station-concept">
+                  <strong>Two Pointers:</strong> Place pointers at both ends of
+                  a sorted array and walk them inward. Use for pair-sum,
+                  palindrome checking, container problems.
+                </p>
+                <p class="station-why">
+                  Two people, opposite ends, walking toward each other. That is
+                  the algorithm.
+                </p>
+              </div>
+
+              <!-- Station 3 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-orange)">
+                  The Bookshelf (Binary Search)
+                </h4>
+                <div class="station-scene">
+                  A tall bookshelf with books sorted by author. You always open
+                  to the middle shelf first. Too high alphabetically? Look at
+                  the left half. Too low? Look at the right half. You never scan
+                  linearly.
+                </div>
+                <p class="station-concept">
+                  <strong>Binary Search:</strong> Halve the search space each
+                  step. O(log n). Works on any sorted or monotonic structure.
+                </p>
+                <p class="station-why">
+                  A sorted bookshelf is the canonical binary search example.
+                  Always start in the middle.
+                </p>
+              </div>
+
+              <!-- Station 4 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(88, 166, 255, 0.2); color: #58a6ff"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-blue)">The Fish Tank (BFS)</h4>
+                <div class="station-scene">
+                  A stone drops into the fish tank. Ripples spread outward in
+                  concentric circles -- level by level, each ring reaches all
+                  points at the same distance before the next ring forms.
+                </div>
+                <p class="station-concept">
+                  <strong>BFS:</strong> Explore level by level using a queue.
+                  Finds shortest unweighted path. Think concentric ripples.
+                </p>
+                <p class="station-why">
+                  Ripples are BFS -- they expand uniformly outward, covering
+                  each distance level before moving to the next.
+                </p>
+              </div>
+
+              <!-- Station 5 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >5</span
+                >
+                <h4 style="color: var(--accent-purple)">The Cat (DFS)</h4>
+                <div class="station-scene">
+                  A curious cat exploring the room. It goes deep into one
+                  corner, sniffs behind every object, hits a wall, then backs
+                  out and tries another path. It never explores broadly --
+                  always commits to one path until it dead-ends.
+                </div>
+                <p class="station-concept">
+                  <strong>DFS:</strong> Explore as deep as possible before
+                  backtracking. Uses a stack (or recursion). Think: cat
+                  exploring corners.
+                </p>
+                <p class="station-why">
+                  A cat's exploration strategy is pure DFS -- commit to one
+                  direction, hit a wall, backtrack.
+                </p>
+              </div>
+
+              <!-- Station 6 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(63, 185, 80, 0.2); color: #3fb950"
+                  >6</span
+                >
+                <h4 style="color: var(--accent-green)">
+                  Christmas Lights (Topological Sort)
+                </h4>
+                <div class="station-scene">
+                  A chain of Christmas lights strung along the wall. You plug
+                  them in from the power source outward. Each light can only
+                  turn on after the one before it is on. One light is burned out
+                  -- everything after it is dark.
+                </div>
+                <p class="station-concept">
+                  <strong>Topological Sort:</strong> Order nodes so every edge
+                  u->v has u before v. Think: prerequisite chains, build
+                  systems, course schedules.
+                </p>
+                <p class="station-why">
+                  Each light depends on the previous one -- a dependency chain.
+                  The order matters.
+                </p>
+              </div>
+
+              <!-- Station 7 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >7</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Coffee Table Spreadsheet (DP)
+                </h4>
+                <div class="station-scene">
+                  A giant spreadsheet on the coffee table. Each cell's value
+                  depends on the cells above and to the left. You fill it
+                  methodically from the top-left corner, row by row. No cell is
+                  computed twice.
+                </div>
+                <p class="station-concept">
+                  <strong>Dynamic Programming:</strong> Break into overlapping
+                  subproblems. Store results in a table. Build bottom-up from
+                  base cases.
+                </p>
+                <p class="station-why">
+                  DP IS a table. Each cell depends on previously computed cells.
+                  The spreadsheet IS the algorithm.
+                </p>
+              </div>
+
+              <!-- Station 8 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >8</span
+                >
+                <h4 style="color: var(--accent-orange)">The Buffet (Greedy)</h4>
+                <div class="station-scene">
+                  Someone at a buffet cart. They always grab the best-looking
+                  dish available RIGHT NOW. No planning ahead, no considering
+                  what is coming next on the cart. Just take the best current
+                  option every time.
+                </div>
+                <p class="station-concept">
+                  <strong>Greedy:</strong> At each step, make the locally
+                  optimal choice. Works when local optima lead to global optimum
+                  (interval scheduling, Huffman, Kruskal).
+                </p>
+                <p class="station-why">
+                  A greedy eater at a buffet -- no strategy, just "what looks
+                  best right now?"
+                </p>
+              </div>
+
+              <!-- Station 9 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >9</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  The Maze (Backtracking)
+                </h4>
+                <div class="station-scene">
+                  A maze drawn on the wall. A mouse enters, goes straight, hits
+                  a dead end, backs up to the last intersection, tries another
+                  path. It explores every possibility systematically, pruning
+                  dead ends.
+                </div>
+                <p class="station-concept">
+                  <strong>Backtracking:</strong> Try a choice, recurse. If it
+                  fails, undo the choice and try the next option. Prune branches
+                  early to avoid exponential blowup.
+                </p>
+                <p class="station-why">
+                  A maze is the physical embodiment of backtracking. Dead end =
+                  prune. Back up = backtrack.
+                </p>
+              </div>
+
+              <!-- Station 10 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >10</span
+                >
+                <h4 style="color: var(--accent-pink)">
+                  The Trophy Shelf (Heap)
+                </h4>
+                <div class="station-scene">
+                  A pyramid-shaped trophy shelf. The biggest trophy is always on
+                  top. When you add a new trophy, it starts at the bottom and
+                  bubbles up to its correct position. Remove the top trophy, and
+                  the next-biggest floats up.
+                </div>
+                <p class="station-concept">
+                  <strong>Heap:</strong> Priority queue. O(log n)
+                  insert/extract. The root is always the min or max. Think:
+                  top-K, merge-K, median tracking.
+                </p>
+                <p class="station-why">
+                  A trophy shelf that self-organizes -- biggest always on top.
+                  That is a max-heap.
+                </p>
+              </div>
+
+              <!-- Station 11 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >11</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  The Plate Stack (Monotonic Stack)
+                </h4>
+                <div class="station-scene">
+                  A stack of plates, strictly decreasing in size from bottom to
+                  top. When a bigger plate arrives, it crushes and removes all
+                  smaller plates on top. Only plates smaller than the new one
+                  survive.
+                </div>
+                <p class="station-concept">
+                  <strong>Monotonic Stack:</strong> Maintain a stack where
+                  elements are in sorted order. Pop elements that violate the
+                  monotonic property. Solves: next greater element, histogram
+                  area, stock span.
+                </p>
+                <p class="station-why">
+                  The crushing visual is unforgettable. Big plate arrives, small
+                  plates get destroyed -- that is the pop operation.
+                </p>
+              </div>
+
+              <!-- Station 12 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(63, 185, 80, 0.2); color: #3fb950"
+                  >12</span
+                >
+                <h4 style="color: var(--accent-green)">
+                  Photo Albums (Union Find)
+                </h4>
+                <div class="station-scene">
+                  Family photo albums on the coffee table. Two families get
+                  married -- their albums merge into one. To find if two photos
+                  are in the same album, you trace back to the album cover
+                  (root). Path compression: everyone points directly to the
+                  cover.
+                </div>
+                <p class="station-concept">
+                  <strong>Union Find:</strong> Track connected components. Union
+                  merges two sets. Find traces an element to its root. Near-O(1)
+                  with path compression + union by rank.
+                </p>
+                <p class="station-why">
+                  Merging photo albums = union. Finding which album a photo
+                  belongs to = find.
+                </p>
+              </div>
+
+              <!-- Station 13 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >13</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Phone Tree Chart (Trie)
+                </h4>
+                <div class="station-scene">
+                  An old telephone tree chart on the wall. Each level is a
+                  letter. You follow the path to spell words: C-A-T goes
+                  left-left-right. Multiple words share prefixes. The tree fans
+                  out like a phone tree.
+                </div>
+                <p class="station-concept">
+                  <strong>Trie:</strong> Prefix tree. Each path from root to
+                  node spells a prefix. O(L) lookup where L = word length. Used
+                  for autocomplete, spell check, IP routing.
+                </p>
+                <p class="station-why">
+                  A telephone tree is a trie -- each branch is a character,
+                  shared prefixes share paths.
+                </p>
+              </div>
+
+              <!-- Station 14 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >14</span
+                >
+                <h4 style="color: var(--accent-orange)">
+                  The Odometer (Prefix Sum)
+                </h4>
+                <div class="station-scene">
+                  A running odometer display on the dashboard of a toy car. To
+                  find the distance between two points, just subtract the
+                  readings: distance(A,B) = reading(B) - reading(A). No need to
+                  remeasure.
+                </div>
+                <p class="station-concept">
+                  <strong>Prefix Sum:</strong> Precompute cumulative sums. Any
+                  range sum in O(1): sum(i..j) = prefix[j+1] - prefix[i]. Works
+                  in 2D too (integral images).
+                </p>
+                <p class="station-why">
+                  An odometer IS a prefix sum. Distance = difference of
+                  readings. No re-counting.
+                </p>
+              </div>
+
+              <!-- Station 15 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >15</span
+                >
+                <h4 style="color: var(--accent-pink)">
+                  The Coat Rack (Hash Map)
+                </h4>
+                <div class="station-scene">
+                  A coat rack with numbered hooks. Each coat has a label. You
+                  compute the hook number from the label (hash function). Hook 7
+                  = blue coat. Look up any coat in O(1) by computing its hook
+                  number.
+                </div>
+                <p class="station-concept">
+                  <strong>Hash Map:</strong> O(1) lookup/insert/delete. Map keys
+                  to values via hash function. Foundation of: two-sum, frequency
+                  counting, grouping, deduplication.
+                </p>
+                <p class="station-why">
+                  A coat rack with labeled hooks. The label-to-hook mapping IS
+                  the hash function.
+                </p>
+              </div>
+
+              <!-- Station 16 -->
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(88, 166, 255, 0.2); color: #58a6ff"
+                  >16</span
+                >
+                <h4 style="color: var(--accent-blue)">
+                  The GPS Device (Dijkstra)
+                </h4>
+                <div class="station-scene">
+                  A GPS navigation device sitting on the side table. It shows
+                  the shortest route, but as you discover new roads (process
+                  neighbors), it updates: "Found a shorter path!
+                  Recalculating..." It always processes the closest unvisited
+                  node next.
+                </div>
+                <p class="station-concept">
+                  <strong>Dijkstra:</strong> Shortest path in weighted graphs
+                  with non-negative edges. Uses a min-heap. Always processes the
+                  nearest unvisited node. O((V+E) log V).
+                </p>
+                <p class="station-why">
+                  GPS navigation IS Dijkstra. It explores closest nodes first
+                  and updates when shorter paths are found.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== KITCHEN ===== -->
+          <section class="room-section" id="room-kitchen">
+            <h2>
+              Kitchen
+              <span class="room-label-tag badge-green">Sorting Algorithms</span>
+            </h2>
+            <p>
+              Everything in the kitchen involves organizing things. Sorting is
+              organizing data. Each station maps a sorting algorithm to a
+              kitchen activity.
+            </p>
+
+            <div class="diagram-container">
+              <div class="diagram-title">Kitchen -- 6 Sorting Stations</div>
+              <svg viewBox="0 0 600 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Kitchen outline -->
+                <rect
+                  x="20"
+                  y="20"
+                  width="560"
+                  height="210"
+                  rx="8"
+                  fill="rgba(63,185,80,0.04)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <!-- Stove -->
+                <rect
+                  x="40"
+                  y="40"
+                  width="70"
+                  height="50"
+                  rx="4"
+                  fill="rgba(248,81,73,0.1)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="10"
+                  fill="none"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="90"
+                  cy="60"
+                  r="10"
+                  fill="none"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="75"
+                  y="105"
+                  font-size="9"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  1. Boiling Pot
+                </text>
+                <text
+                  x="75"
+                  y="117"
+                  font-size="7"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Bubble Sort
+                </text>
+                <!-- Counter -->
+                <rect
+                  x="140"
+                  y="40"
+                  width="90"
+                  height="50"
+                  rx="4"
+                  fill="rgba(210,153,34,0.1)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="185"
+                  y="72"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  scan...
+                </text>
+                <text
+                  x="185"
+                  y="105"
+                  font-size="9"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  2. Chef Scanning
+                </text>
+                <text
+                  x="185"
+                  y="117"
+                  font-size="7"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Selection Sort
+                </text>
+                <!-- Card hand -->
+                <rect
+                  x="260"
+                  y="40"
+                  width="80"
+                  height="50"
+                  rx="4"
+                  fill="rgba(88,166,255,0.1)"
+                  stroke="#58a6ff"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="275"
+                  y="50"
+                  width="15"
+                  height="25"
+                  rx="2"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  transform="rotate(-5,282,62)"
+                />
+                <rect
+                  x="290"
+                  y="48"
+                  width="15"
+                  height="25"
+                  rx="2"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <rect
+                  x="305"
+                  y="50"
+                  width="15"
+                  height="25"
+                  rx="2"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  transform="rotate(5,312,62)"
+                />
+                <text
+                  x="300"
+                  y="105"
+                  font-size="9"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  3. Card Hand
+                </text>
+                <text
+                  x="300"
+                  y="117"
+                  font-size="7"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Insertion Sort
+                </text>
+                <!-- Conveyor belts -->
+                <rect
+                  x="370"
+                  y="40"
+                  width="90"
+                  height="50"
+                  rx="4"
+                  fill="rgba(63,185,80,0.1)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="380"
+                  y1="60"
+                  x2="450"
+                  y2="60"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <line
+                  x1="380"
+                  y1="75"
+                  x2="450"
+                  y2="75"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="415"
+                  y="105"
+                  font-size="9"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  4. Conveyors
+                </text>
+                <text
+                  x="415"
+                  y="117"
+                  font-size="7"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Merge Sort
+                </text>
+                <!-- Bouncer -->
+                <rect
+                  x="490"
+                  y="40"
+                  width="70"
+                  height="50"
+                  rx="4"
+                  fill="rgba(188,140,255,0.1)"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="525"
+                  cy="55"
+                  r="8"
+                  fill="rgba(188,140,255,0.2)"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="510"
+                  y1="75"
+                  x2="525"
+                  y2="68"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="540"
+                  y1="75"
+                  x2="525"
+                  y2="68"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="525"
+                  y="105"
+                  font-size="9"
+                  fill="#bc8cff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  5. Bouncer
+                </text>
+                <text
+                  x="525"
+                  y="117"
+                  font-size="7"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Quick Sort
+                </text>
+                <!-- Oranges pyramid -->
+                <rect
+                  x="220"
+                  y="145"
+                  width="160"
+                  height="65"
+                  rx="4"
+                  fill="rgba(210,153,34,0.08)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <circle
+                  cx="280"
+                  cy="190"
+                  r="8"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="300"
+                  cy="190"
+                  r="8"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="320"
+                  cy="190"
+                  r="8"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="290"
+                  cy="174"
+                  r="8"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="310"
+                  cy="174"
+                  r="8"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <circle
+                  cx="300"
+                  cy="158"
+                  r="8"
+                  fill="rgba(210,153,34,0.4)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="300"
+                  y="222"
+                  font-size="9"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  6. Orange Pyramid
+                </text>
+                <text
+                  x="300"
+                  y="234"
+                  font-size="7"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Heap Sort
+                </text>
+              </svg>
+            </div>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  Boiling Pot (Bubble Sort)
+                </h4>
+                <div class="station-scene">
+                  Bubbles rising in a boiling pot. The largest bubbles rise to
+                  the surface first. Each pass through the water pushes the
+                  next-largest bubble to the top.
+                </div>
+                <p class="station-concept">
+                  <strong>Bubble Sort:</strong> O(n^2). Repeatedly swap adjacent
+                  elements if out of order. Largest elements "bubble" to the
+                  end. Simple but slow.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-orange)">
+                  Chef Scanning (Selection Sort)
+                </h4>
+                <div class="station-scene">
+                  A chef scanning all ingredients on the counter, picking the
+                  smallest one, placing it at the start. Then scanning the
+                  remaining ingredients, picking the smallest again. Methodical,
+                  thorough, slow.
+                </div>
+                <p class="station-concept">
+                  <strong>Selection Sort:</strong> O(n^2). Find the minimum in
+                  the unsorted portion, place it at the correct position. Easy
+                  to understand, not efficient.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(88, 166, 255, 0.2); color: #58a6ff"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-blue)">
+                  Card Hand (Insertion Sort)
+                </h4>
+                <div class="station-scene">
+                  Sorting a hand of playing cards as they are dealt. Each new
+                  card is inserted into the correct position in the
+                  already-sorted hand. You shift cards right to make room.
+                </div>
+                <p class="station-concept">
+                  <strong>Insertion Sort:</strong> O(n^2) worst, O(n) best
+                  (nearly sorted). Insert each element into its sorted position.
+                  Great for small or nearly-sorted data.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(63, 185, 80, 0.2); color: #3fb950"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-green)">
+                  Two Conveyors (Merge Sort)
+                </h4>
+                <div class="station-scene">
+                  Two conveyor belts, each carrying sorted items. They merge
+                  into one output belt: always take the smaller item from
+                  whichever belt has the smaller front item. Divide, conquer,
+                  merge.
+                </div>
+                <p class="station-concept">
+                  <strong>Merge Sort:</strong> O(n log n) always. Divide in
+                  half, sort each, merge. Stable. Great for linked lists and
+                  external sorting. Uses O(n) extra space.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >5</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  The Bouncer (Quick Sort)
+                </h4>
+                <div class="station-scene">
+                  A bouncer at the kitchen door. Everyone shorter than the
+                  bouncer goes left, everyone taller goes right. Then a new
+                  bouncer appears in each group and repeats. Divide around a
+                  pivot.
+                </div>
+                <p class="station-concept">
+                  <strong>Quick Sort:</strong> O(n log n) average, O(n^2) worst.
+                  Pick a pivot, partition around it. In-place. Usually fastest
+                  in practice.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >6</span
+                >
+                <h4 style="color: var(--accent-orange)">
+                  Orange Pyramid (Heap Sort)
+                </h4>
+                <div class="station-scene">
+                  A pyramid of oranges. Take the top orange (the largest), set
+                  it aside. The pyramid reorganizes -- the next-largest floats
+                  to the top. Repeat until all oranges are sorted in a line.
+                </div>
+                <p class="station-concept">
+                  <strong>Heap Sort:</strong> O(n log n) always. Build a
+                  max-heap, repeatedly extract the max. In-place, not stable.
+                  Guaranteed performance.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== DINING ROOM ===== -->
+          <section class="room-section" id="room-dining-room">
+            <h2>
+              Dining Room
+              <span class="room-label-tag badge-orange">Data Structures</span>
+            </h2>
+            <p>
+              Where data is served and consumed. Each piece of furniture holds
+              data in a specific way.
+            </p>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(210, 153, 34, 0.2); color: #d29922"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-orange)">
+                  The Long Table (Array)
+                </h4>
+                <div class="station-scene">
+                  A long dining table with numbered place settings. Each seat is
+                  adjacent, indexed 0 to n-1. You can find any seat by number
+                  instantly, but inserting a new place in the middle means
+                  everyone shifts.
+                </div>
+                <p class="station-concept">
+                  <strong>Array:</strong> O(1) random access, O(n) insert/delete
+                  in the middle. Contiguous memory. Foundation of everything.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(63, 185, 80, 0.2); color: #3fb950"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-green)">
+                  Conga Line (Linked List)
+                </h4>
+                <div class="station-scene">
+                  Guests in a conga line. Each person holds the shoulders of the
+                  person in front. To insert someone, just break one connection
+                  and splice them in. But finding the 50th person means walking
+                  from the front.
+                </div>
+                <p class="station-concept">
+                  <strong>Linked List:</strong> O(1) insert/delete at known
+                  position, O(n) access. Dynamic size, no shifting. Useful for
+                  LRU caches, adjacency lists.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(88, 166, 255, 0.2); color: #58a6ff"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-blue)">
+                  Stacked Plates (Stack)
+                </h4>
+                <div class="station-scene">
+                  A stack of dinner plates. Last plate placed on top is the
+                  first one taken off. You cannot reach the bottom plate without
+                  removing all plates above it. LIFO -- Last In, First Out.
+                </div>
+                <p class="station-concept">
+                  <strong>Stack:</strong> LIFO. O(1) push/pop. Used in: DFS,
+                  expression evaluation, undo operations, parenthesis matching,
+                  call stacks.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  Serving Line (Queue)
+                </h4>
+                <div class="station-scene">
+                  Guests line up at the buffet. First person in line is first
+                  served. New guests join at the back. FIFO -- First In, First
+                  Out. Nobody cuts the line.
+                </div>
+                <p class="station-concept">
+                  <strong>Queue:</strong> FIFO. O(1) enqueue/dequeue. Used in:
+                  BFS, task scheduling, message passing, rate limiting.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >5</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Family Tree Portrait (Tree/BST)
+                </h4>
+                <div class="station-scene">
+                  A large family tree portrait on the dining room wall.
+                  Grandparents at top, parents below, children at bottom. Each
+                  person has at most two children. The left child's name comes
+                  alphabetically before the parent.
+                </div>
+                <p class="station-concept">
+                  <strong>Binary Search Tree:</strong> O(log n)
+                  search/insert/delete when balanced. Left subtree smaller,
+                  right subtree larger. Foundation for sets and maps.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >6</span
+                >
+                <h4 style="color: var(--accent-pink)">Seating Chart (Graph)</h4>
+                <div class="station-scene">
+                  A complex seating chart where lines connect people who know
+                  each other. Some connections are one-way (directed), some have
+                  weights (how well they know each other). The chart itself is a
+                  graph -- nodes are people, edges are relationships.
+                </div>
+                <p class="station-concept">
+                  <strong>Graph:</strong> Nodes + edges. Adjacency list or
+                  matrix. Foundation for BFS, DFS, shortest path, connected
+                  components, topological sort.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== STUDY/LIBRARY ===== -->
+          <section class="room-section" id="room-study">
+            <h2>
+              Study / Library
+              <span
+                class="room-label-tag"
+                style="background: rgba(57, 210, 192, 0.15); color: #39d2c0"
+                >Systems Design</span
+              >
+            </h2>
+            <p>
+              Where you read, plan, and architect. Each station maps to a
+              systems design concept.
+            </p>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Globe on Desk (CAP Theorem)
+                </h4>
+                <div class="station-scene">
+                  A globe with three continents highlighted: C, A, P. A sign on
+                  the desk says "Pick any two." You can spin the globe but can
+                  never see all three at once -- one is always hidden.
+                </div>
+                <p class="station-concept">
+                  <strong>CAP Theorem:</strong> Consistency, Availability,
+                  Partition Tolerance -- pick two. In a network partition,
+                  choose CP (consistent but unavailable) or AP (available but
+                  inconsistent).
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Filing Cabinet (Database Scaling)
+                </h4>
+                <div class="station-scene">
+                  A filing cabinet that is overflowing. Solution 1: Buy a bigger
+                  cabinet (vertical scaling). Solution 2: Split files across
+                  multiple cabinets by letter (sharding). The labels A-M go to
+                  cabinet 1, N-Z to cabinet 2.
+                </div>
+                <p class="station-concept">
+                  <strong>Database Scaling:</strong> Vertical (bigger machine)
+                  vs. horizontal (sharding). Replication for reads. Partitioning
+                  for writes.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Sticky Notes (Caching)
+                </h4>
+                <div class="station-scene">
+                  Sticky notes on the monitor with frequently-used phone
+                  numbers. Faster than looking up the phone book every time. But
+                  the note might be outdated if someone changed their number --
+                  cache invalidation.
+                </div>
+                <p class="station-concept">
+                  <strong>Caching:</strong> Store frequently accessed data
+                  closer to the consumer. Trade staleness for speed. The two
+                  hard things: cache invalidation and naming things.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(57, 210, 192, 0.2); color: #39d2c0"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-cyan)">
+                  Inbox Tray (Message Queues)
+                </h4>
+                <div class="station-scene">
+                  A physical inbox tray on the desk. Letters pile up. A clerk
+                  processes them one at a time. If the clerk is busy, letters
+                  just wait in the tray -- nothing is lost. Producer-consumer
+                  decoupling.
+                </div>
+                <p class="station-concept">
+                  <strong>Message Queues:</strong> Decouple producers and
+                  consumers. Handle backpressure. Enable async processing.
+                  Kafka, RabbitMQ, SQS.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== WORKSHOP ===== -->
+          <section class="room-section" id="room-workshop">
+            <h2>
+              Workshop / Garage
+              <span
+                class="room-label-tag"
+                style="background: rgba(247, 120, 186, 0.15); color: #f778ba"
+                >Software Engineering</span
+              >
+            </h2>
+            <p>
+              Where you build things with tools. Each station maps to a software
+              engineering practice.
+            </p>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-pink)">
+                  Workbench (SOLID Principles)
+                </h4>
+                <div class="station-scene">
+                  Five tools hanging on the pegboard above the workbench, each
+                  labeled with a letter: S, O, L, I, D. Single-wrench,
+                  Open-socket, Liskov-pliers, Interface-separator,
+                  Dependency-inverter.
+                </div>
+                <p class="station-concept">
+                  <strong>SOLID:</strong> Five principles for maintainable OO
+                  code. Single Responsibility, Open/Closed, Liskov Substitution,
+                  Interface Segregation, Dependency Inversion.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-pink)">Assembly Line (CI/CD)</h4>
+                <div class="station-scene">
+                  A model assembly line on the shelf. Raw materials enter one
+                  end, pass through testing stations, quality checks, and a
+                  finished product comes out the other end automatically. Break
+                  the line, red light flashes.
+                </div>
+                <p class="station-concept">
+                  <strong>CI/CD:</strong> Automated build, test, deploy
+                  pipeline. Every commit triggers the assembly line. Broken
+                  tests halt deployment.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-pink)">
+                  Testing Pyramid Poster (Testing)
+                </h4>
+                <div class="station-scene">
+                  A poster on the wall showing a pyramid. Wide base of unit
+                  tests (fast, many). Middle layer of integration tests
+                  (moderate). Tiny peak of E2E tests (slow, few). An inverted
+                  pyramid next to it with a red X -- that is the anti-pattern.
+                </div>
+                <p class="station-concept">
+                  <strong>Testing Pyramid:</strong> Many unit tests (fast,
+                  focused), fewer integration tests, fewest E2E tests. Invert
+                  the pyramid and everything is slow and brittle.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(247, 120, 186, 0.2); color: #f778ba"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-pink)">
+                  Version Control Shelf (Git)
+                </h4>
+                <div class="station-scene">
+                  A shelf with branching model trains. The main track is stable.
+                  Side tracks (branches) diverge, get tested, then merge back.
+                  If a side track derails, the main track is unaffected.
+                </div>
+                <p class="station-concept">
+                  <strong>Git Branching:</strong> Feature branches isolate work.
+                  PRs with reviews merge back. Trunk-based development for
+                  speed, gitflow for releases.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== SERVER ROOM ===== -->
+          <section class="room-section" id="room-server-room">
+            <h2>
+              Server Room / Basement
+              <span class="room-label-tag badge-red">CS Fundamentals</span>
+            </h2>
+            <p>
+              The infrastructure underneath everything. Dark, humming, full of
+              machines. Every concept here is foundational.
+            </p>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  Server Rack (Processes & Threads)
+                </h4>
+                <div class="station-scene">
+                  A server rack with multiple blades. Each blade is a process --
+                  isolated, with its own memory. Within each blade, multiple
+                  LEDs blink independently -- those are threads sharing the same
+                  blade's memory.
+                </div>
+                <p class="station-concept">
+                  <strong>Processes vs. Threads:</strong> Processes are isolated
+                  (separate memory). Threads share memory within a process. Like
+                  separate boards vs. parallel circuits on one board.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  Network Cables (TCP/UDP)
+                </h4>
+                <div class="station-scene">
+                  Two types of network cables. The thick, shielded cable (TCP)
+                  guarantees delivery with confirmation receipts. The thin cable
+                  (UDP) is faster but packets might get lost -- like shouting
+                  across the room vs. handing a signed letter.
+                </div>
+                <p class="station-concept">
+                  <strong>TCP vs. UDP:</strong> TCP = reliable, ordered,
+                  connection-based. UDP = fast, unreliable, connectionless. TCP
+                  for data, UDP for streaming/gaming.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  Deadlock Puzzle (Concurrency)
+                </h4>
+                <div class="station-scene">
+                  Two robot arms reaching for the same two bolts. Arm A grabs
+                  bolt 1 and waits for bolt 2. Arm B grabs bolt 2 and waits for
+                  bolt 1. Neither can proceed. A deadlock -- freeze forever.
+                </div>
+                <p class="station-concept">
+                  <strong>Concurrency Hazards:</strong> Deadlock (circular
+                  wait), race conditions (unsynchronized access), starvation
+                  (never scheduled). Use locks carefully, prefer
+                  message-passing.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(248, 81, 73, 0.2); color: #f85149"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-red)">
+                  Database Console (SQL & ACID)
+                </h4>
+                <div class="station-scene">
+                  A glowing green terminal showing SQL queries. On the wall:
+                  "A-C-I-D" in large letters. Atomicity (all or nothing),
+                  Consistency (rules enforced), Isolation (transactions don't
+                  interfere), Durability (committed = permanent).
+                </div>
+                <p class="station-concept">
+                  <strong>ACID:</strong> Atomicity, Consistency, Isolation,
+                  Durability. The guarantees that make databases trustworthy.
+                  Like signal integrity guarantees on a bus.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== UPSTAIRS OFFICE ===== -->
+          <section class="room-section" id="room-upstairs">
+            <h2>
+              Upstairs Office
+              <span class="room-label-tag badge-purple"
+                >Staff-Level Skills</span
+              >
+            </h2>
+            <p>
+              You climb the stairs to get here -- literally elevated
+              perspective. These are the skills that separate senior from staff
+              engineers.
+            </p>
+
+            <div class="station-grid">
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >1</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  Whiteboard (RFC / Design Docs)
+                </h4>
+                <div class="station-scene">
+                  A large whiteboard covered with a structured document:
+                  Problem, Context, Options (with pros/cons), Decision,
+                  Consequences. The format is always the same. Below it: stacks
+                  of past RFCs, all following the same template.
+                </div>
+                <p class="station-concept">
+                  <strong>RFC Writing:</strong> Staff engineers write before
+                  they code. Problem statement, constraints, options analysis,
+                  decision with rationale, rollback plan.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >2</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  Conference Phone (Cross-Team Influence)
+                </h4>
+                <div class="station-scene">
+                  A conference phone on the desk with multiple lines lit up --
+                  each line is a different team. You are not their manager, but
+                  you influence through clarity, data, and earned credibility.
+                  No authority needed.
+                </div>
+                <p class="station-concept">
+                  <strong>Influence Without Authority:</strong> Staff engineers
+                  lead through technical credibility, clear communication, and
+                  shared context. Not through org chart power.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >3</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  Dashboard Monitor (Observability)
+                </h4>
+                <div class="station-scene">
+                  Three monitors on the desk: one showing logs (text streams),
+                  one showing metrics (graphs and gauges), one showing traces
+                  (request flow through services). Together they give complete
+                  system visibility.
+                </div>
+                <p class="station-concept">
+                  <strong>Observability:</strong> Logs (what happened), Metrics
+                  (how much), Traces (the path). Like having an oscilloscope,
+                  multimeter, and logic analyzer -- all three together.
+                </p>
+              </div>
+              <div class="station-card">
+                <span
+                  class="station-num"
+                  style="background: rgba(188, 140, 255, 0.2); color: #bc8cff"
+                  >4</span
+                >
+                <h4 style="color: var(--accent-purple)">
+                  Mentor's Chair (Teaching & Mentoring)
+                </h4>
+                <div class="station-scene">
+                  A comfortable chair across from a smaller desk. This is where
+                  you sit with junior engineers, explaining not just what to do
+                  but why. Your multiplier effect: make 5 engineers 20% better
+                  rather than doing 100% more yourself.
+                </div>
+                <p class="station-concept">
+                  <strong>Mentoring:</strong> Staff engineers multiply team
+                  output. Teach the reasoning, not just the answer. Create
+                  systems that make others successful.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== HOW TO USE ===== -->
+          <h2>How to Use the Memory Palace</h2>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Daily Practice (5 minutes)</div>
+            <p>Every morning, close your eyes and walk through the building:</p>
+            <ol>
+              <li>
+                <strong>Front Door:</strong> Touch each of the 6 objects. Can
+                you name all 6 mental models?
+              </li>
+              <li>
+                <strong>Living Room:</strong> Walk clockwise. Window, couch,
+                bookshelf, fish tank, cat... Can you name all 21 patterns?
+              </li>
+              <li>
+                <strong>Kitchen:</strong> Stove, counter, cards, conveyors,
+                bouncer, oranges. All 6 sorting algorithms?
+              </li>
+              <li>
+                <strong>Other rooms:</strong> Scan each station. Can you recall
+                the concept?
+              </li>
+            </ol>
+            <p>
+              The first time will take 15 minutes. By day 7, it will take 3
+              minutes. By day 30, it will be instant.
+            </p>
+          </div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">When You Encounter a Problem</div>
+            <p>
+              When you see a coding problem, mentally walk to the
+              <strong>Living Room</strong> and scan the stations. Ask: "Does
+              this problem look like something at one of my 16 stations?" The
+              vivid images should trigger pattern recognition faster than
+              memorized rules.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Making It Stronger</div>
+            <ul>
+              <li>
+                <strong>Add sensory details:</strong> What does the boiling pot
+                sound like? What does the buffet smell like?
+              </li>
+              <li>
+                <strong>Make scenes absurd:</strong> The cat is wearing a tiny
+                headlamp while exploring. The GPS device is arguing with you.
+              </li>
+              <li>
+                <strong>Personalize:</strong> Use your actual house, office, or
+                childhood home instead of this generic building.
+              </li>
+              <li>
+                <strong>Add motion:</strong> The sliding window curtains are
+                flapping in the wind. The two people on the couch are racing to
+                meet.
+              </li>
+            </ul>
+          </div>
+
+          <hr />
+
+          <!-- ===== PRACTICE EXERCISE ===== -->
+          <h2>Practice: Pattern Recognition via the Palace</h2>
+          <p>
+            For each problem description below, mentally walk to the Living
+            Room, scan the stations, and identify which pattern matches. Click
+            "Reveal" to check your answer.
+          </p>
+
+          <div id="practice-problems">
+            <div class="practice-item">
+              <p>
+                <strong>1.</strong> Given a string, find the length of the
+                longest substring without repeating characters.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 1: The Window (Sliding Window)</strong> --
+                Expand window right, shrink from left when a repeat is found.
+                The window frame is your substring.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>2.</strong> Given a sorted array, find two numbers that
+                add up to a target sum.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 2: The Couch (Two Pointers)</strong> -- Two
+                people at opposite ends of the couch. Sum too large? Right
+                person steps left. Sum too small? Left person steps right.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>3.</strong> Given a list of courses and their
+                prerequisites, find a valid order to take all courses.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 6: Christmas Lights (Topological Sort)</strong>
+                -- Each course depends on its prerequisite, like each light
+                depends on the one before it. Find the order from the power
+                source outward.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>4.</strong> Given a grid, find the shortest path from
+                top-left to bottom-right.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 4: The Fish Tank (BFS)</strong> -- Ripples
+                spreading outward level by level. BFS guarantees the shortest
+                unweighted path.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>5.</strong> Given a set of coins, find the minimum
+                number of coins to make a target amount.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 7: Coffee Table Spreadsheet (DP)</strong> --
+                Each cell dp[amount] depends on previously computed cells
+                dp[amount - coin]. Fill the table from 0 to target.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>6.</strong> Given n queen pieces, place them on an n x n
+                chessboard so no two queens attack each other.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 9: The Maze (Backtracking)</strong> -- Place a
+                queen, recurse. If invalid, remove the queen (backtrack) and try
+                the next position. Prune invalid placements early.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>7.</strong> Given a stream of numbers, find the median
+                at each insertion.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 10: The Trophy Shelf (Heap)</strong> -- Two
+                heaps: a max-heap for the lower half and a min-heap for the
+                upper half. The trophies on top of each shelf give you the
+                median.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>8.</strong> Given an array of temperatures, for each day
+                find how many days until a warmer temperature.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 11: The Plate Stack (Monotonic Stack)</strong>
+                -- Stack days in decreasing temperature order. When a warmer day
+                arrives, pop all cooler days (plates get crushed) and record the
+                distance.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>9.</strong> Given a weighted graph, find the shortest
+                path from source to all other nodes (no negative edges).
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 16: The GPS Device (Dijkstra)</strong> -- The
+                GPS processes the nearest unvisited node and updates distances.
+                "Recalculating..." when a shorter path is found.
+              </div>
+            </div>
+            <div class="practice-item">
+              <p>
+                <strong>10.</strong> Given a list of words, implement
+                autocomplete that returns all words with a given prefix.
+              </p>
+              <button
+                class="reveal-btn"
+                onclick="this.nextElementSibling.classList.toggle('show')"
+              >
+                Reveal
+              </button>
+              <div class="practice-answer">
+                <strong>Station 13: Phone Tree Chart (Trie)</strong> -- Follow
+                the path letter by letter. At the prefix node, all descendants
+                are valid completions. The tree fans out like a phone tree.
+              </div>
+            </div>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

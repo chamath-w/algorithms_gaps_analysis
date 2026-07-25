@@ -1,0 +1,3406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Provability — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Provability &amp; Correctness</h1>
+          <p class="tagline">
+            How to prove algorithms do the right things, don't do the wrong
+            things, and finish in finite time.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              In hardware design, you don't just simulate — you
+              <strong>formally verify</strong>. Timing analysis proves your
+              circuit meets setup/hold constraints. Model checking proves your
+              state machine can't deadlock. Equivalence checking proves your
+              synthesized netlist matches your RTL. Software provability uses
+              the same ideas: <strong>invariants</strong> (like timing
+              constraints), <strong>termination</strong> (like guaranteed
+              convergence of a PLL), and <strong>safety properties</strong>
+              (like proving a latch-up can't occur).
+            </p>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- Overview: The Three Questions -->
+          <!-- ============================================================ -->
+          <h2 id="three-questions">The Three Questions of Correctness</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Correctness"?</div>
+            <p>
+              From Latin <em>correctus</em> = made straight, set right. An
+              algorithm is "correct" when its behavior has been "set right" —
+              aligned with its specification.
+              <strong>Partial correctness</strong> = "if it finishes, the answer
+              is right" (partial because it doesn't guarantee finishing).
+              <strong>Total correctness</strong> = partial correctness +
+              termination = "it finishes AND the answer is right." The word
+              "total" means the guarantee is complete — no caveats.
+            </p>
+          </div>
+
+          <p>
+            Every algorithm or system must answer three fundamental questions.
+            These map directly to formal verification concepts you know from
+            hardware:
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">The Three Pillars of Provability</div>
+            <svg viewBox="0 0 750 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Pillar 1: Partial Correctness -->
+              <rect
+                x="30"
+                y="140"
+                width="200"
+                height="160"
+                rx="12"
+                fill="rgba(63,185,80,0.08)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <rect
+                x="30"
+                y="140"
+                width="200"
+                height="45"
+                rx="12"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="130"
+                y="168"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="700"
+              >
+                Partial Correctness
+              </text>
+              <text x="130" y="205" class="label-small" fill="#e6edf3">
+                "Does the right thing"
+              </text>
+              <text x="130" y="225" class="label-small" fill="#8b949e">
+                If it terminates,
+              </text>
+              <text x="130" y="240" class="label-small" fill="#8b949e">
+                is the output correct?
+              </text>
+              <text
+                x="130"
+                y="270"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                Loop invariants
+              </text>
+              <text
+                x="130"
+                y="285"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                Pre/postconditions
+              </text>
+
+              <!-- Pillar 2: Safety -->
+              <rect
+                x="275"
+                y="140"
+                width="200"
+                height="160"
+                rx="12"
+                fill="rgba(248,81,73,0.08)"
+                stroke="#f85149"
+                stroke-width="2"
+              />
+              <rect
+                x="275"
+                y="140"
+                width="200"
+                height="45"
+                rx="12"
+                fill="rgba(248,81,73,0.2)"
+                stroke="#f85149"
+                stroke-width="2"
+              />
+              <text
+                x="375"
+                y="168"
+                class="label-text"
+                fill="#f85149"
+                font-weight="700"
+              >
+                Safety
+              </text>
+              <text x="375" y="205" class="label-small" fill="#e6edf3">
+                "Nothing bad happens"
+              </text>
+              <text x="375" y="225" class="label-small" fill="#8b949e">
+                No invalid states,
+              </text>
+              <text x="375" y="240" class="label-small" fill="#8b949e">
+                no violated constraints
+              </text>
+              <text
+                x="375"
+                y="270"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                Invariant preservation
+              </text>
+              <text
+                x="375"
+                y="285"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                State machine bounds
+              </text>
+
+              <!-- Pillar 3: Liveness / Termination -->
+              <rect
+                x="520"
+                y="140"
+                width="200"
+                height="160"
+                rx="12"
+                fill="rgba(88,166,255,0.08)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <rect
+                x="520"
+                y="140"
+                width="200"
+                height="45"
+                rx="12"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="620"
+                y="168"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="700"
+              >
+                Liveness / Termination
+              </text>
+              <text x="620" y="205" class="label-small" fill="#e6edf3">
+                "Finishes in finite time"
+              </text>
+              <text x="620" y="225" class="label-small" fill="#8b949e">
+                No infinite loops,
+              </text>
+              <text x="620" y="240" class="label-small" fill="#8b949e">
+                progress is guaranteed
+              </text>
+              <text
+                x="620"
+                y="270"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                Variant functions
+              </text>
+              <text
+                x="620"
+                y="285"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                Well-founded orderings
+              </text>
+
+              <!-- Top: Total Correctness = Partial + Termination -->
+              <rect
+                x="150"
+                y="20"
+                width="450"
+                height="50"
+                rx="12"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="375"
+                y="50"
+                class="label-text"
+                fill="#bc8cff"
+                font-weight="700"
+                font-size="15"
+              >
+                Total Correctness = Partial Correctness + Termination
+              </text>
+
+              <!-- Arrows down -->
+              <line
+                x1="260"
+                y1="70"
+                x2="130"
+                y2="137"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="375"
+                y1="70"
+                x2="375"
+                y2="137"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="490"
+                y1="70"
+                x2="620"
+                y2="137"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- EE analogies at bottom -->
+              <text
+                x="130"
+                y="315"
+                fill="#bc8cff"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Functional verification
+              </text>
+              <text
+                x="375"
+                y="315"
+                fill="#bc8cff"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Latch-up / glitch freedom
+              </text>
+              <text
+                x="620"
+                y="315"
+                fill="#bc8cff"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: PLL lock / convergence
+              </text>
+            </svg>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 1: Loop Invariants -->
+          <!-- ============================================================ -->
+          <h2 id="loop-invariants">
+            Part 1: Loop Invariants — The Core Proof Technique
+          </h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Loop Invariant"?</div>
+            <p>
+              <strong>"Invariant"</strong> from Latin <em>in-</em> (not) +
+              <em>varians</em> (changing) = something that does NOT change. A
+              loop invariant is a property that remains unchanged (invariant)
+              across every iteration of a loop. Picture a spinning wheel: the
+              axle doesn't move even though the wheel turns — the axle is the
+              invariant. The invariant is the truth that survives every
+              revolution of the loop.
+            </p>
+          </div>
+
+          <p>
+            A <strong>loop invariant</strong> is a property that is true before
+            the loop starts, remains true after each iteration, and — combined
+            with the loop's exit condition — proves the algorithm is correct.
+            It's the single most important proof technique for algorithms.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Timing Constraints</div>
+            <p>
+              A loop invariant is like a
+              <strong>setup/hold timing constraint</strong>
+              in a synchronous circuit. Before each clock edge (iteration), the
+              data must be stable (invariant holds). After each clock edge, the
+              output settles to a valid state (invariant preserved). When the
+              clock stops (loop ends), the final state is guaranteed correct. If
+              the invariant ever breaks, the "circuit" produces garbage — just
+              like a timing violation causes metastability.
+            </p>
+          </div>
+
+          <h3>The Three Parts of a Loop Invariant Proof</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">1</div>
+                <div class="card-title">Initialization</div>
+              </div>
+              <div class="card-desc">
+                The invariant is true
+                <strong>before the first iteration</strong>. <br /><em
+                  >EE: Reset state is valid.</em
+                >
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">2</div>
+                <div class="card-title">Maintenance</div>
+              </div>
+              <div class="card-desc">
+                If the invariant is true before iteration <em>k</em>, it's still
+                true after iteration <em>k</em>. <br /><em
+                  >EE: Each clock cycle preserves valid state.</em
+                >
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon purple">3</div>
+                <div class="card-title">Termination</div>
+              </div>
+              <div class="card-desc">
+                When the loop ends, the invariant plus the exit condition
+                <strong>implies the desired result</strong>. <br /><em
+                  >EE: Final output meets spec after last clock edge.</em
+                >
+              </div>
+            </div>
+          </div>
+
+          <h3>Example: Binary Search</h3>
+
+          <p>
+            Let's prove binary search correctly finds a target in a sorted
+            array, or correctly reports it's absent.
+          </p>
+
+          <pre><code><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="cm"># Invariant: if target exists, arr[lo] &lt;= target &lt;= arr[hi]</span>
+    <span class="kw">while</span> lo &lt;= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] &lt; target:
+            lo = mid + <span class="num">1</span>    <span class="cm"># target can't be in arr[lo..mid]</span>
+        <span class="kw">else</span>:
+            hi = mid - <span class="num">1</span>    <span class="cm"># target can't be in arr[mid..hi]</span>
+    <span class="kw">return</span> -<span class="num">1</span></code></pre>
+
+          <!-- Animated Loop Invariant Proof -->
+          <div class="diagram-container" id="loop-inv-container">
+            <div class="diagram-title">Loop Invariant Proof: Binary Search</div>
+            <svg
+              id="loop-inv-svg"
+              viewBox="0 0 700 200"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <!-- Array cells -->
+              <text
+                x="50"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                0
+              </text>
+              <text
+                x="110"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                1
+              </text>
+              <text
+                x="170"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                2
+              </text>
+              <text
+                x="230"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                3
+              </text>
+              <text
+                x="290"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                4
+              </text>
+              <text
+                x="350"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                5
+              </text>
+              <text
+                x="410"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                6
+              </text>
+              <text
+                x="470"
+                y="25"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                7
+              </text>
+
+              <rect
+                id="li-cell-0"
+                x="25"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-1"
+                x="85"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-2"
+                x="145"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-3"
+                x="205"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-4"
+                x="265"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-5"
+                x="325"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-6"
+                x="385"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+              <rect
+                id="li-cell-7"
+                x="445"
+                y="32"
+                width="50"
+                height="40"
+                rx="4"
+                class="array-cell"
+              />
+
+              <text x="50" y="57" class="array-value">2</text>
+              <text x="110" y="57" class="array-value">5</text>
+              <text x="170" y="57" class="array-value">8</text>
+              <text x="230" y="57" class="array-value">12</text>
+              <text x="290" y="57" class="array-value">16</text>
+              <text x="350" y="57" class="array-value">23</text>
+              <text x="410" y="57" class="array-value">38</text>
+              <text x="470" y="57" class="array-value">56</text>
+
+              <!-- Target label -->
+              <text
+                x="570"
+                y="57"
+                fill="#f85149"
+                font-size="13"
+                font-weight="600"
+              >
+                target = 23
+              </text>
+
+              <!-- Pointers -->
+              <g id="li-lo-ptr" style="display: none">
+                <polygon points="0,-8 -5,0 5,0" fill="#3fb950" />
+                <text
+                  y="14"
+                  text-anchor="middle"
+                  fill="#3fb950"
+                  font-size="11"
+                  font-weight="700"
+                >
+                  lo
+                </text>
+              </g>
+              <g id="li-hi-ptr" style="display: none">
+                <polygon points="0,-8 -5,0 5,0" fill="#f85149" />
+                <text
+                  y="14"
+                  text-anchor="middle"
+                  fill="#f85149"
+                  font-size="11"
+                  font-weight="700"
+                >
+                  hi
+                </text>
+              </g>
+              <g id="li-mid-ptr" style="display: none">
+                <polygon points="0,-8 -5,0 5,0" fill="#d29922" />
+                <text
+                  y="14"
+                  text-anchor="middle"
+                  fill="#d29922"
+                  font-size="11"
+                  font-weight="700"
+                >
+                  mid
+                </text>
+              </g>
+
+              <!-- Invariant status box -->
+              <rect
+                id="li-inv-box"
+                x="530"
+                y="90"
+                width="160"
+                height="70"
+                rx="8"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+                style="display: none"
+              />
+              <text
+                id="li-inv-label"
+                x="610"
+                y="112"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                style="display: none"
+              >
+                INVARIANT
+              </text>
+              <text
+                id="li-inv-text1"
+                x="610"
+                y="130"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+                style="display: none"
+              ></text>
+              <text
+                id="li-inv-text2"
+                x="610"
+                y="145"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+                style="display: none"
+              ></text>
+
+              <!-- Proof step label -->
+              <rect
+                id="li-proof-box"
+                x="25"
+                y="165"
+                width="480"
+                height="28"
+                rx="6"
+                fill="rgba(188,140,255,0.1)"
+                stroke="#bc8cff"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="li-proof-text"
+                x="265"
+                y="183"
+                fill="#bc8cff"
+                font-size="12"
+                font-weight="500"
+                text-anchor="middle"
+                style="display: none"
+              ></text>
+            </svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              const cells = [0, 1, 2, 3, 4, 5, 6, 7];
+              function setPtr(id, cellIdx) {
+                const el = document.getElementById(id);
+                el.style.display = "";
+                el.setAttribute(
+                  "transform",
+                  "translate(" + (50 + cellIdx * 60) + ", 90)",
+                );
+              }
+              function hidePtr(id) {
+                document.getElementById(id).style.display = "none";
+              }
+              function showInv(t1, t2) {
+                [
+                  "li-inv-box",
+                  "li-inv-label",
+                  "li-inv-text1",
+                  "li-inv-text2",
+                ].forEach((id) => {
+                  document.getElementById(id).style.display = "";
+                });
+                document.getElementById("li-inv-text1").textContent = t1;
+                document.getElementById("li-inv-text2").textContent = t2;
+              }
+              function showProof(txt) {
+                document.getElementById("li-proof-box").style.display = "";
+                document.getElementById("li-proof-text").style.display = "";
+                document.getElementById("li-proof-text").textContent = txt;
+              }
+              function setCellClass(idx, cls) {
+                document
+                  .getElementById("li-cell-" + idx)
+                  .setAttribute("class", cls);
+              }
+              function resetAll() {
+                cells.forEach((i) => setCellClass(i, "array-cell"));
+                ["li-lo-ptr", "li-hi-ptr", "li-mid-ptr"].forEach(hidePtr);
+                [
+                  "li-inv-box",
+                  "li-inv-label",
+                  "li-inv-text1",
+                  "li-inv-text2",
+                  "li-proof-box",
+                  "li-proof-text",
+                ].forEach((id) => {
+                  document.getElementById(id).style.display = "none";
+                });
+              }
+
+              new AlgoAnimation(
+                "loop-inv-container",
+                [
+                  {
+                    description:
+                      "INITIALIZATION: lo=0, hi=7. Invariant: if target exists, it's in arr[lo..hi]. The entire array is our search space.",
+                    apply: function () {
+                      cells.forEach((i) =>
+                        setCellClass(i, "array-cell-window"),
+                      );
+                      setPtr("li-lo-ptr", 0);
+                      setPtr("li-hi-ptr", 7);
+                      showInv(
+                        "target in arr[0..7]?",
+                        "Search space: all 8 elements",
+                      );
+                      showProof(
+                        "INIT: Invariant trivially true — entire array is the search space",
+                      );
+                    },
+                  },
+                  {
+                    description:
+                      "Compute mid = (0+7)//2 = 3. arr[3]=12. Compare: 12 < 23, so target is in the RIGHT half.",
+                    apply: function () {
+                      setPtr("li-mid-ptr", 3);
+                      setCellClass(3, "array-cell-active");
+                      showInv("arr[3]=12 < 23", "target must be right of mid");
+                    },
+                  },
+                  {
+                    description:
+                      "MAINTENANCE: Set lo = mid+1 = 4. Invariant preserved: target (if exists) is in arr[4..7]. We eliminated arr[0..3] safely.",
+                    apply: function () {
+                      [0, 1, 2, 3].forEach((i) =>
+                        setCellClass(i, "array-cell"),
+                      );
+                      [4, 5, 6, 7].forEach((i) =>
+                        setCellClass(i, "array-cell-window"),
+                      );
+                      setPtr("li-lo-ptr", 4);
+                      hidePtr("li-mid-ptr");
+                      showInv(
+                        "target in arr[4..7]?",
+                        "Search space: 4 elements",
+                      );
+                      showProof(
+                        "MAINTAIN: arr[0..3] ≤ 12 < 23 = target, so safe to exclude",
+                      );
+                    },
+                  },
+                  {
+                    description:
+                      "Compute mid = (4+7)//2 = 5. arr[5]=23. Compare: 23 == 23. Found!",
+                    apply: function () {
+                      setPtr("li-mid-ptr", 5);
+                      setCellClass(5, "array-cell-result");
+                      showInv("arr[5]=23 == 23", "FOUND at index 5!");
+                    },
+                  },
+                  {
+                    description:
+                      "TERMINATION: Loop exits via return. Invariant + exit condition ⟹ arr[mid] == target. Proof complete: binary search is correct.",
+                    apply: function () {
+                      [4, 6, 7].forEach((i) => setCellClass(i, "array-cell"));
+                      setCellClass(5, "array-cell-result");
+                      hidePtr("li-lo-ptr");
+                      hidePtr("li-hi-ptr");
+                      hidePtr("li-mid-ptr");
+                      document
+                        .getElementById("li-inv-box")
+                        .setAttribute("stroke", "#bc8cff");
+                      document
+                        .getElementById("li-inv-label")
+                        .setAttribute("fill", "#bc8cff");
+                      document.getElementById("li-inv-label").textContent =
+                        "PROVED ✓";
+                      document.getElementById("li-inv-text1").textContent =
+                        "Partial correctness: ✓";
+                      document.getElementById("li-inv-text2").textContent =
+                        "Termination: ✓ (space halves)";
+                      showProof(
+                        "TOTAL CORRECTNESS: Invariant held at every step. Search space shrinks → terminates.",
+                      );
+                    },
+                  },
+                ],
+                { speed: 2000, onReset: resetAll },
+              );
+            });
+          </script>
+
+          <h3>Common Loop Invariants for Key Algorithms</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Loop Invariant</th>
+                <th>Why It Works</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Binary Search</strong></td>
+                <td>
+                  If target exists,
+                  <code>arr[lo] &le; target &le; arr[hi]</code>
+                </td>
+                <td>
+                  Each iteration halves search space while preserving this bound
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Insertion Sort</strong></td>
+                <td><code>arr[0..i-1]</code> is sorted</td>
+                <td>
+                  Each iteration inserts <code>arr[i]</code> into its correct
+                  position
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Dijkstra's</strong></td>
+                <td>
+                  For every visited node <code>v</code>, <code>dist[v]</code> is
+                  the true shortest path
+                </td>
+                <td>
+                  Greedy choice: always process the closest unvisited node
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Two Pointers</strong></td>
+                <td>
+                  Answer is not in the eliminated region (before
+                  <code>lo</code> or after <code>hi</code>)
+                </td>
+                <td>Each pointer move safely eliminates candidates</td>
+              </tr>
+              <tr>
+                <td><strong>BFS (shortest path)</strong></td>
+                <td>
+                  All nodes at distance &le; <code>d</code> have been discovered
+                </td>
+                <td>Queue processes nodes in distance order</td>
+              </tr>
+              <tr>
+                <td><strong>DP (bottom-up)</strong></td>
+                <td>
+                  <code>dp[0..i]</code> contains optimal solutions for
+                  subproblems of size &le; <code>i</code>
+                </td>
+                <td>
+                  Each step builds on previously solved, optimal subproblems
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Union-Find</strong></td>
+                <td>
+                  Two nodes have the same root iff they are in the same
+                  connected component
+                </td>
+                <td>
+                  Union preserves connectivity; find follows parent pointers to
+                  root
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 2: Termination Proofs -->
+          <!-- ============================================================ -->
+          <h2 id="termination">Part 2: Termination — Proving It Finishes</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Variant Function"?</div>
+            <p>
+              <strong>"Variant"</strong> from Latin <em>varians</em> = changing
+              — the opposite of "invariant." While an invariant stays the same,
+              a variant <em>changes</em> (decreases) every iteration. Also
+              called a <strong>"ranking function"</strong> because it ranks how
+              far you are from termination — like a countdown timer. Picture an
+              hourglass: the sand (variant) decreases each second, bounded by
+              zero. When it runs out, the loop stops.
+            </p>
+          </div>
+
+          <p>
+            A <strong>termination proof</strong> shows that an algorithm always
+            halts — no infinite loops. The key tool is a
+            <strong>variant function</strong> (also called a
+            <em>decreasing measure</em> or <em>ranking function</em>): a value
+            that strictly decreases on every iteration and is bounded below.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Energy Dissipation</div>
+            <p>
+              Think of a variant function like
+              <strong>energy in a damped oscillator</strong>. Each swing
+              (iteration) dissipates energy (the variant decreases). Since
+              energy is bounded below by zero, the oscillator must eventually
+              stop. If you can show your algorithm has a "energy" that always
+              decreases and can't go below zero, it must terminate. Similarly, a
+              <strong>PLL</strong> converges because the phase error decreases
+              each cycle — that's a variant function proof in hardware.
+            </p>
+          </div>
+
+          <h3>The Variant Function Recipe</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">1</div>
+                <div class="card-title">Define the Variant</div>
+              </div>
+              <div class="card-desc">
+                Find a non-negative integer expression <code>V</code> that
+                depends on loop variables. <br /><em
+                  >Example: V = hi - lo + 1 (search space size)</em
+                >
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon orange">2</div>
+                <div class="card-title">Show It Decreases</div>
+              </div>
+              <div class="card-desc">
+                Prove <code>V</code> strictly decreases every iteration:
+                <code>V' &lt; V</code>. <br /><em
+                  >Binary search: new space &le; old_space / 2</em
+                >
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon red">3</div>
+                <div class="card-title">Show It's Bounded</div>
+              </div>
+              <div class="card-desc">
+                Prove <code>V &ge; 0</code> always. Since a non-negative integer
+                can't decrease forever, the loop must terminate.
+              </div>
+            </div>
+          </div>
+
+          <h3>Variant Functions for Common Patterns</h3>
+
+          <!-- Animated variant function visualization -->
+          <div class="diagram-container" id="variant-container">
+            <div class="diagram-title">
+              Variant Function Decreasing (Binary Search)
+            </div>
+            <svg
+              id="variant-svg"
+              viewBox="0 0 600 220"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <!-- Axes -->
+              <line
+                x1="60"
+                y1="20"
+                x2="60"
+                y2="180"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <line
+                x1="60"
+                y1="180"
+                x2="560"
+                y2="180"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="30"
+                y="100"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+                transform="rotate(-90, 30, 100)"
+              >
+                V = hi - lo + 1
+              </text>
+              <text
+                x="310"
+                y="210"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                Iteration
+              </text>
+
+              <!-- Y-axis labels -->
+              <text
+                x="50"
+                y="45"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                8
+              </text>
+              <text
+                x="50"
+                y="85"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                6
+              </text>
+              <text
+                x="50"
+                y="105"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                5
+              </text>
+              <text
+                x="50"
+                y="125"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                4
+              </text>
+              <text
+                x="50"
+                y="145"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                3
+              </text>
+              <text
+                x="50"
+                y="165"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                2
+              </text>
+              <text
+                x="50"
+                y="183"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="end"
+              >
+                1
+              </text>
+
+              <!-- Grid lines -->
+              <line
+                x1="60"
+                y1="40"
+                x2="560"
+                y2="40"
+                stroke="#21262d"
+                stroke-width="1"
+              />
+              <line
+                x1="60"
+                y1="80"
+                x2="560"
+                y2="80"
+                stroke="#21262d"
+                stroke-width="1"
+              />
+              <line
+                x1="60"
+                y1="120"
+                x2="560"
+                y2="120"
+                stroke="#21262d"
+                stroke-width="1"
+              />
+              <line
+                x1="60"
+                y1="160"
+                x2="560"
+                y2="160"
+                stroke="#21262d"
+                stroke-width="1"
+              />
+
+              <!-- Zero line (termination bound) -->
+              <line
+                x1="60"
+                y1="180"
+                x2="560"
+                y2="180"
+                stroke="#f85149"
+                stroke-width="2"
+                stroke-dasharray="6,3"
+              />
+              <text x="565" y="183" fill="#f85149" font-size="10">
+                V=0 (bound)
+              </text>
+
+              <!-- Data points and lines (animated) -->
+              <!-- Step 0: V=8 -->
+              <circle
+                id="var-dot-0"
+                cx="120"
+                cy="40"
+                r="6"
+                fill="#3fb950"
+                style="display: none"
+              />
+              <text
+                id="var-label-0"
+                x="120"
+                y="30"
+                fill="#3fb950"
+                font-size="10"
+                text-anchor="middle"
+                style="display: none"
+              >
+                V=8
+              </text>
+
+              <!-- Step 1: V=4 -->
+              <line
+                id="var-line-1"
+                x1="120"
+                y1="40"
+                x2="220"
+                y2="120"
+                stroke="#3fb950"
+                stroke-width="2"
+                style="display: none"
+              />
+              <circle
+                id="var-dot-1"
+                cx="220"
+                cy="120"
+                r="6"
+                fill="#3fb950"
+                style="display: none"
+              />
+              <text
+                id="var-label-1"
+                x="220"
+                y="110"
+                fill="#3fb950"
+                font-size="10"
+                text-anchor="middle"
+                style="display: none"
+              >
+                V=4
+              </text>
+
+              <!-- Step 2: V=2 -->
+              <line
+                id="var-line-2"
+                x1="220"
+                y1="120"
+                x2="320"
+                y2="160"
+                stroke="#3fb950"
+                stroke-width="2"
+                style="display: none"
+              />
+              <circle
+                id="var-dot-2"
+                cx="320"
+                cy="160"
+                r="6"
+                fill="#3fb950"
+                style="display: none"
+              />
+              <text
+                id="var-label-2"
+                x="320"
+                y="150"
+                fill="#3fb950"
+                font-size="10"
+                text-anchor="middle"
+                style="display: none"
+              >
+                V=2
+              </text>
+
+              <!-- Step 3: V=1 (found or done) -->
+              <line
+                id="var-line-3"
+                x1="320"
+                y1="160"
+                x2="420"
+                y2="175"
+                stroke="#3fb950"
+                stroke-width="2"
+                style="display: none"
+              />
+              <circle
+                id="var-dot-3"
+                cx="420"
+                cy="175"
+                r="6"
+                fill="#58a6ff"
+                style="display: none"
+              />
+              <text
+                id="var-label-3"
+                x="420"
+                y="165"
+                fill="#58a6ff"
+                font-size="10"
+                text-anchor="middle"
+                style="display: none"
+              >
+                V=1 ✓
+              </text>
+
+              <!-- Annotation -->
+              <text
+                id="var-qed"
+                x="480"
+                y="175"
+                fill="#bc8cff"
+                font-size="12"
+                font-weight="600"
+                style="display: none"
+              >
+                QED: must terminate
+              </text>
+            </svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              function resetVariant() {
+                for (let i = 0; i < 4; i++) {
+                  ["var-dot-", "var-label-"].forEach((p) => {
+                    document.getElementById(p + i).style.display = "none";
+                  });
+                  if (i > 0)
+                    document.getElementById("var-line-" + i).style.display =
+                      "none";
+                }
+                document.getElementById("var-qed").style.display = "none";
+              }
+              new AlgoAnimation(
+                "variant-container",
+                [
+                  {
+                    description:
+                      "Initial state: V = hi - lo + 1 = 7 - 0 + 1 = 8. The search space covers all 8 elements.",
+                    apply: function () {
+                      document.getElementById("var-dot-0").style.display = "";
+                      document.getElementById("var-label-0").style.display = "";
+                    },
+                  },
+                  {
+                    description:
+                      "After iteration 1: mid=3, arr[3]=12 < 23, so lo=4. V = 7-4+1 = 4. Decreased by half!",
+                    apply: function () {
+                      document.getElementById("var-line-1").style.display = "";
+                      document.getElementById("var-dot-1").style.display = "";
+                      document.getElementById("var-label-1").style.display = "";
+                    },
+                  },
+                  {
+                    description:
+                      "After iteration 2: mid=5, arr[5]=23 == target. Found! But let's trace V: it would be V=2 if we continued.",
+                    apply: function () {
+                      document.getElementById("var-line-2").style.display = "";
+                      document.getElementById("var-dot-2").style.display = "";
+                      document.getElementById("var-label-2").style.display = "";
+                    },
+                  },
+                  {
+                    description:
+                      "Worst case: V=1 means lo==hi, one element left. Either it matches or we return -1. V can't go below 0.",
+                    apply: function () {
+                      document.getElementById("var-line-3").style.display = "";
+                      document.getElementById("var-dot-3").style.display = "";
+                      document.getElementById("var-label-3").style.display = "";
+                    },
+                  },
+                  {
+                    description:
+                      "QED: V is a non-negative integer that halves each iteration. A positive integer halved repeatedly must reach 0. Binary search terminates in O(log n) steps.",
+                    apply: function () {
+                      document.getElementById("var-qed").style.display = "";
+                    },
+                  },
+                ],
+                { speed: 2000, onReset: resetVariant },
+              );
+            });
+          </script>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Variant Function V</th>
+                <th>Decrease Rate</th>
+                <th>Bound</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Binary Search</strong></td>
+                <td><code>hi - lo + 1</code></td>
+                <td>Halves each iteration</td>
+                <td>V &ge; 0, terminates in O(log n)</td>
+              </tr>
+              <tr>
+                <td><strong>Linear Scan</strong></td>
+                <td><code>n - i</code></td>
+                <td>Decreases by 1</td>
+                <td>V &ge; 0, terminates in O(n)</td>
+              </tr>
+              <tr>
+                <td><strong>Merge Sort</strong></td>
+                <td>subarray size</td>
+                <td>Halves per recursion level</td>
+                <td>V &ge; 1, terminates in O(log n) levels</td>
+              </tr>
+              <tr>
+                <td><strong>BFS</strong></td>
+                <td>unvisited nodes</td>
+                <td>Decreases by &ge; 1 per dequeue</td>
+                <td>V &ge; 0, terminates in O(V+E)</td>
+              </tr>
+              <tr>
+                <td><strong>Dijkstra's</strong></td>
+                <td>unprocessed nodes</td>
+                <td>Decreases by 1 per extraction</td>
+                <td>V &ge; 0, terminates in O(V log V)</td>
+              </tr>
+              <tr>
+                <td><strong>Euclidean GCD</strong></td>
+                <td><code>min(a, b)</code></td>
+                <td>At least halves every 2 steps</td>
+                <td>V &ge; 0, terminates in O(log(min))</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 3: Pre/Postconditions & Contracts -->
+          <!-- ============================================================ -->
+          <h2 id="contracts">
+            Part 3: Pre/Postconditions — Design by Contract
+          </h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Design by Contract"?</div>
+            <p>
+              Coined by <strong>Bertrand Meyer</strong> (Eiffel language, 1986).
+              Named after legal contracts: a contract specifies obligations and
+              guarantees for both parties. <strong>"Precondition"</strong> =
+              Latin <em>prae</em> (before) + condition — what must be true
+              <em>before</em> the function runs (the caller's obligation).
+              <strong>"Postcondition"</strong> = Latin <em>post</em> (after) —
+              what the function guarantees <em>after</em> it runs (the
+              function's obligation). Like a contract between caller and
+              function: "You give me sorted input, I guarantee the correct
+              index."
+            </p>
+          </div>
+
+          <p>
+            <strong>Design by Contract</strong> (Bertrand Meyer, Eiffel
+            language) specifies what a function <em>requires</em> and what it
+            <em>guarantees</em>. This is the practical form of partial
+            correctness proofs.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">
+              Design by Contract: Function as a Black Box
+            </div>
+            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="contract-arr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Precondition box -->
+              <rect
+                x="30"
+                y="50"
+                width="170"
+                height="100"
+                rx="10"
+                fill="rgba(210,153,34,0.1)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="115"
+                y="78"
+                class="label-text"
+                fill="#d29922"
+                font-weight="700"
+                font-size="13"
+              >
+                Precondition
+              </text>
+              <text x="115" y="100" class="label-small" fill="#8b949e">
+                What the CALLER
+              </text>
+              <text x="115" y="115" class="label-small" fill="#8b949e">
+                must guarantee
+              </text>
+              <text
+                x="115"
+                y="138"
+                fill="#39d2c0"
+                font-size="10"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                assert arr is sorted
+              </text>
+
+              <!-- Arrow -->
+              <line
+                x1="200"
+                y1="100"
+                x2="260"
+                y2="100"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#contract-arr)"
+              />
+              <text
+                x="230"
+                y="90"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+              >
+                requires
+              </text>
+
+              <!-- Function box -->
+              <rect
+                x="265"
+                y="40"
+                width="170"
+                height="120"
+                rx="10"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="2.5"
+              />
+              <text
+                x="350"
+                y="75"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="700"
+                font-size="14"
+              >
+                Function
+              </text>
+              <text
+                x="350"
+                y="95"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                binary_search(arr, t)
+              </text>
+              <text x="350" y="120" class="label-small" fill="#8b949e">
+                Invariant holds
+              </text>
+              <text x="350" y="135" class="label-small" fill="#8b949e">
+                throughout execution
+              </text>
+
+              <!-- Arrow -->
+              <line
+                x1="435"
+                y1="100"
+                x2="495"
+                y2="100"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#contract-arr)"
+              />
+              <text
+                x="465"
+                y="90"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+              >
+                ensures
+              </text>
+
+              <!-- Postcondition box -->
+              <rect
+                x="500"
+                y="50"
+                width="170"
+                height="100"
+                rx="10"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="585"
+                y="78"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="700"
+                font-size="13"
+              >
+                Postcondition
+              </text>
+              <text x="585" y="100" class="label-small" fill="#8b949e">
+                What the FUNCTION
+              </text>
+              <text x="585" y="115" class="label-small" fill="#8b949e">
+                guarantees on exit
+              </text>
+              <text
+                x="585"
+                y="138"
+                fill="#39d2c0"
+                font-size="10"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+              >
+                arr[result] == target
+              </text>
+
+              <!-- EE label -->
+              <text
+                x="350"
+                y="190"
+                fill="#bc8cff"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Input specs → IC data sheet guarantees → Output specs
+              </text>
+            </svg>
+          </div>
+
+          <h3>Contracts in Python</h3>
+
+          <pre><code><span class="kw">def</span> <span class="fn">binary_search</span>(arr: <span class="ty">list</span>[<span class="ty">int</span>], target: <span class="ty">int</span>) -> <span class="ty">int</span>:
+    <span class="str">"""Find target in sorted array.
+
+    Preconditions:
+        - arr is sorted in ascending order
+        - all elements are comparable
+
+    Postconditions:
+        - If returns i >= 0: arr[i] == target
+        - If returns -1: target not in arr
+
+    Invariant:
+        - If target in arr, then arr[lo] <= target <= arr[hi]
+    """</span>
+    <span class="cm"># Validate precondition (in debug mode)</span>
+    <span class="kw">assert</span> arr == <span class="fn">sorted</span>(arr), <span class="str">"Precondition: arr must be sorted"</span>
+
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> lo <= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">assert</span> arr[mid] == target  <span class="cm"># Postcondition</span>
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] < target:
+            lo = mid + <span class="num">1</span>
+        <span class="kw">else</span>:
+            hi = mid - <span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># Postcondition: target not in arr</span></code></pre>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">
+              Practical Tip: Assertions vs Production
+            </div>
+            <p>
+              Use <code>assert</code> for preconditions during development. In
+              production, use explicit checks that raise proper exceptions.
+              Python's <code>-O</code> flag strips all assertions. For critical
+              contracts, use
+              <code>if not condition: raise ValueError(...)</code>.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 4: Safety vs Liveness -->
+          <!-- ============================================================ -->
+          <h2 id="safety-liveness">Part 4: Safety vs Liveness Properties</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Safety" and "Liveness"?</div>
+            <p>
+              Terms formalized by <strong>Leslie Lamport</strong> (1977).
+              <strong>"Safety"</strong> = keeping safe, preventing harm. A
+              safety property says "nothing bad ever happens" — like a safety
+              rail preventing falls. If violated, you can point to the exact
+              moment it went wrong. <strong>"Liveness"</strong> = being alive,
+              making progress. A liveness property says "something good
+              eventually happens" — the system is "live" (alive, active), not
+              stuck. Named because a system that satisfies only safety but not
+              liveness could simply <em>do nothing</em> — perfectly safe but
+              dead. You need both: safe AND alive.
+            </p>
+          </div>
+
+          <p>
+            In distributed systems and concurrent programs, correctness splits
+            into two orthogonal categories. Every property you want to prove
+            about a system is either a <strong>safety property</strong> or a
+            <strong>liveness property</strong> (or a combination).
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Safety vs Liveness Properties</div>
+            <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg">
+              <!-- Safety side -->
+              <rect
+                x="30"
+                y="30"
+                width="300"
+                height="290"
+                rx="12"
+                fill="rgba(248,81,73,0.05)"
+                stroke="#f85149"
+                stroke-width="2"
+              />
+              <rect
+                x="30"
+                y="30"
+                width="300"
+                height="50"
+                rx="12"
+                fill="rgba(248,81,73,0.15)"
+                stroke="#f85149"
+                stroke-width="2"
+              />
+              <text
+                x="180"
+                y="60"
+                class="label-text"
+                fill="#f85149"
+                font-weight="700"
+                font-size="16"
+              >
+                Safety
+              </text>
+
+              <text
+                x="180"
+                y="105"
+                class="label-text"
+                fill="#e6edf3"
+                font-size="13"
+              >
+                "Nothing bad happens"
+              </text>
+
+              <text
+                x="50"
+                y="140"
+                fill="#8b949e"
+                font-size="12"
+                text-anchor="start"
+              >
+                Can be violated at a specific moment.
+              </text>
+              <text
+                x="50"
+                y="158"
+                fill="#8b949e"
+                font-size="12"
+                text-anchor="start"
+              >
+                Once violated, can never be undone.
+              </text>
+
+              <!-- Safety examples -->
+              <rect
+                x="50"
+                y="175"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(248,81,73,0.08)"
+                stroke="none"
+              />
+              <text x="60" y="192" fill="#f85149" font-size="11">
+                Mutual exclusion: ≤1 thread in critical section
+              </text>
+              <rect
+                x="50"
+                y="205"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(248,81,73,0.08)"
+                stroke="none"
+              />
+              <text x="60" y="222" fill="#f85149" font-size="11">
+                No data corruption: invariants always hold
+              </text>
+              <rect
+                x="50"
+                y="235"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(248,81,73,0.08)"
+                stroke="none"
+              />
+              <text x="60" y="252" fill="#f85149" font-size="11">
+                Type safety: no type errors at runtime
+              </text>
+              <rect
+                x="50"
+                y="265"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(248,81,73,0.08)"
+                stroke="none"
+              />
+              <text x="60" y="282" fill="#f85149" font-size="11">
+                Consensus: all nodes agree on same value
+              </text>
+
+              <!-- EE analogy -->
+              <text
+                x="180"
+                y="310"
+                fill="#bc8cff"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: No latch-up, no shoot-through, no glitch
+              </text>
+
+              <!-- Liveness side -->
+              <rect
+                x="370"
+                y="30"
+                width="300"
+                height="290"
+                rx="12"
+                fill="rgba(63,185,80,0.05)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <rect
+                x="370"
+                y="30"
+                width="300"
+                height="50"
+                rx="12"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="520"
+                y="60"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="700"
+                font-size="16"
+              >
+                Liveness
+              </text>
+
+              <text
+                x="520"
+                y="105"
+                class="label-text"
+                fill="#e6edf3"
+                font-size="13"
+              >
+                "Something good eventually happens"
+              </text>
+
+              <text
+                x="390"
+                y="140"
+                fill="#8b949e"
+                font-size="12"
+                text-anchor="start"
+              >
+                Cannot be violated at a finite prefix.
+              </text>
+              <text
+                x="390"
+                y="158"
+                fill="#8b949e"
+                font-size="12"
+                text-anchor="start"
+              >
+                Only violated by infinite behavior.
+              </text>
+
+              <!-- Liveness examples -->
+              <rect
+                x="390"
+                y="175"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(63,185,80,0.08)"
+                stroke="none"
+              />
+              <text x="400" y="192" fill="#3fb950" font-size="11">
+                Termination: program eventually halts
+              </text>
+              <rect
+                x="390"
+                y="205"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(63,185,80,0.08)"
+                stroke="none"
+              />
+              <text x="400" y="222" fill="#3fb950" font-size="11">
+                Starvation freedom: every request served
+              </text>
+              <rect
+                x="390"
+                y="235"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(63,185,80,0.08)"
+                stroke="none"
+              />
+              <text x="400" y="252" fill="#3fb950" font-size="11">
+                Eventual consistency: replicas converge
+              </text>
+              <rect
+                x="390"
+                y="265"
+                width="260"
+                height="25"
+                rx="4"
+                fill="rgba(63,185,80,0.08)"
+                stroke="none"
+              />
+              <text x="400" y="282" fill="#3fb950" font-size="11">
+                Progress: system makes forward progress
+              </text>
+
+              <!-- EE analogy -->
+              <text
+                x="520"
+                y="310"
+                fill="#bc8cff"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: PLL locks, FIFO drains, bus grants access
+              </text>
+            </svg>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">The Fundamental Trade-off</div>
+            <p>
+              In an asynchronous distributed system, you often
+              <strong>can't have both</strong> safety and liveness. This is the
+              essence of the <strong>FLP impossibility result</strong>
+              (Fischer, Lynch, Paterson, 1985): no deterministic consensus
+              protocol can guarantee both safety (agreement) and liveness
+              (termination) in an asynchronous system with even one faulty
+              process. In practice, systems choose: Raft/Paxos sacrifice
+              liveness (may block during leader election) to preserve safety
+              (never disagree).
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 5: Induction Proofs -->
+          <!-- ============================================================ -->
+          <h2 id="induction">
+            Part 5: Induction — Proving Recursive Algorithms
+          </h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Induction"?</div>
+            <p>
+              From Latin <em>inductio</em> = leading into. Mathematical
+              induction "leads you into" the truth of an infinite set of
+              statements by proving just two things: the base case (the first
+              domino falls) and the inductive step (if any domino falls, the
+              next one falls too). <strong>"Structural induction"</strong> =
+              induction that follows the <em>structure</em> of the data (tree,
+              list, graph) rather than natural numbers. Named because the
+              proof's structure mirrors the data's structure — recursive data
+              gets a recursive proof.
+            </p>
+          </div>
+
+          <p>
+            Recursive algorithms are naturally proved by
+            <strong>structural induction</strong> — the recursive structure of
+            the algorithm mirrors the inductive structure of the proof.
+          </p>
+
+          <h3>The Induction Template</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">BC</div>
+                <div class="card-title">Base Case</div>
+              </div>
+              <div class="card-desc">
+                Prove the algorithm is correct for the smallest input (empty
+                list, single node, n=0 or n=1).
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">IH</div>
+                <div class="card-title">Inductive Hypothesis</div>
+              </div>
+              <div class="card-desc">
+                <strong>Assume</strong> the algorithm works correctly for all
+                inputs smaller than <em>n</em>.
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon purple">IS</div>
+                <div class="card-title">Inductive Step</div>
+              </div>
+              <div class="card-desc">
+                Show that if it works for smaller inputs, it must work for input
+                of size <em>n</em>. The recursive calls handle the smaller
+                inputs (by IH), and the combine step preserves correctness.
+              </div>
+            </div>
+          </div>
+
+          <h3>Example: Merge Sort Correctness</h3>
+
+          <pre><code><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>:
+        <span class="kw">return</span> arr            <span class="cm"># BASE CASE: single element is sorted</span>
+
+    mid = <span class="fn">len</span>(arr) // <span class="num">2</span>
+    left = <span class="fn">merge_sort</span>(arr[:mid])    <span class="cm"># IH: correctly sorts left half</span>
+    right = <span class="fn">merge_sort</span>(arr[mid:])   <span class="cm"># IH: correctly sorts right half</span>
+
+    <span class="kw">return</span> <span class="fn">merge</span>(left, right)       <span class="cm"># IS: merging two sorted → sorted</span></code></pre>
+
+          <div class="callout callout-success">
+            <div class="callout-title">The Proof</div>
+            <p>
+              <strong>Base case:</strong> A single-element array is trivially
+              sorted. ✓<br />
+              <strong>Inductive hypothesis:</strong> Assume
+              <code>merge_sort</code> correctly sorts any array of size &lt;
+              n.<br />
+              <strong>Inductive step:</strong> For an array of size n, the two
+              recursive calls sort arrays of size n/2 (by IH, both results are
+              sorted). The <code>merge</code> function combines two sorted
+              arrays into one sorted array (can be proved separately with a loop
+              invariant). Therefore, the result is sorted. ✓<br />
+              <strong>Termination:</strong> Each recursive call halves the
+              input. Size is a natural number bounded below by 1. ✓
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 6: Proving Systems -->
+          <!-- ============================================================ -->
+          <h2 id="systems">Part 6: Proving Systems Correct</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Model Checking" and "TLA+"?</div>
+            <p>
+              <strong>"Model checking"</strong> — you build a
+              <em>model</em> (simplified mathematical representation) of your
+              system, then <em>check</em> every possible state it can reach.
+              Named because it literally checks a model. Invented by Edmund
+              Clarke and Allen Emerson (1981, Turing Award 2007).
+              <strong>"TLA+"</strong> = Temporal Logic of Actions. "Temporal" =
+              about time (Latin <em>tempus</em>). "Logic of Actions" = a logic
+              for reasoning about actions that change state over time. The "+"
+              was added by Leslie Lamport when he extended the original TLA.
+              <strong>"Formal verification"</strong> = verification using formal
+              (mathematical) methods, as opposed to informal testing. Named to
+              distinguish rigorous mathematical proof from ad-hoc testing.
+            </p>
+          </div>
+
+          <p>
+            Proving individual algorithms is one thing. Proving entire
+            <strong>systems</strong> — concurrent, distributed, with failures —
+            requires different tools. Here's the practical toolkit, ordered from
+            most to least formal:
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">The Verification Spectrum</div>
+            <svg viewBox="0 0 750 260" xmlns="http://www.w3.org/2000/svg">
+              <!-- Arrow (spectrum) -->
+              <defs>
+                <linearGradient id="spec-grad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#3fb950" />
+                  <stop offset="50%" stop-color="#d29922" />
+                  <stop offset="100%" stop-color="#f85149" />
+                </linearGradient>
+                <marker
+                  id="spec-arr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#f85149" />
+                </marker>
+              </defs>
+
+              <rect
+                x="50"
+                y="25"
+                width="650"
+                height="12"
+                rx="6"
+                fill="url(#spec-grad)"
+                opacity="0.3"
+              />
+              <line
+                x1="50"
+                y1="31"
+                x2="700"
+                y2="31"
+                stroke="url(#spec-grad)"
+                stroke-width="3"
+                marker-end="url(#spec-arr)"
+              />
+
+              <text
+                x="50"
+                y="18"
+                fill="#3fb950"
+                font-size="10"
+                font-weight="600"
+                text-anchor="start"
+              >
+                MOST FORMAL
+              </text>
+              <text
+                x="700"
+                y="18"
+                fill="#f85149"
+                font-size="10"
+                font-weight="600"
+                text-anchor="end"
+              >
+                LEAST FORMAL
+              </text>
+
+              <!-- Level 1: Theorem Provers -->
+              <rect
+                x="40"
+                y="55"
+                width="130"
+                height="90"
+                rx="8"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="105"
+                y="78"
+                fill="#3fb950"
+                font-size="12"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                Theorem Provers
+              </text>
+              <text
+                x="105"
+                y="95"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                Coq, Isabelle, Lean
+              </text>
+              <text
+                x="105"
+                y="110"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                Mathematical proof
+              </text>
+              <text
+                x="105"
+                y="125"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                checked by machine
+              </text>
+              <text
+                x="105"
+                y="155"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Formal equivalence
+              </text>
+              <text
+                x="105"
+                y="167"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                checking (LEC)
+              </text>
+
+              <!-- Level 2: Model Checking -->
+              <rect
+                x="195"
+                y="55"
+                width="130"
+                height="90"
+                rx="8"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="260"
+                y="78"
+                fill="#58a6ff"
+                font-size="12"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                Model Checking
+              </text>
+              <text
+                x="260"
+                y="95"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                TLA+, SPIN, Alloy
+              </text>
+              <text
+                x="260"
+                y="110"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                Exhaustive state space
+              </text>
+              <text
+                x="260"
+                y="125"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                exploration
+              </text>
+              <text
+                x="260"
+                y="155"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Static timing
+              </text>
+              <text
+                x="260"
+                y="167"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                analysis (STA)
+              </text>
+
+              <!-- Level 3: Property Testing -->
+              <rect
+                x="350"
+                y="55"
+                width="130"
+                height="90"
+                rx="8"
+                fill="rgba(210,153,34,0.1)"
+                stroke="#d29922"
+                stroke-width="1.5"
+              />
+              <text
+                x="415"
+                y="78"
+                fill="#d29922"
+                font-size="12"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                Property Testing
+              </text>
+              <text
+                x="415"
+                y="95"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                Hypothesis, QuickCheck
+              </text>
+              <text
+                x="415"
+                y="110"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                Random inputs, check
+              </text>
+              <text
+                x="415"
+                y="125"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                properties hold
+              </text>
+              <text
+                x="415"
+                y="155"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Monte Carlo
+              </text>
+              <text
+                x="415"
+                y="167"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                simulation
+              </text>
+
+              <!-- Level 4: Unit/Integration Testing -->
+              <rect
+                x="505"
+                y="55"
+                width="130"
+                height="90"
+                rx="8"
+                fill="rgba(248,81,73,0.1)"
+                stroke="#f85149"
+                stroke-width="1.5"
+              />
+              <text
+                x="570"
+                y="78"
+                fill="#f85149"
+                font-size="12"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                Example Tests
+              </text>
+              <text
+                x="570"
+                y="95"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                pytest, unittest
+              </text>
+              <text
+                x="570"
+                y="110"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                Specific inputs →
+              </text>
+              <text
+                x="570"
+                y="125"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+              >
+                expected outputs
+              </text>
+              <text
+                x="570"
+                y="155"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE: Testbench with
+              </text>
+              <text
+                x="570"
+                y="167"
+                fill="#bc8cff"
+                font-size="9"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                specific vectors
+              </text>
+
+              <!-- Bottom labels -->
+              <text
+                x="105"
+                y="195"
+                fill="#3fb950"
+                font-size="9"
+                text-anchor="middle"
+              >
+                100% coverage
+              </text>
+              <text
+                x="105"
+                y="207"
+                fill="#3fb950"
+                font-size="9"
+                text-anchor="middle"
+              >
+                Very expensive
+              </text>
+              <text
+                x="260"
+                y="195"
+                fill="#58a6ff"
+                font-size="9"
+                text-anchor="middle"
+              >
+                All reachable states
+              </text>
+              <text
+                x="260"
+                y="207"
+                fill="#58a6ff"
+                font-size="9"
+                text-anchor="middle"
+              >
+                State explosion risk
+              </text>
+              <text
+                x="415"
+                y="195"
+                fill="#d29922"
+                font-size="9"
+                text-anchor="middle"
+              >
+                Finds edge cases
+              </text>
+              <text
+                x="415"
+                y="207"
+                fill="#d29922"
+                font-size="9"
+                text-anchor="middle"
+              >
+                Not exhaustive
+              </text>
+              <text
+                x="570"
+                y="195"
+                fill="#f85149"
+                font-size="9"
+                text-anchor="middle"
+              >
+                Easy to write
+              </text>
+              <text
+                x="570"
+                y="207"
+                fill="#f85149"
+                font-size="9"
+                text-anchor="middle"
+              >
+                Only tests what you think of
+              </text>
+
+              <!-- Confidence bar -->
+              <text
+                x="375"
+                y="240"
+                fill="#e6edf3"
+                font-size="11"
+                text-anchor="middle"
+                font-weight="600"
+              >
+                Confidence Level
+              </text>
+              <rect
+                x="50"
+                y="247"
+                width="650"
+                height="8"
+                rx="4"
+                fill="#21262d"
+              />
+              <rect
+                x="50"
+                y="247"
+                width="650"
+                height="8"
+                rx="4"
+                fill="url(#spec-grad)"
+                opacity="0.5"
+              />
+            </svg>
+          </div>
+
+          <h3>TLA+ — The Staff Engineer's Secret Weapon</h3>
+
+          <p>
+            <strong>TLA+</strong> (Temporal Logic of Actions) is a specification
+            language created by Leslie Lamport. Amazon uses it extensively to
+            verify distributed systems (DynamoDB, S3, EBS). It's the most
+            practical tool for proving distributed system designs correct
+            <em>before writing code</em>.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">
+              EE Analogy: TLA+ = SystemVerilog Assertions
+            </div>
+            <p>
+              TLA+ is to distributed systems what
+              <strong>SystemVerilog Assertions (SVA)</strong> are to hardware.
+              You write temporal properties ("if request is asserted, grant must
+              follow within 3 cycles") and the model checker exhaustively
+              verifies them against all possible execution traces. Just as SVA
+              catches race conditions in RTL before tape-out, TLA+ catches
+              concurrency bugs in system designs before deployment.
+            </p>
+          </div>
+
+          <pre><code><span class="cm">---- TLA+ Specification: Simple Lock ----</span>
+<span class="cm">(* Models a mutex ensuring mutual exclusion *)</span>
+
+<span class="kw">VARIABLES</span> lock, pc  <span class="cm">(* lock holder, program counters *)</span>
+
+<span class="fn">Init</span> == lock = <span class="str">"free"</span> /\ pc = [p \in Procs |-> <span class="str">"idle"</span>]
+
+<span class="fn">Acquire</span>(p) ==
+    /\ pc[p] = <span class="str">"idle"</span>
+    /\ lock = <span class="str">"free"</span>
+    /\ lock' = p
+    /\ pc' = [pc EXCEPT ![p] = <span class="str">"critical"</span>]
+
+<span class="fn">Release</span>(p) ==
+    /\ pc[p] = <span class="str">"critical"</span>
+    /\ lock' = <span class="str">"free"</span>
+    /\ pc' = [pc EXCEPT ![p] = <span class="str">"idle"</span>]
+
+<span class="cm">(* SAFETY: At most one process in critical section *)</span>
+<span class="fn">MutualExclusion</span> ==
+    \A p, q \in Procs:
+        (pc[p] = <span class="str">"critical"</span> /\ pc[q] = <span class="str">"critical"</span>) => p = q
+
+<span class="cm">(* LIVENESS: Every request eventually gets the lock *)</span>
+<span class="fn">StarvationFreedom</span> ==
+    \A p \in Procs: pc[p] = <span class="str">"waiting"</span> ~> pc[p] = <span class="str">"critical"</span></code></pre>
+
+          <h3>Property-Based Testing in Python</h3>
+
+          <p>
+            For everyday development,
+            <strong>property-based testing</strong> (using the
+            <code>hypothesis</code> library) is the most practical form of
+            provability. Instead of writing specific test cases, you describe
+            <em>properties</em> that should always hold, and the framework
+            generates hundreds of random inputs to try to break them.
+          </p>
+
+          <pre><code><span class="kw">from</span> hypothesis <span class="kw">import</span> given, strategies <span class="kw">as</span> st
+
+<span class="cm"># Property: sorting is idempotent (sorting a sorted list = same list)</span>
+@<span class="fn">given</span>(st.lists(st.integers()))
+<span class="kw">def</span> <span class="fn">test_sort_idempotent</span>(xs):
+    <span class="kw">assert</span> <span class="fn">sorted</span>(<span class="fn">sorted</span>(xs)) == <span class="fn">sorted</span>(xs)
+
+<span class="cm"># Property: sorted output has same elements as input</span>
+@<span class="fn">given</span>(st.lists(st.integers()))
+<span class="kw">def</span> <span class="fn">test_sort_permutation</span>(xs):
+    result = <span class="fn">sorted</span>(xs)
+    <span class="kw">assert</span> <span class="fn">len</span>(result) == <span class="fn">len</span>(xs)
+    <span class="kw">assert</span> <span class="fn">sorted</span>(result) == <span class="fn">sorted</span>(xs)  <span class="cm"># same multiset</span>
+
+<span class="cm"># Property: sorted output is actually sorted</span>
+@<span class="fn">given</span>(st.lists(st.integers(), min_size=<span class="num">2</span>))
+<span class="kw">def</span> <span class="fn">test_sort_ordered</span>(xs):
+    result = <span class="fn">sorted</span>(xs)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(result) - <span class="num">1</span>):
+        <span class="kw">assert</span> result[i] <= result[i + <span class="num">1</span>]
+
+<span class="cm"># Property: binary search finds what's there, doesn't find what's not</span>
+@<span class="fn">given</span>(st.lists(st.integers(), min_size=<span class="num">1</span>).map(<span class="fn">sorted</span>), st.integers())
+<span class="kw">def</span> <span class="fn">test_binary_search_correct</span>(arr, target):
+    result = <span class="fn">binary_search</span>(arr, target)
+    <span class="kw">if</span> target <span class="kw">in</span> arr:
+        <span class="kw">assert</span> result >= <span class="num">0</span>
+        <span class="kw">assert</span> arr[result] == target
+    <span class="kw">else</span>:
+        <span class="kw">assert</span> result == -<span class="num">1</span></code></pre>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Key Properties to Test</div>
+            <p>
+              <strong>Idempotency:</strong> <code>f(f(x)) == f(x)</code> —
+              sorting, deduplication<br />
+              <strong>Round-trip:</strong> <code>decode(encode(x)) == x</code> —
+              serialization<br />
+              <strong>Commutativity:</strong> <code>f(a,b) == f(b,a)</code> —
+              set operations<br />
+              <strong>Invariant preservation:</strong>
+              <code>invariant(f(x))</code> if <code>invariant(x)</code> — BST
+              operations<br />
+              <strong>Oracle testing:</strong>
+              <code>fast_impl(x) == slow_reference(x)</code> — optimized
+              algorithms
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 7: Practical Proof Strategies -->
+          <!-- ============================================================ -->
+          <h2 id="practical">
+            Part 7: Practical Proof Strategies for Interviews &amp; Work
+          </h2>
+
+          <p>
+            You don't need to write formal proofs in interviews. But you
+            <strong>do</strong> need to convince your interviewer (and yourself)
+            that your algorithm is correct. Here's the practical approach:
+          </p>
+
+          <h3>The 4-Step Correctness Argument</h3>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Practical Correctness Checklist</div>
+            <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="prac-arr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Step 1 -->
+              <rect
+                x="30"
+                y="30"
+                width="300"
+                height="55"
+                rx="10"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <circle
+                cx="55"
+                cy="57"
+                r="16"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="55"
+                y="62"
+                fill="#3fb950"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                1
+              </text>
+              <text
+                x="80"
+                y="50"
+                fill="#3fb950"
+                font-size="13"
+                font-weight="600"
+              >
+                State the invariant
+              </text>
+              <text x="80" y="70" fill="#8b949e" font-size="11">
+                "At each iteration, [property] holds"
+              </text>
+
+              <!-- Arrow -->
+              <line
+                x1="180"
+                y1="85"
+                x2="180"
+                y2="105"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#prac-arr)"
+              />
+
+              <!-- Step 2 -->
+              <rect
+                x="30"
+                y="110"
+                width="300"
+                height="55"
+                rx="10"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <circle
+                cx="55"
+                cy="137"
+                r="16"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="55"
+                y="142"
+                fill="#58a6ff"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                2
+              </text>
+              <text
+                x="80"
+                y="130"
+                fill="#58a6ff"
+                font-size="13"
+                font-weight="600"
+              >
+                Check edge cases
+              </text>
+              <text x="80" y="150" fill="#8b949e" font-size="11">
+                Empty input, single element, duplicates, max size
+              </text>
+
+              <!-- Arrow -->
+              <line
+                x1="180"
+                y1="165"
+                x2="180"
+                y2="185"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#prac-arr)"
+              />
+
+              <!-- Step 3 -->
+              <rect
+                x="30"
+                y="190"
+                width="300"
+                height="55"
+                rx="10"
+                fill="rgba(210,153,34,0.1)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <circle
+                cx="55"
+                cy="217"
+                r="16"
+                fill="rgba(210,153,34,0.2)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="55"
+                y="222"
+                fill="#d29922"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                3
+              </text>
+              <text
+                x="80"
+                y="210"
+                fill="#d29922"
+                font-size="13"
+                font-weight="600"
+              >
+                Argue termination
+              </text>
+              <text x="80" y="230" fill="#8b949e" font-size="11">
+                "This quantity decreases every iteration"
+              </text>
+
+              <!-- Arrow -->
+              <line
+                x1="180"
+                y1="245"
+                x2="180"
+                y2="260"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#prac-arr)"
+              />
+
+              <!-- Step 4 -->
+              <rect
+                x="30"
+                y="265"
+                width="300"
+                height="35"
+                rx="10"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <circle
+                cx="55"
+                cy="282"
+                r="16"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="55"
+                y="287"
+                fill="#bc8cff"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                4
+              </text>
+              <text
+                x="80"
+                y="287"
+                fill="#bc8cff"
+                font-size="13"
+                font-weight="600"
+              >
+                State the complexity
+              </text>
+
+              <!-- Right side: example -->
+              <rect
+                x="380"
+                y="30"
+                width="290"
+                height="270"
+                rx="10"
+                fill="rgba(57,210,192,0.05)"
+                stroke="#39d2c0"
+                stroke-width="1.5"
+              />
+              <text
+                x="525"
+                y="55"
+                fill="#39d2c0"
+                font-size="13"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                Example: Two Sum
+              </text>
+
+              <text x="400" y="85" fill="#8b949e" font-size="11">
+                1. Invariant: "seen contains all
+              </text>
+              <text x="400" y="100" fill="#8b949e" font-size="11">
+                values before index i. If a
+              </text>
+              <text x="400" y="115" fill="#8b949e" font-size="11">
+                complement existed, we'd have found it."
+              </text>
+
+              <text x="400" y="145" fill="#8b949e" font-size="11">
+                2. Edge cases: empty → return [].
+              </text>
+              <text x="400" y="160" fill="#8b949e" font-size="11">
+                All same values. Negative numbers.
+              </text>
+
+              <text x="400" y="190" fill="#8b949e" font-size="11">
+                3. Termination: i goes from 0 to n-1.
+              </text>
+              <text x="400" y="205" fill="#8b949e" font-size="11">
+                Variant = n - i, decreases by 1.
+              </text>
+
+              <text x="400" y="235" fill="#8b949e" font-size="11">
+                4. Time: O(n), Space: O(n)
+              </text>
+              <text x="400" y="250" fill="#8b949e" font-size="11">
+                Hash lookups are O(1) expected.
+              </text>
+
+              <text
+                x="525"
+                y="285"
+                fill="#3fb950"
+                font-size="12"
+                font-weight="600"
+                text-anchor="middle"
+              >
+                ✓ Correct, terminates, optimal
+              </text>
+            </svg>
+          </div>
+
+          <h3>What to Say in an Interview</h3>
+
+          <p>You don't need to write formal proofs. Use these phrases:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Concept</th>
+                <th>What to Say</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Loop invariant</strong></td>
+                <td>
+                  "At the start of each iteration, we know that [property]. This
+                  is maintained because [reason]."
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Termination</strong></td>
+                <td>
+                  "The loop terminates because [quantity] strictly decreases
+                  every iteration and is bounded below by [value]."
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Greedy correctness</strong></td>
+                <td>
+                  "The greedy choice is safe because [exchange argument]: if we
+                  had a better choice, we could swap it with ours without losing
+                  quality."
+                </td>
+              </tr>
+              <tr>
+                <td><strong>DP correctness</strong></td>
+                <td>
+                  "This has optimal substructure because [the optimal solution
+                  to the whole includes optimal solutions to parts], and
+                  overlapping subproblems because [the same subproblem appears
+                  multiple times]."
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Edge case handling</strong></td>
+                <td>
+                  "Let me trace through the empty/single-element/boundary case
+                  to make sure it works."
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 8: Proving Greedy & DP -->
+          <!-- ============================================================ -->
+          <h2 id="greedy-dp">Part 8: Proving Greedy &amp; DP Algorithms</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Exchange Argument"?</div>
+            <p>
+              Named for the proof technique: you <em>exchange</em> (swap) one
+              choice in an optimal solution with the greedy choice and show
+              quality doesn't decrease.
+              <strong>"Optimal substructure"</strong> = the optimal (best)
+              solution has substructure (contains smaller solutions that are
+              themselves optimal). Named because you can see the structure of
+              smaller optimal solutions inside the big one — like a fractal
+              where each piece mirrors the whole.
+              <strong>"Overlapping subproblems"</strong> = the same subproblems
+              overlap (appear multiple times) in different branches of the
+              recursion. Named because the recursion tree has overlapping
+              branches — the same subproblem computed repeatedly.
+            </p>
+          </div>
+
+          <h3>Greedy: The Exchange Argument</h3>
+
+          <p>
+            Greedy algorithms are notoriously tricky to prove correct. The
+            standard technique is the <strong>exchange argument</strong>: show
+            that any optimal solution can be transformed into the greedy
+            solution without losing quality.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">
+              Exchange Argument: Greedy Proof Template
+            </div>
+            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="exch-arr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- OPT box -->
+              <rect
+                x="30"
+                y="40"
+                width="180"
+                height="70"
+                rx="10"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="120"
+                y="68"
+                fill="#58a6ff"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                OPT (any optimal)
+              </text>
+              <text
+                x="120"
+                y="90"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                Suppose an optimal solution
+              </text>
+              <text
+                x="120"
+                y="103"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                differs from greedy
+              </text>
+
+              <!-- Arrow: swap -->
+              <line
+                x1="210"
+                y1="75"
+                x2="280"
+                y2="75"
+                stroke="#d29922"
+                stroke-width="2.5"
+                marker-end="url(#exch-arr)"
+              />
+              <text
+                x="245"
+                y="65"
+                fill="#d29922"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+              >
+                Swap one choice
+              </text>
+
+              <!-- OPT' box -->
+              <rect
+                x="285"
+                y="40"
+                width="180"
+                height="70"
+                rx="10"
+                fill="rgba(210,153,34,0.1)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="375"
+                y="68"
+                fill="#d29922"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                OPT' (modified)
+              </text>
+              <text
+                x="375"
+                y="90"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                Replace OPT's choice with
+              </text>
+              <text
+                x="375"
+                y="103"
+                fill="#8b949e"
+                font-size="11"
+                text-anchor="middle"
+              >
+                greedy's choice
+              </text>
+
+              <!-- Arrow: still optimal -->
+              <line
+                x1="465"
+                y1="75"
+                x2="510"
+                y2="75"
+                stroke="#3fb950"
+                stroke-width="2.5"
+                marker-end="url(#exch-arr)"
+              />
+              <text
+                x="487"
+                y="65"
+                fill="#3fb950"
+                font-size="10"
+                font-weight="600"
+                text-anchor="middle"
+              >
+                Show
+              </text>
+
+              <!-- Conclusion -->
+              <rect
+                x="515"
+                y="40"
+                width="160"
+                height="70"
+                rx="10"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="595"
+                y="65"
+                fill="#3fb950"
+                font-size="13"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                OPT' is at least
+              </text>
+              <text
+                x="595"
+                y="83"
+                fill="#3fb950"
+                font-size="13"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                as good as OPT
+              </text>
+              <text
+                x="595"
+                y="103"
+                fill="#3fb950"
+                font-size="11"
+                text-anchor="middle"
+              >
+                ∴ greedy is optimal ✓
+              </text>
+
+              <!-- Bottom: repeat -->
+              <text
+                x="350"
+                y="150"
+                fill="#bc8cff"
+                font-size="12"
+                text-anchor="middle"
+              >
+                Repeat swaps until OPT = GREEDY. Since each swap preserves (or
+                improves) quality,
+              </text>
+              <text
+                x="350"
+                y="168"
+                fill="#bc8cff"
+                font-size="12"
+                text-anchor="middle"
+              >
+                the greedy solution must be optimal.
+              </text>
+
+              <text
+                x="350"
+                y="195"
+                fill="#8b949e"
+                font-size="10"
+                text-anchor="middle"
+                font-style="italic"
+              >
+                EE analogy: Like proving a circuit with fewer gates has the same
+                truth table — swap gates one at a time
+              </text>
+            </svg>
+          </div>
+
+          <h3>DP: Optimal Substructure + Overlapping Subproblems</h3>
+
+          <p>To prove a DP solution is correct, show two things:</p>
+
+          <ol>
+            <li>
+              <strong>Optimal substructure:</strong> An optimal solution to the
+              problem contains optimal solutions to subproblems. (If you could
+              improve a subproblem solution, you could improve the whole —
+              contradiction.)
+            </li>
+            <li>
+              <strong>Overlapping subproblems:</strong> The same subproblems
+              appear repeatedly, so memoization/tabulation avoids redundant
+              work. (This justifies using DP instead of plain recursion.)
+            </li>
+          </ol>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Common Pitfall: Greedy ≠ Optimal</div>
+            <p>
+              Many problems <em>look</em> greedy but aren't. The classic trap:
+              <strong>coin change</strong> with denominations [1, 3, 4]. Greedy
+              picks 4+1+1=3 coins for amount 6, but optimal is 3+3=2 coins. If
+              you can't prove the exchange argument, it's probably not greedy —
+              use DP instead.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Quick Reference -->
+          <!-- ============================================================ -->
+          <h2 id="quick-ref">
+            Quick Reference: Proof Techniques by Algorithm Type
+          </h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm Type</th>
+                <th>Proof Technique</th>
+                <th>Key Element</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Iterative (loops)</strong></td>
+                <td>Loop invariant</td>
+                <td>Init, Maintain, Terminate</td>
+              </tr>
+              <tr>
+                <td><strong>Recursive</strong></td>
+                <td>Structural induction</td>
+                <td>Base case + inductive step</td>
+              </tr>
+              <tr>
+                <td><strong>Divide &amp; Conquer</strong></td>
+                <td>Strong induction</td>
+                <td>Subproblems smaller + combine correct</td>
+              </tr>
+              <tr>
+                <td><strong>Greedy</strong></td>
+                <td>Exchange argument</td>
+                <td>Swap greedy ↔ optimal without loss</td>
+              </tr>
+              <tr>
+                <td><strong>Dynamic Programming</strong></td>
+                <td>Optimal substructure</td>
+                <td>Bellman equation + cut-and-paste argument</td>
+              </tr>
+              <tr>
+                <td><strong>Graph algorithms</strong></td>
+                <td>Invariant on visited set</td>
+                <td>Each visited node has correct distance/color/order</td>
+              </tr>
+              <tr>
+                <td><strong>Concurrent systems</strong></td>
+                <td>Safety + liveness properties</td>
+                <td>Mutual exclusion, deadlock freedom, progress</td>
+              </tr>
+              <tr>
+                <td><strong>Distributed systems</strong></td>
+                <td>Model checking (TLA+)</td>
+                <td>Exhaustive state space exploration</td>
+              </tr>
+              <tr>
+                <td><strong>Any algorithm</strong></td>
+                <td>Property-based testing</td>
+                <td>Hypothesis: random inputs, check invariants</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">
+              EE Summary: The Hardware Analogy Map
+            </div>
+            <p>
+              <strong>Loop invariant</strong> = Setup/hold timing constraint
+              (must be met every clock edge)<br />
+              <strong>Variant function</strong> = Energy in a damped system
+              (must decrease to zero)<br />
+              <strong>Precondition</strong> = Input specification on a data
+              sheet<br />
+              <strong>Postcondition</strong> = Output specification on a data
+              sheet<br />
+              <strong>Safety property</strong> = No latch-up, no
+              shoot-through<br />
+              <strong>Liveness property</strong> = PLL locks, FIFO drains, bus
+              grants<br />
+              <strong>Model checking</strong> = Static timing analysis (STA)<br />
+              <strong>Theorem proving</strong> = Formal equivalence checking
+              (LEC)<br />
+              <strong>Property testing</strong> = Monte Carlo simulation<br />
+              <strong>Unit testing</strong> = Specific test vectors in a
+              testbench
+            </p>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

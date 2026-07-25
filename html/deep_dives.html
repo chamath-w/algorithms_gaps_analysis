@@ -1,0 +1,3826 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep Dives: 8 Hard Patterns -- Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Deep Dives: 8 Hard Patterns</h1>
+          <p>
+            The algorithms that separate "I can solve easy problems" from "I can
+            handle anything." Each section breaks down one pattern you struggle
+            with, using EE analogies and step-by-step visualizations.
+          </p>
+
+          <!-- ===== TABLE OF CONTENTS ===== -->
+          <div class="card">
+            <h3 style="margin-top: 0">Table of Contents</h3>
+            <ol>
+              <li>
+                <a href="#topo-sort">Topological Sort</a> -- dependency ordering
+                in DAGs
+              </li>
+              <li>
+                <a href="#dp-bottom-up"
+                  >Dynamic Programming (Bottom-Up Tabulation)</a
+                >
+                -- from memoization to iteration
+              </li>
+              <li>
+                <a href="#backtracking">Backtracking</a> -- systematic search
+                with pruning
+              </li>
+              <li>
+                <a href="#heap">Heap / Priority Queue</a> -- efficient dynamic
+                min/max
+              </li>
+              <li>
+                <a href="#monotonic-stack">Monotonic Stack</a> -- next
+                greater/smaller in O(n)
+              </li>
+              <li>
+                <a href="#union-find">Union Find (Disjoint Set)</a> --
+                incremental connectivity
+              </li>
+              <li>
+                <a href="#prefix-sum">Prefix Sum</a> -- O(1) range queries
+              </li>
+              <li>
+                <a href="#dijkstra">Dijkstra's Shortest Path</a> -- weighted
+                graph distances
+              </li>
+            </ol>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 1. TOPOLOGICAL SORT                                               -->
+          <!-- ================================================================= -->
+          <a id="topo-sort"></a>
+          <h2>1. Topological Sort</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Topological Sort"?</div>
+            <p>
+              "Topology" from Greek "topos" (place) + "logos" (study). Studies
+              the structure of connections, not distances. A topological sort
+              arranges a graph's nodes respecting their directed connections
+              &mdash; the "topology" of dependencies.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              You have a set of tasks with dependencies: task C can't start
+              until A and B are done. You need a valid execution order. This
+              appears in build systems (compile order), course prerequisites,
+              spreadsheet cell evaluation, and package managers.
+            </p>
+            <p>
+              <strong>Why can't simpler approaches work?</strong> You might
+              think "just sort by number of prerequisites." But that fails --
+              two tasks with the same number of prerequisites might depend on
+              each other transitively. BFS/DFS alone finds components or
+              shortest paths but doesn't produce a valid dependency order. You
+              need a structure-aware ordering that respects ALL edges in a
+              directed acyclic graph (DAG).
+            </p>
+            <p>
+              <strong>Without this algorithm:</strong> You'd have to try every
+              possible ordering and check validity -- O(n!) for n tasks.
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Process nodes with no remaining dependencies first -- then
+                remove their edges, revealing newly ready nodes."</strong
+              >
+            </p>
+            <p>
+              Think of it as peeling an onion: the outermost layer has no inward
+              dependencies. Remove it, and a new outer layer is exposed.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">
+              EE Analogy: Combinational Circuit Propagation
+            </div>
+            <p>
+              In a combinational logic circuit, gates fire in dependency order
+              -- a gate's output is valid only when ALL its inputs are valid.
+              Primary inputs (no dependencies) resolve first, then gates fed by
+              those inputs, then the next level, and so on. This is exactly
+              Kahn's algorithm: process gates with all inputs ready (in-degree
+              0), then propagate.
+            </p>
+            <p>
+              If there's a feedback loop (cycle), the circuit isn't
+              combinational -- it's sequential and needs a flip-flop.
+              Topological sort detects this: if you can't process all nodes, a
+              cycle exists.
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- Kahn's Algorithm</h3>
+          <div class="diagram-container" id="topo-anim-container">
+            <div class="diagram-title">Kahn's Algorithm: Processing a DAG</div>
+            <svg id="topo-svg" viewBox="0 0 600 320"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <h4>Approach 1: Kahn's Algorithm (BFS-based)</h4>
+          <ol>
+            <li>
+              <strong>Build the graph and compute in-degrees.</strong> For every
+              edge u->v, add v to u's adjacency list and increment in_degree[v].
+              The in-degree tells you how many unresolved dependencies a node
+              has.
+            </li>
+            <li>
+              <strong>Seed the queue with all zero-in-degree nodes.</strong>
+              These are your "primary inputs" -- tasks with no prerequisites.
+              They're immediately ready to execute.
+            </li>
+            <li>
+              <strong
+                >Process the queue: dequeue a node, add it to the result
+                order.</strong
+              >
+              This node is "done." For each of its outgoing edges (u->v),
+              decrement in_degree[v] because one dependency is now resolved.
+            </li>
+            <li>
+              <strong
+                >If a neighbor's in-degree drops to zero, enqueue it.</strong
+              >
+              All its dependencies are now satisfied -- it's ready.
+            </li>
+            <li>
+              <strong>Repeat until the queue is empty.</strong> If the result
+              has fewer nodes than the graph, a cycle exists (some nodes'
+              in-degrees never reached 0).
+            </li>
+          </ol>
+
+          <h4>Approach 2: DFS Post-Order (Reverse)</h4>
+          <ol>
+            <li>
+              <strong>Run DFS from every unvisited node.</strong> Use 3-state
+              coloring: WHITE (unvisited), GRAY (in current DFS path), BLACK
+              (fully processed).
+            </li>
+            <li>
+              <strong>When entering a node, color it GRAY.</strong> If you
+              encounter a GRAY neighbor, you've found a back edge -- that's a
+              cycle.
+            </li>
+            <li>
+              <strong
+                >After processing all of a node's children, color it BLACK and
+                add it to the result.</strong
+              >
+              This is post-order: a node appears after all its descendants.
+            </li>
+            <li>
+              <strong>Reverse the result.</strong> Post-order gives
+              dependencies-last; reversing gives dependencies-first (topological
+              order).
+            </li>
+          </ol>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="cm"># Kahn's Algorithm (BFS-based topological sort)</span>
+<span class="kw">from</span> <span class="var">collections</span> <span class="kw">import</span> <span class="var">deque, defaultdict</span>
+
+<span class="kw">def</span> <span class="fn">topo_sort_kahn</span>(num_nodes, edges):
+    <span class="cm"># Build adjacency list and count incoming edges for each node</span>
+    graph <span class="op">=</span> defaultdict(list)
+    in_degree <span class="op">=</span> [<span class="num">0</span>] <span class="op">*</span> num_nodes
+
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:       <span class="cm"># u must come before v</span>
+        graph[u].append(v)
+        in_degree[v] <span class="op">+=</span> <span class="num">1</span>
+
+    <span class="cm"># Start with all nodes that have no prerequisites (in-degree 0)</span>
+    <span class="cm"># These are the "primary inputs" of our circuit</span>
+    queue <span class="op">=</span> deque(i <span class="kw">for</span> i <span class="kw">in</span> range(num_nodes) <span class="kw">if</span> in_degree[i] <span class="op">==</span> <span class="num">0</span>)
+    order <span class="op">=</span> []
+
+    <span class="kw">while</span> queue:
+        node <span class="op">=</span> queue.popleft()
+        order.append(node)
+
+        <span class="cm"># "Fire" this gate: reduce in-degree of downstream nodes</span>
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            in_degree[neighbor] <span class="op">-=</span> <span class="num">1</span>
+            <span class="kw">if</span> in_degree[neighbor] <span class="op">==</span> <span class="num">0</span>:
+                queue.append(neighbor)  <span class="cm"># all inputs ready, gate can fire</span>
+
+    <span class="cm"># If we processed fewer nodes than exist, there's a cycle</span>
+    <span class="kw">return</span> order <span class="kw">if</span> len(order) <span class="op">==</span> num_nodes <span class="kw">else</span> []</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">prerequisite</span>
+            <span class="signal">dependency ordering</span>
+            <span class="signal">course schedule</span>
+            <span class="signal">build order</span>
+            <span class="signal">before/after constraints</span>
+            <span class="signal">DAG</span>
+            <span class="signal">valid sequence</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Edge direction confusion:</strong> "A is a prerequisite
+                of B" means edge A->B, not B->A. Think "arrow points to the
+                thing that depends."
+              </li>
+              <li>
+                <strong>Forgetting disconnected components:</strong> You must
+                seed the queue with ALL zero-in-degree nodes, not just one.
+              </li>
+              <li>
+                <strong>Using 2-state visited for DFS cycle detection:</strong>
+                In directed graphs, you need 3 states (WHITE/GRAY/BLACK). A node
+                can be visited but not "in the current path." Only a GRAY->GRAY
+                edge indicates a cycle.
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong>Picture a combinational logic circuit on a PCB.</strong>
+              The primary inputs (DIP switches, sensor pins) light up first.
+              Then the first row of AND/OR gates fires. Then the second row.
+              Layer by layer, the signal propagates until it reaches the output
+              LEDs. If you trace it and find a wire going backwards (a cycle),
+              the circuit needs a clock -- it's no longer purely combinational.
+            </p>
+            <p>
+              Topological sort = forward signal propagation in a combinational
+              circuit.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 2. DYNAMIC PROGRAMMING (Bottom-Up)                               -->
+          <!-- ================================================================= -->
+          <a id="dp-bottom-up"></a>
+          <h2>2. Dynamic Programming (Bottom-Up Tabulation)</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Dynamic Programming"?</div>
+            <p>
+              Richard Bellman chose "dynamic" to sound impressive to his boss
+              who hated "research." "Programming" meant scheduling/planning
+              (like "linear programming" = linear planning). Really means
+              "multi-stage optimization by breaking into overlapping
+              subproblems."
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              Optimization problems where the solution depends on solutions to
+              smaller subproblems, and those subproblems overlap (the same
+              subproblem gets computed many times). Classic examples: minimum
+              cost, maximum profit, number of ways to reach a goal.
+            </p>
+            <p>
+              <strong>Why can't simpler approaches work?</strong> Greedy fails
+              when the locally optimal choice doesn't lead to the global
+              optimum. Brute force explores exponentially many paths. You
+              already understand top-down memoization (recursion + cache), which
+              is great. Bottom-up is the SAME computation, but iterative.
+            </p>
+            <p>
+              <strong>Without bottom-up DP:</strong> Top-down memoization hits
+              Python's recursion limit (~1000 deep), can't do space optimization
+              (rolling arrays), and has function call overhead.
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Build the answer from smallest subproblems upward, filling a
+                table. The dependency graph of subproblems tells you the fill
+                order."</strong
+              >
+            </p>
+            <p>
+              If top-down asks "what do I need?" and works backward, bottom-up
+              says "I'll compute everything I might need, starting from what I
+              know."
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">
+              EE Analogy: Circuit Simulation -- Forward vs. Backward
+            </div>
+            <p>
+              <strong>Top-down (memoization)</strong> is like starting at the
+              output pin and asking "what feeds this gate?" Then for each input,
+              "what feeds THAT gate?" You trace backward recursively. If the
+              same intermediate signal appears in multiple paths, you cache it
+              so you only compute it once.
+            </p>
+            <p>
+              <strong>Bottom-up (tabulation)</strong> is like SPICE simulation:
+              start from the known inputs (base cases), compute every gate's
+              output level by level, until you reach the final output. You never
+              ask "what do I need?" -- you just fill in the truth table from
+              left to right.
+            </p>
+            <p>
+              Both give the same answer. Bottom-up is more systematic, doesn't
+              blow up the call stack, and you can often optimize memory by
+              keeping only the last row of the table (like only needing the
+              previous pipeline stage, not the whole history).
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation</h3>
+
+          <h4>Animation 1: Fibonacci -- Top-Down vs Bottom-Up</h4>
+          <div class="diagram-container" id="dp-fib-container">
+            <div class="diagram-title">
+              Fibonacci: Recursive Call Tree vs. Bottom-Up Table
+            </div>
+            <svg id="dp-fib-svg" viewBox="0 0 700 340"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <h4>Animation 2: LCS Grid Fill</h4>
+          <div class="diagram-container" id="dp-lcs-container">
+            <div class="diagram-title">
+              Longest Common Subsequence: "ABCB" vs "BDCB"
+            </div>
+            <svg id="dp-lcs-svg" viewBox="0 0 460 380"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <h4>The Bridge from Top-Down to Bottom-Up</h4>
+          <ol>
+            <li>
+              <strong>Start with the recurrence you already know.</strong> For
+              Fibonacci: <code>fib(n) = fib(n-1) + fib(n-2)</code>. For LCS:
+              <code>dp[i][j] = dp[i-1][j-1]+1</code> if chars match, else
+              <code>max(dp[i-1][j], dp[i][j-1])</code>.
+            </li>
+            <li>
+              <strong>Identify the base cases.</strong> These are the
+              subproblems you can solve without recursion. For Fibonacci:
+              <code>fib(0)=0, fib(1)=1</code>. For LCS:
+              <code>dp[0][j]=0, dp[i][0]=0</code>.
+            </li>
+            <li>
+              <strong>Determine the fill order.</strong> Each cell depends on
+              cells that come "before" it in some sense. For 1D: left to right.
+              For 2D LCS: each cell depends on the cell above, to the left, and
+              diagonally above-left -- so fill top-to-bottom, left-to-right.
+            </li>
+            <li>
+              <strong>Create the table and fill base cases.</strong> For 1D:
+              <code>dp = [0] * (n+1)</code>. For 2D:
+              <code>dp = [[0]*(m+1) for _ in range(n+1)]</code>.
+            </li>
+            <li>
+              <strong>Fill the table using the recurrence, iteratively.</strong>
+              Replace recursive calls with table lookups. The values are already
+              there because you filled in order.
+            </li>
+            <li>
+              <strong>The answer is in the table at dp[n] or dp[n][m].</strong>
+            </li>
+          </ol>
+
+          <h4>Why Bottom-Up Over Top-Down?</h4>
+          <ol>
+            <li>
+              <strong>No stack overflow:</strong> Python's default recursion
+              limit is ~1000. Bottom-up uses a loop, not the call stack.
+            </li>
+            <li>
+              <strong>Space optimization:</strong> If each row only depends on
+              the previous row, you can keep just two rows (or even one row with
+              careful indexing). Top-down can't do this easily.
+            </li>
+            <li>
+              <strong>No function call overhead:</strong> Iterating is faster
+              than recursive function calls, even with memoization.
+            </li>
+            <li>
+              <strong>Clearer complexity analysis:</strong> The number of
+              iterations is explicitly visible from the loop bounds.
+            </li>
+          </ol>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="cm"># Side-by-side: Top-Down vs Bottom-Up for Fibonacci</span>
+
+<span class="cm"># TOP-DOWN (what you already know)</span>
+<span class="kw">def</span> <span class="fn">fib_top_down</span>(n, memo<span class="op">=</span>{}):
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">if</span> n <span class="kw">in</span> memo: <span class="kw">return</span> memo[n]
+    memo[n] <span class="op">=</span> fib_top_down(n<span class="op">-</span><span class="num">1</span>) <span class="op">+</span> fib_top_down(n<span class="op">-</span><span class="num">2</span>)
+    <span class="kw">return</span> memo[n]
+
+<span class="cm"># BOTTOM-UP (the same computation, iteratively)</span>
+<span class="kw">def</span> <span class="fn">fib_bottom_up</span>(n):
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span>: <span class="kw">return</span> n
+    dp <span class="op">=</span> [<span class="num">0</span>] <span class="op">*</span> (n <span class="op">+</span> <span class="num">1</span>)
+    dp[<span class="num">0</span>], dp[<span class="num">1</span>] <span class="op">=</span> <span class="num">0</span>, <span class="num">1</span>         <span class="cm"># base cases</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">2</span>, n <span class="op">+</span> <span class="num">1</span>):
+        dp[i] <span class="op">=</span> dp[i<span class="op">-</span><span class="num">1</span>] <span class="op">+</span> dp[i<span class="op">-</span><span class="num">2</span>]   <span class="cm"># same recurrence, table lookup</span>
+    <span class="kw">return</span> dp[n]
+
+<span class="cm"># SPACE-OPTIMIZED (only need last 2 values)</span>
+<span class="kw">def</span> <span class="fn">fib_optimized</span>(n):
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span>: <span class="kw">return</span> n
+    prev2, prev1 <span class="op">=</span> <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="num">2</span>, n <span class="op">+</span> <span class="num">1</span>):
+        prev2, prev1 <span class="op">=</span> prev1, prev2 <span class="op">+</span> prev1
+    <span class="kw">return</span> prev1</code></pre>
+
+          <pre><code><span class="cm"># 2D Example: Longest Common Subsequence</span>
+<span class="kw">def</span> <span class="fn">lcs</span>(text1, text2):
+    m, n <span class="op">=</span> len(text1), len(text2)
+    <span class="cm"># dp[i][j] = LCS length of text1[:i] and text2[:j]</span>
+    dp <span class="op">=</span> [[<span class="num">0</span>] <span class="op">*</span> (n <span class="op">+</span> <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> range(m <span class="op">+</span> <span class="num">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, m <span class="op">+</span> <span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> range(<span class="num">1</span>, n <span class="op">+</span> <span class="num">1</span>):
+            <span class="kw">if</span> text1[i<span class="op">-</span><span class="num">1</span>] <span class="op">==</span> text2[j<span class="op">-</span><span class="num">1</span>]:
+                <span class="cm"># Characters match: extend the LCS from diagonal</span>
+                dp[i][j] <span class="op">=</span> dp[i<span class="op">-</span><span class="num">1</span>][j<span class="op">-</span><span class="num">1</span>] <span class="op">+</span> <span class="num">1</span>
+            <span class="kw">else</span>:
+                <span class="cm"># Don't match: take best of skipping either character</span>
+                dp[i][j] <span class="op">=</span> max(dp[i<span class="op">-</span><span class="num">1</span>][j], dp[i][j<span class="op">-</span><span class="num">1</span>])
+
+    <span class="kw">return</span> dp[m][n]</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">minimum cost</span>
+            <span class="signal">maximum profit</span>
+            <span class="signal">number of ways</span>
+            <span class="signal">can you reach</span>
+            <span class="signal">longest/shortest subsequence</span>
+            <span class="signal">overlapping subproblems</span>
+            <span class="signal">optimal substructure</span>
+            <span class="signal">take or skip decision</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Imprecise state definition:</strong> "dp[i] = best
+                result" is too vague. Be precise: "dp[i] = max profit using
+                items 0..i-1 with capacity W" vs "dp[i] = max profit ending at
+                index i." These give different recurrences.
+              </li>
+              <li>
+                <strong>Wrong fill order:</strong> If dp[i][j] depends on
+                dp[i-1][j-1], dp[i-1][j], and dp[i][j-1], you must fill
+                top-to-bottom, left-to-right. Filling in the wrong order reads
+                uninitialized values.
+              </li>
+              <li>
+                <strong>Off-by-one with 1-indexed dp:</strong> When dp has size
+                (n+1), remember dp[i] typically corresponds to the first i
+                elements, and dp[0] is the empty case.
+              </li>
+              <li>
+                <strong>Forgetting to consider ALL choices:</strong> At each
+                state, enumerate every option (take/skip, use character/skip
+                character) and pick the best.
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong>Picture a SPICE simulation of a pipeline ADC.</strong>
+              Stage 1 samples the input (base case). Stage 2 reads stage 1's
+              output and computes its value. Stage 3 reads stage 2. Each stage
+              only needs the previous stage's result. You can throw away older
+              stages once you're past them (space optimization). And you never
+              need to "go back" -- the computation flows forward, filling in the
+              table from left to right, input to output.
+            </p>
+            <p>
+              Bottom-up DP = forward SPICE simulation. Top-down = backward
+              tracing from output to inputs.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 3. BACKTRACKING                                                   -->
+          <!-- ================================================================= -->
+          <a id="backtracking"></a>
+          <h2>3. Backtracking</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Backtracking"?</div>
+            <p>
+              "Back" + "tracking" = tracking/tracing your steps backward. When
+              you reach a dead end in the search tree, you backtrack (go back)
+              to the previous decision point and try a different choice.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              Generating all valid configurations or finding a valid arrangement
+              under constraints. Permutations, combinations, N-Queens, Sudoku,
+              word search on a grid. Any problem where you build a solution
+              piece by piece and need to explore all possibilities.
+            </p>
+            <p>
+              <strong>Why can't simpler approaches work?</strong> Brute force
+              generates ALL possible configurations (e.g., all n! permutations)
+              then filters valid ones. With n=20, that's over 2 * 10^18
+              configurations. Backtracking prunes early -- it never generates
+              branches that already violate constraints, making it exponentially
+              faster in practice.
+            </p>
+            <p>
+              <strong>Without backtracking:</strong> You'd enumerate every
+              possibility. For 8-Queens, that's 8^8 = 16 million board
+              configurations to check, vs roughly 15,000 with backtracking.
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Build incrementally. Abandon a branch the moment it violates a
+                constraint. Undo and try the next option."</strong
+              >
+            </p>
+            <p>
+              The pattern is always: <em>choose -> explore -> un-choose</em>.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">
+              EE Analogy: Test Engineer Probing a PCB
+            </div>
+            <p>
+              Imagine debugging a multi-layer PCB. You start at the connector,
+              trace signal path A. You probe a junction -- signal looks good.
+              Continue down branch A1. Dead signal. You backtrack to the
+              junction and try branch A2. Bad signal there too. Backtrack
+              further to the connector, try signal path B.
+            </p>
+            <p>
+              You don't probe every single trace on the entire board. You follow
+              a path, and the moment you find a fault, you backtrack to the last
+              decision point. That's backtracking: systematic exploration with
+              early abandonment.
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- 4-Queens</h3>
+          <div class="diagram-container" id="bt-anim-container">
+            <div class="diagram-title">4-Queens: Placing Queens Row by Row</div>
+            <svg id="bt-svg" viewBox="0 0 700 350"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <ol>
+            <li>
+              <strong>Define the decision space.</strong> At each step, what
+              choices do you have? For N-Queens: which column to place the queen
+              in the current row. For permutations: which unused element to
+              place next.
+            </li>
+            <li>
+              <strong>Choose:</strong> Pick an option and add it to the current
+              partial solution.
+            </li>
+            <li>
+              <strong>Check constraints (prune):</strong> Does this choice
+              violate any constraint? If yes, skip it immediately -- don't
+              recurse deeper. This is the pruning that makes backtracking
+              efficient.
+            </li>
+            <li>
+              <strong>Explore:</strong> Recursively solve the remaining
+              subproblem with this choice in place.
+            </li>
+            <li>
+              <strong>Un-choose (backtrack):</strong> Remove the choice to
+              restore state, then try the next option. This is critical -- you
+              must leave the state exactly as you found it.
+            </li>
+            <li>
+              <strong>Base case:</strong> If the partial solution is complete
+              (all queens placed, all slots filled), add a copy to results.
+            </li>
+          </ol>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">solve_n_queens</span>(n):
+    result <span class="op">=</span> []
+    board <span class="op">=</span> [<span class="num">-1</span>] <span class="op">*</span> n  <span class="cm"># board[row] = column where queen is placed</span>
+
+    <span class="kw">def</span> <span class="fn">is_safe</span>(row, col):
+        <span class="cm"># Check against all previously placed queens</span>
+        <span class="kw">for</span> r <span class="kw">in</span> range(row):
+            c <span class="op">=</span> board[r]
+            <span class="cm"># Same column, or same diagonal?</span>
+            <span class="kw">if</span> c <span class="op">==</span> col <span class="kw">or</span> abs(c <span class="op">-</span> col) <span class="op">==</span> abs(r <span class="op">-</span> row):
+                <span class="kw">return</span> <span class="num">False</span>
+        <span class="kw">return</span> <span class="num">True</span>
+
+    <span class="kw">def</span> <span class="fn">backtrack</span>(row):
+        <span class="kw">if</span> row <span class="op">==</span> n:
+            result.append(board[:])   <span class="cm"># COPY! Found a valid placement</span>
+            <span class="kw">return</span>
+
+        <span class="kw">for</span> col <span class="kw">in</span> range(n):
+            <span class="kw">if</span> is_safe(row, col):      <span class="cm"># PRUNE: skip invalid placements</span>
+                board[row] <span class="op">=</span> col       <span class="cm"># CHOOSE</span>
+                backtrack(row <span class="op">+</span> <span class="num">1</span>)    <span class="cm"># EXPLORE</span>
+                board[row] <span class="op">=</span> <span class="num">-1</span>       <span class="cm"># UN-CHOOSE (backtrack)</span>
+
+    backtrack(<span class="num">0</span>)
+    <span class="kw">return</span> result</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">all permutations</span>
+            <span class="signal">all combinations</span>
+            <span class="signal">all subsets</span>
+            <span class="signal">generate all valid</span>
+            <span class="signal">enumerate</span>
+            <span class="signal">N-Queens / Sudoku</span>
+            <span class="signal">word search</span>
+            <span class="signal">constraint satisfaction</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Forgetting to copy:</strong>
+                <code>result.append(current)</code> appends a reference. When
+                you later modify <code>current</code>, the result changes too.
+                Always use <code>current[:]</code> or
+                <code>list(current)</code>.
+              </li>
+              <li>
+                <strong>Forgetting to un-choose:</strong> If you modify state
+                before recursing, you MUST undo it after. Otherwise the next
+                branch starts with corrupted state.
+              </li>
+              <li>
+                <strong>No pruning:</strong> Backtracking without pruning is
+                just brute force with extra steps. The power comes from
+                detecting invalid branches early.
+              </li>
+              <li>
+                <strong>Duplicate handling:</strong> For combination sum with
+                duplicates, sort the input and skip
+                <code>candidates[i] == candidates[i-1]</code> when
+                <code>i > start</code>.
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong
+                >Picture a maze-solving robot with one rule: when you hit a
+                wall, back up to the last junction and try the next
+                corridor.</strong
+              >
+              The robot marks each path it tries. When a path dead-ends, it
+              reverses (un-choose), erases its marks (restore state), and takes
+              the next untried corridor. It systematically explores every
+              reachable path without ever going down the same dead end twice.
+            </p>
+            <p>
+              Backtracking = maze robot with wall detection (pruning) and
+              junction memory (recursion stack).
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 4. HEAP / PRIORITY QUEUE                                          -->
+          <!-- ================================================================= -->
+          <a id="heap"></a>
+          <h2>4. Heap / Priority Queue</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Heap / Priority Queue"?</div>
+            <p>
+              "Heap" = pile/mound. The binary tree looks like a pyramid/mound
+              shape. "Priority" queue = items come out in priority order, not
+              insertion order. Like a hospital triage queue.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              You need to repeatedly find the minimum (or maximum) element from
+              a collection that changes over time -- elements are inserted and
+              removed dynamically. Sorting doesn't work because the data is
+              streaming, and you'd have to re-sort after every change.
+            </p>
+            <p>
+              <strong>Why can't simpler approaches work?</strong> An unsorted
+              list gives O(1) insert but O(n) to find the min. A sorted list
+              gives O(1) min but O(n) insert (shifting). A heap gives O(log n)
+              for both operations -- the sweet spot.
+            </p>
+            <p>
+              <strong>Without heaps:</strong> Dijkstra's algorithm would be
+              O(V^2) instead of O((V+E) log V). Finding the K-th largest element
+              would require sorting the entire array every time a new element
+              arrives.
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"A binary tree where every parent is smaller (or larger) than
+                its children. Not fully sorted -- just enough structure to
+                always know the extreme element."</strong
+              >
+            </p>
+            <p>
+              The key: the heap property is weaker than full sorting. You trade
+              the ability to find any element for faster insert/extract of the
+              min or max.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">
+              EE Analogy: Priority Interrupt Controller
+            </div>
+            <p>
+              A priority interrupt controller (like the 8259 PIC) doesn't sort
+              ALL pending interrupts. It just always knows which one has the
+              highest priority. When a new interrupt arrives, the controller
+              inserts it in O(log n). When the CPU finishes handling one, it
+              extracts the next-highest priority in O(log n). The controller
+              maintains just enough order to serve the most urgent request --
+              exactly like a heap.
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- Building a Min-Heap</h3>
+          <div class="diagram-container" id="heap-anim-container">
+            <div class="diagram-title">
+              Min-Heap: Insert [4, 10, 3, 5, 1] then Extract-Min
+            </div>
+            <svg id="heap-svg" viewBox="0 0 600 320"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <h4>Heap Insert (heappush)</h4>
+          <ol>
+            <li>
+              <strong>Add the new element at the end of the array</strong> (last
+              position in the complete binary tree).
+            </li>
+            <li>
+              <strong>Bubble up (sift up):</strong> Compare with parent at index
+              <code>(i-1)//2</code>. If the new element is smaller than its
+              parent, swap them.
+            </li>
+            <li>
+              <strong>Repeat until the element is in a valid position</strong>
+              (either it reaches the root or its parent is smaller). This takes
+              at most O(log n) swaps -- the tree height.
+            </li>
+          </ol>
+          <h4>Heap Extract-Min (heappop)</h4>
+          <ol>
+            <li>
+              <strong>Save the root element</strong> (index 0) -- that's the
+              minimum.
+            </li>
+            <li>
+              <strong>Move the last element to the root position.</strong> This
+              temporarily violates the heap property.
+            </li>
+            <li>
+              <strong>Bubble down (sift down):</strong> Compare with children at
+              indices <code>2i+1</code> and <code>2i+2</code>. Swap with the
+              smaller child if it's smaller than the current node.
+            </li>
+            <li>
+              <strong>Repeat until the element is in a valid position.</strong>
+              O(log n) swaps.
+            </li>
+          </ol>
+
+          <h4>Array Representation</h4>
+          <p>
+            A heap is stored as a flat array. For element at index
+            <code>i</code>:
+          </p>
+          <ul>
+            <li>Parent: <code>(i - 1) // 2</code></li>
+            <li>Left child: <code>2*i + 1</code></li>
+            <li>Right child: <code>2*i + 2</code></li>
+          </ul>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="kw">import</span> <span class="var">heapq</span>
+
+<span class="cm"># Python's heapq is a MIN-heap. For max-heap, negate values.</span>
+
+<span class="cm"># Basic operations</span>
+heap <span class="op">=</span> []
+heapq.heappush(heap, <span class="num">5</span>)    <span class="cm"># Insert: O(log n)</span>
+heapq.heappush(heap, <span class="num">3</span>)
+heapq.heappush(heap, <span class="num">7</span>)
+smallest <span class="op">=</span> heapq.heappop(heap)  <span class="cm"># Extract-min: O(log n), returns 3</span>
+peek <span class="op">=</span> heap[<span class="num">0</span>]                    <span class="cm"># Peek at min: O(1), returns 5</span>
+
+<span class="cm"># K-th largest element: maintain a min-heap of size k</span>
+<span class="kw">def</span> <span class="fn">kth_largest</span>(nums, k):
+    heap <span class="op">=</span> nums[:k]
+    heapq.heapify(heap)         <span class="cm"># O(k) to build initial heap</span>
+    <span class="kw">for</span> num <span class="kw">in</span> nums[k:]:
+        <span class="kw">if</span> num <span class="op">&gt;</span> heap[<span class="num">0</span>]:       <span class="cm"># bigger than smallest in top-k?</span>
+            heapq.heapreplace(heap, num)  <span class="cm"># pop-and-push in one step</span>
+    <span class="kw">return</span> heap[<span class="num">0</span>]              <span class="cm"># smallest of the k largest = k-th largest</span>
+
+<span class="cm"># Merge K sorted lists</span>
+<span class="kw">def</span> <span class="fn">merge_k_sorted</span>(lists):
+    heap <span class="op">=</span> []
+    <span class="kw">for</span> i, lst <span class="kw">in</span> enumerate(lists):
+        <span class="kw">if</span> lst:
+            heapq.heappush(heap, (lst[<span class="num">0</span>], i, <span class="num">0</span>))  <span class="cm"># (value, list_idx, elem_idx)</span>
+
+    result <span class="op">=</span> []
+    <span class="kw">while</span> heap:
+        val, li, ei <span class="op">=</span> heapq.heappop(heap)
+        result.append(val)
+        <span class="kw">if</span> ei <span class="op">+</span> <span class="num">1</span> <span class="op">&lt;</span> len(lists[li]):
+            heapq.heappush(heap, (lists[li][ei<span class="op">+</span><span class="num">1</span>], li, ei<span class="op">+</span><span class="num">1</span>))
+    <span class="kw">return</span> result</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">K-th largest/smallest</span>
+            <span class="signal">top K elements</span>
+            <span class="signal">merge K sorted</span>
+            <span class="signal">streaming median</span>
+            <span class="signal">priority</span>
+            <span class="signal">schedule by deadline</span>
+            <span class="signal">closest points</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Python heapq is min-heap only.</strong> For max-heap,
+                negate: <code>heappush(h, -val)</code> and remember to negate
+                back: <code>-heappop(h)</code>.
+              </li>
+              <li>
+                <strong>Tuple comparison crash:</strong> When first elements
+                tie, Python compares the second. If the second element isn't
+                comparable (e.g., a ListNode), it crashes. Fix: use
+                <code>(value, unique_counter, object)</code>.
+              </li>
+              <li>
+                <strong>Confusing K-th largest with K-th smallest:</strong> For
+                K-th largest, use a min-heap of size K (the root is the smallest
+                of the K largest). For K-th smallest, use a max-heap of size K.
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong
+                >Picture an old-school 8259 PIC chip on a motherboard.</strong
+              >
+              Interrupt lines come in from peripherals. The PIC doesn't sort
+              them all -- it just always has the highest-priority one ready at
+              its output pin. When the CPU acknowledges and handles that
+              interrupt, the PIC instantly presents the next highest. Insert and
+              extract, insert and extract. That's a heap.
+            </p>
+            <p>
+              Heap = priority interrupt controller. O(log n) to insert a new
+              interrupt, O(log n) to serve and remove the highest priority one.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 5. MONOTONIC STACK                                                -->
+          <!-- ================================================================= -->
+          <a id="monotonic-stack"></a>
+          <h2>5. Monotonic Stack</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Monotonic Stack"?</div>
+            <p>
+              "Monotonic" from Greek "monos" (single) + "tonos"
+              (tone/direction). A function is monotonic if it only goes one
+              direction (non-decreasing or non-increasing). The stack maintains
+              this property &mdash; elements are always in one direction.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              For each element in an array, find the
+              <em>next greater element</em> (or next smaller, previous greater,
+              etc.) to its right or left. Also: largest rectangle in histogram,
+              stock span, trapping rain water.
+            </p>
+            <p>
+              <strong>Why can't simpler approaches work?</strong> The brute
+              force is O(n^2): for each element, scan right to find the first
+              larger one. With a monotonic stack, each element is pushed and
+              popped at most once, giving O(n) total.
+            </p>
+            <p>
+              <strong>Without this technique:</strong> "Daily Temperatures" with
+              30,000 days takes 900 million operations (brute force) vs 30,000
+              (monotonic stack).
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Maintain a stack where elements are always in sorted order
+                (monotonically increasing or decreasing). When a new element
+                violates the order, pop -- each popped element has found its
+                answer."</strong
+              >
+            </p>
+            <p>
+              The stack holds "unresolved" elements waiting for their answer.
+              Each pop resolves one.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Peak Detector Circuit</div>
+            <p>
+              A peak detector tracks the running maximum of a signal. When the
+              voltage rises past the stored peak, the capacitor charges to the
+              new peak. With a monotonic decreasing stack, it's similar: you
+              maintain a "waterfall" of decreasing values. When a new value
+              arrives that's taller than the top, the shorter values get
+              "knocked off" -- they've found the first thing taller than them.
+            </p>
+            <p>
+              Think of it like a line of dominoes of decreasing height. When a
+              new, taller domino appears, it knocks down all shorter ones. Each
+              falling domino records who knocked it down (its "next greater
+              element").
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- Next Greater Element</h3>
+          <div class="diagram-container" id="ms-anim-container">
+            <div class="diagram-title">
+              Next Greater Element: [2, 1, 5, 6, 2, 3]
+            </div>
+            <svg id="ms-svg" viewBox="0 0 700 350"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <ol>
+            <li>
+              <strong
+                >Initialize an empty stack and a result array filled with
+                -1.</strong
+              >
+              The stack will hold indices of elements whose "next greater"
+              hasn't been found yet.
+            </li>
+            <li><strong>Iterate through the array left to right.</strong></li>
+            <li>
+              <strong>For each new element:</strong> while the stack is
+              non-empty and the new element is greater than the element at the
+              stack's top index, <strong>pop</strong>. The popped element's
+              "next greater" is the current element. Record it in the result
+              array.
+            </li>
+            <li>
+              <strong>Push the current index onto the stack.</strong> This
+              element is now "waiting" for its next greater element.
+            </li>
+            <li>
+              <strong
+                >After iteration, remaining indices in the stack have no next
+                greater element</strong
+              >
+              (result stays -1).
+            </li>
+            <li>
+              <strong
+                >Key insight: each element is pushed exactly once and popped at
+                most once.</strong
+              >
+              So the total work is O(2n) = O(n), not O(n^2).
+            </li>
+          </ol>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">next_greater_element</span>(nums):
+    <span class="str">"""For each element, find the next greater element to its right."""</span>
+    n <span class="op">=</span> len(nums)
+    result <span class="op">=</span> [<span class="num">-1</span>] <span class="op">*</span> n
+    stack <span class="op">=</span> []  <span class="cm"># stores INDICES; values at those indices are decreasing</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="cm"># Current element is greater than stack top's element?</span>
+        <span class="cm"># Then stack top has found its next greater element!</span>
+        <span class="kw">while</span> stack <span class="kw">and</span> nums[stack[<span class="op">-</span><span class="num">1</span>]] <span class="op">&lt;</span> nums[i]:
+            idx <span class="op">=</span> stack.pop()
+            result[idx] <span class="op">=</span> nums[i]   <span class="cm"># i is the answer for idx</span>
+        stack.append(i)
+
+    <span class="kw">return</span> result
+    <span class="cm"># Example: [2,1,5,6,2,3] -> [5,5,6,-1,3,-1]</span>
+
+<span class="cm"># Largest Rectangle in Histogram</span>
+<span class="kw">def</span> <span class="fn">largest_rectangle</span>(heights):
+    stack <span class="op">=</span> []  <span class="cm"># increasing stack of indices</span>
+    max_area <span class="op">=</span> <span class="num">0</span>
+    heights.append(<span class="num">0</span>)  <span class="cm"># sentinel: force all remaining bars to be processed</span>
+
+    <span class="kw">for</span> i, h <span class="kw">in</span> enumerate(heights):
+        <span class="kw">while</span> stack <span class="kw">and</span> heights[stack[<span class="op">-</span><span class="num">1</span>]] <span class="op">&gt;</span> h:
+            height <span class="op">=</span> heights[stack.pop()]
+            <span class="cm"># Width extends from the bar after the new stack top to i-1</span>
+            width <span class="op">=</span> i <span class="kw">if not</span> stack <span class="kw">else</span> i <span class="op">-</span> stack[<span class="op">-</span><span class="num">1</span>] <span class="op">-</span> <span class="num">1</span>
+            max_area <span class="op">=</span> max(max_area, height <span class="op">*</span> width)
+        stack.append(i)
+
+    heights.pop()  <span class="cm"># remove sentinel</span>
+    <span class="kw">return</span> max_area</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">next greater element</span>
+            <span class="signal">next smaller element</span>
+            <span class="signal">daily temperatures</span>
+            <span class="signal">stock span</span>
+            <span class="signal">histogram rectangle</span>
+            <span class="signal">trapping rain water</span>
+            <span class="signal">remove K digits</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Confusing increasing vs decreasing stack:</strong> For
+                "next greater," use a <em>decreasing</em> stack (pop when new
+                element > top). For "next smaller," use an
+                <em>increasing</em> stack (pop when new element < top). The name
+                refers to the stack's order from bottom to top.
+              </li>
+              <li>
+                <strong>Forgetting the sentinel:</strong> In histogram problems,
+                append a 0 at the end to force all remaining bars to be
+                processed. Without it, bars still on the stack are never
+                evaluated.
+              </li>
+              <li>
+                <strong>Width calculation in histogram:</strong> When you pop,
+                the width is NOT <code>i - popped_index</code>. It's
+                <code>i - stack[-1] - 1</code> (distance to the next shorter bar
+                on the left), or <code>i</code> if the stack is empty (extends
+                all the way left).
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong
+                >Picture a line of dominoes standing on a table, each one
+                shorter than the previous.</strong
+              >
+              They form a nice staircase going down from left to right. Now a
+              new, tall domino arrives on the right. It knocks down every domino
+              shorter than itself -- each fallen domino records the tall one as
+              its "next greater." The tall domino takes its place in the line,
+              and the staircase property is maintained. That staircase IS the
+              monotonic stack.
+            </p>
+            <p>
+              Monotonic stack = a domino staircase where new arrivals knock down
+              everything shorter.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 6. UNION FIND                                                     -->
+          <!-- ================================================================= -->
+          <a id="union-find"></a>
+          <h2>6. Union Find (Disjoint Set)</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Union-Find"?</div>
+            <p>
+              Named after its two operations: Union (merge two groups) and Find
+              (which group is this in?). Also called "Disjoint Set Union (DSU)"
+              because it manages disjoint (non-overlapping) sets with union
+              operations.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              Dynamically group elements into sets and efficiently query whether
+              two elements are in the same group. Elements start separate, and
+              you incrementally merge groups as connections are discovered. "Are
+              nodes X and Y connected?" after adding edges one at a time.
+            </p>
+            <p>
+              <strong>Why can't BFS/DFS work?</strong> BFS/DFS can answer "are X
+              and Y connected?" by traversing the graph. But if you add edges
+              one at a time and ask the question after each addition, BFS/DFS
+              rebuilds from scratch each time -- O(V+E) per query. Union-Find
+              answers the same query in nearly O(1) amortized, and adding an
+              edge is also nearly O(1).
+            </p>
+            <p>
+              <strong>Without Union-Find:</strong> Kruskal's MST algorithm would
+              be O(E * V) instead of O(E * alpha(V)). Detecting if adding an
+              edge creates a cycle would require a full graph traversal each
+              time.
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Represent each group as a tree. Two elements are in the same
+                group if and only if they have the same root. Merging groups
+                means linking one root to another."</strong
+              >
+            </p>
+            <p>
+              With two optimizations (path compression + union by rank), every
+              operation is nearly O(1).
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Breadboard Wire Jumpers</div>
+            <p>
+              Imagine a breadboard with isolated pin groups. Each group of
+              connected pins is a "set." When you add a wire jumper between two
+              pin groups, the sets merge -- all pins in both groups are now
+              connected. To check if two pins are connected, trace the wires to
+              find which bus strip (root) each pin ultimately connects to. If
+              it's the same bus strip, they're connected.
+            </p>
+            <p>
+              Path compression is like replacing a chain of jumper wires with a
+              single direct wire to the bus strip. Union by rank is like always
+              connecting the smaller group's bus to the larger group's bus,
+              keeping the tree shallow.
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- Union-Find Operations</h3>
+          <div class="diagram-container" id="uf-anim-container">
+            <div class="diagram-title">
+              Union-Find: union(A,B), union(C,D), union(A,C), find(D) with path
+              compression
+            </div>
+            <svg id="uf-svg" viewBox="0 0 650 300"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <ol>
+            <li>
+              <strong>Initialize:</strong> Each element is its own root:
+              <code>parent[i] = i</code>. Every element is a one-node tree. Also
+              initialize rank (or size) to 0 (or 1).
+            </li>
+            <li>
+              <strong>Find(x) -- find the root of x's tree:</strong> Follow
+              parent pointers until you reach a node that is its own parent.
+              That's the root. <strong>Path compression:</strong> While
+              traversing, point every node directly to the root. This flattens
+              the tree so future finds are O(1).
+            </li>
+            <li>
+              <strong>Union(x, y) -- merge the sets containing x and y:</strong>
+              Find the roots of x and y. If they're the same root, x and y are
+              already connected -- return False. Otherwise, attach the shorter
+              tree under the taller one (<strong>union by rank</strong>). This
+              keeps trees balanced.
+            </li>
+            <li>
+              <strong
+                >Connected(x, y) -- check if x and y are in the same
+                set:</strong
+              >
+              Simply check if <code>find(x) == find(y)</code>.
+            </li>
+          </ol>
+
+          <h4>Why Two Optimizations?</h4>
+          <ul>
+            <li>
+              <strong>Without path compression:</strong> Trees can get tall,
+              making find O(n) worst case.
+            </li>
+            <li>
+              <strong>Without union by rank:</strong> Merging can create
+              degenerate chains (like a linked list).
+            </li>
+            <li>
+              <strong>With both:</strong> Amortized O(alpha(n)) per operation,
+              where alpha is the inverse Ackermann function -- effectively
+              constant (alpha(n) <= 4 for any practical n).
+            </li>
+          </ul>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="kw">class</span> <span class="ty">UnionFind</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n):
+        self.parent <span class="op">=</span> list(range(n))   <span class="cm"># each node is its own root</span>
+        self.rank <span class="op">=</span> [<span class="num">0</span>] <span class="op">*</span> n            <span class="cm"># tree height upper bound</span>
+        self.components <span class="op">=</span> n            <span class="cm"># number of disjoint sets</span>
+
+    <span class="kw">def</span> <span class="fn">find</span>(self, x):
+        <span class="cm"># Path compression: make every node point directly to root</span>
+        <span class="kw">if</span> self.parent[x] <span class="op">!=</span> x:
+            self.parent[x] <span class="op">=</span> self.find(self.parent[x])  <span class="cm"># recursive flatten</span>
+        <span class="kw">return</span> self.parent[x]
+
+    <span class="kw">def</span> <span class="fn">union</span>(self, x, y):
+        px, py <span class="op">=</span> self.find(x), self.find(y)
+        <span class="kw">if</span> px <span class="op">==</span> py:
+            <span class="kw">return</span> <span class="num">False</span>         <span class="cm"># already in same set</span>
+
+        <span class="cm"># Union by rank: attach shorter tree under taller tree</span>
+        <span class="kw">if</span> self.rank[px] <span class="op">&lt;</span> self.rank[py]:
+            px, py <span class="op">=</span> py, px      <span class="cm"># ensure px is the taller root</span>
+        self.parent[py] <span class="op">=</span> px      <span class="cm"># py becomes child of px</span>
+        <span class="kw">if</span> self.rank[px] <span class="op">==</span> self.rank[py]:
+            self.rank[px] <span class="op">+=</span> <span class="num">1</span>   <span class="cm"># only grows when equal height</span>
+        self.components <span class="op">-=</span> <span class="num">1</span>
+        <span class="kw">return</span> <span class="num">True</span>
+
+    <span class="kw">def</span> <span class="fn">connected</span>(self, x, y):
+        <span class="kw">return</span> self.find(x) <span class="op">==</span> self.find(y)</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">connected components</span>
+            <span class="signal">are X and Y connected?</span>
+            <span class="signal">merge groups</span>
+            <span class="signal">redundant connection</span>
+            <span class="signal">Kruskal's MST</span>
+            <span class="signal">accounts merge</span>
+            <span class="signal">cycle detection (undirected)</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Forgetting path compression:</strong> Without it, find
+                degrades to O(n) on tall chains.
+              </li>
+              <li>
+                <strong>Using both rank AND size:</strong> Pick one. Rank is an
+                upper bound on tree height; size is the actual count of nodes.
+                Mixing them corrupts the balancing.
+              </li>
+              <li>
+                <strong>String/object keys:</strong> When elements aren't
+                integers (e.g., email addresses), use a dict for the parent map
+                instead of a list.
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong>Picture a breadboard with 20 isolated pin strips.</strong>
+              You start wiring: connect pin A to pin B (union). Connect pin C to
+              pin D (union). Now connect pin A to pin C (union). The strips
+              merge into one connected group. When you need to check if pin D
+              connects to pin B, you trace each one's wires to its bus strip
+              (root). Same bus? Connected.
+            </p>
+            <p>
+              Path compression = replacing a chain of 5 jumper wires with one
+              direct wire to the bus. Union by rank = always connecting the
+              smaller strip to the larger bus, not the other way around.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 7. PREFIX SUM                                                     -->
+          <!-- ================================================================= -->
+          <a id="prefix-sum"></a>
+          <h2>7. Prefix Sum</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Prefix Sum"?</div>
+            <p>
+              "Prefix" = the beginning portion. prefix_sum[i] = sum of all
+              elements from index 0 to i (the prefix of the array up to position
+              i). Named because each entry represents the sum of a prefix of the
+              original array.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              Answering many range sum queries on an array. "What's the sum of
+              elements from index 2 to index 7?" With Q such queries on an array
+              of size n, brute force is O(Q*n). Prefix sum is O(n + Q) -- build
+              once in O(n), then answer each query in O(1).
+            </p>
+            <p>
+              <strong>Why can't simpler approaches work?</strong> A single range
+              sum query is already O(n). If you have Q queries, you'd repeat
+              that work Q times. Prefix sum precomputes all cumulative sums so
+              each query becomes a single subtraction.
+            </p>
+            <p>
+              <strong>Without prefix sum:</strong> "Count subarrays with sum K"
+              would be O(n^2) or worse. With prefix sum + hash map, it's O(n).
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Precompute cumulative sums so that any range sum is just one
+                subtraction: sum(i..j) = prefix[j+1] - prefix[i]."</strong
+              >
+            </p>
+            <p>
+              The sum of any window is the difference between two running
+              totals.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Voltage Integrator</div>
+            <p>
+              A running voltage integrator (op-amp with capacitor feedback)
+              accumulates the input signal over time. The output at time T is
+              the integral from 0 to T. To find the integral from time A to time
+              B, you subtract: <code>V(B) - V(A)</code>. You don't re-integrate
+              the segment -- you just read two values and subtract.
+            </p>
+            <p>
+              Prefix sum = discrete version of an integrator. Build the
+              cumulative sum once, answer any "integral over [A, B]" with one
+              subtraction.
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- Prefix Sum Build and Query</h3>
+          <div class="diagram-container" id="ps-anim-container">
+            <div class="diagram-title">
+              Prefix Sum: Array [1, 2, 3, 4, 5] -- Query sum(1..3)
+            </div>
+            <svg id="ps-svg" viewBox="0 0 650 280"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <ol>
+            <li>
+              <strong>Build the prefix array.</strong> Create an array of size
+              n+1. Set <code>prefix[0] = 0</code>. For each i from 0 to n-1:
+              <code>prefix[i+1] = prefix[i] + arr[i]</code>. This is O(n).
+            </li>
+            <li>
+              <strong>Answer a range query [L, R].</strong> The sum of arr[L..R]
+              (inclusive) = <code>prefix[R+1] - prefix[L]</code>. This is O(1)
+              -- just a subtraction.
+            </li>
+            <li>
+              <strong>Why prefix[0] = 0?</strong> It handles the edge case where
+              L=0. Without it, you'd need special-case logic for queries
+              starting at index 0.
+            </li>
+          </ol>
+
+          <h4>Advanced: Count Subarrays with Sum K</h4>
+          <ol>
+            <li>
+              Maintain a running prefix sum and a hash map of {prefix_sum:
+              count}.
+            </li>
+            <li>
+              At each position, if <code>prefix_sum - K</code> exists in the
+              map, those are subarrays ending here with sum K.
+            </li>
+            <li>
+              Initialize the map with <code>{0: 1}</code> to account for
+              subarrays starting at index 0.
+            </li>
+          </ol>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="cm"># Basic prefix sum: O(1) range queries</span>
+<span class="kw">def</span> <span class="fn">build_prefix_sum</span>(arr):
+    prefix <span class="op">=</span> [<span class="num">0</span>] <span class="op">*</span> (len(arr) <span class="op">+</span> <span class="num">1</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(arr)):
+        prefix[i <span class="op">+</span> <span class="num">1</span>] <span class="op">=</span> prefix[i] <span class="op">+</span> arr[i]
+    <span class="kw">return</span> prefix
+
+<span class="kw">def</span> <span class="fn">range_sum</span>(prefix, left, right):
+    <span class="str">"""Sum of arr[left..right] inclusive. O(1)."""</span>
+    <span class="kw">return</span> prefix[right <span class="op">+</span> <span class="num">1</span>] <span class="op">-</span> prefix[left]
+
+<span class="cm"># Advanced: count subarrays with sum exactly K</span>
+<span class="kw">def</span> <span class="fn">subarray_sum_k</span>(nums, k):
+    count <span class="op">=</span> <span class="num">0</span>
+    prefix_sum <span class="op">=</span> <span class="num">0</span>
+    seen <span class="op">=</span> {<span class="num">0</span>: <span class="num">1</span>}   <span class="cm"># critical: empty prefix sum = 0 occurs once</span>
+
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        prefix_sum <span class="op">+=</span> num
+        <span class="cm"># How many previous prefix sums equal (current - K)?</span>
+        <span class="cm"># Each one marks the start of a subarray summing to K</span>
+        count <span class="op">+=</span> seen.get(prefix_sum <span class="op">-</span> k, <span class="num">0</span>)
+        seen[prefix_sum] <span class="op">=</span> seen.get(prefix_sum, <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span>
+
+    <span class="kw">return</span> count</code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">subarray sum</span>
+            <span class="signal">range sum query</span>
+            <span class="signal">cumulative</span>
+            <span class="signal">subarrays equal to K</span>
+            <span class="signal">divisible by K</span>
+            <span class="signal">contiguous array</span>
+            <span class="signal">product except self</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Off-by-one:</strong> The prefix array has n+1 elements.
+                <code>prefix[0] = 0</code>, and the sum of arr[L..R] is
+                <code>prefix[R+1] - prefix[L]</code>, NOT
+                <code>prefix[R] - prefix[L]</code>.
+              </li>
+              <li>
+                <strong>Forgetting {0: 1} initialization:</strong> When counting
+                subarrays with sum K, the empty prefix (sum=0) must be in the
+                map with count 1. Without it, you miss subarrays that start at
+                index 0.
+              </li>
+              <li>
+                <strong>Applying to products:</strong> Prefix sum doesn't
+                directly work for products (zero ruins everything). Use prefix
+                product with special handling for zeros, or use logarithms.
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong
+                >Picture a digital multimeter measuring charge on a capacitor
+                bank.</strong
+              >
+              Each capacitor in the row adds its charge to the running total.
+              The meter reading at position 5 is the total charge from
+              capacitors 0-4. To find the charge from capacitors 2-4, subtract
+              the reading at position 2 from the reading at position 5. One
+              subtraction instead of summing three values.
+            </p>
+            <p>
+              Prefix sum = capacitor bank integrator. Read two points, subtract,
+              done.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ================================================================= -->
+          <!-- 8. DIJKSTRA'S SHORTEST PATH                                       -->
+          <!-- ================================================================= -->
+          <a id="dijkstra"></a>
+          <h2>8. Dijkstra's Shortest Path</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Dijkstra's Shortest Path"?</div>
+            <p>
+              Named after Edsger Dijkstra, Dutch computer scientist. He invented
+              it in ~20 minutes at a caf&eacute; in Amsterdam (1956), published
+              1959. Pronounced "DIKE-struh." The algorithm finds the shortest
+              path from a source to all other nodes using a greedy,
+              priority-queue approach.
+            </p>
+          </div>
+
+          <!-- A. The Problem This Solves -->
+          <div class="callout callout-info">
+            <div class="callout-title">A. The Problem This Solves</div>
+            <p>
+              Finding the shortest path from a source node to all other nodes in
+              a weighted graph where all edge weights are non-negative. This is
+              the foundation of routing algorithms, navigation systems, and
+              network optimization.
+            </p>
+            <p>
+              <strong>Why can't BFS work?</strong> BFS finds shortest paths in
+              unweighted graphs (fewest edges). But with different edge weights,
+              the path with fewest edges might not have the lowest total weight.
+              Dijkstra accounts for weights.
+            </p>
+            <p>
+              <strong>Why not Bellman-Ford?</strong> Bellman-Ford handles
+              negative weights but runs in O(V*E). Dijkstra is O((V+E) log V) --
+              much faster for large graphs. The tradeoff: Dijkstra only works
+              with non-negative weights.
+            </p>
+          </div>
+
+          <!-- B. The Core Insight -->
+          <div class="callout callout-success">
+            <div class="callout-title">B. The Core Insight</div>
+            <p>
+              <strong
+                >"Greedily process the closest unvisited node. Once a node is
+                processed, its shortest distance is final -- no future path
+                through unvisited nodes can be shorter (because all remaining
+                edges are non-negative)."</strong
+              >
+            </p>
+            <p>
+              This greedy property only holds because edge weights are >= 0. One
+              negative edge could create a shorter path through an unvisited
+              node, breaking the invariant.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Static Timing Analysis</div>
+            <p>
+              In digital circuit design, static timing analysis (STA) computes
+              the arrival time of signals at every gate. Each wire has a
+              propagation delay (weight). The signal leaves the clock (source)
+              and propagates outward. Each gate "latches" its arrival time when
+              the signal first reaches it through the shortest delay path.
+            </p>
+            <p>
+              Dijkstra works the same way: the signal (shortest distance)
+              propagates outward from the source. Nearby nodes get their final
+              distance first, then the wavefront expands. Each node locks its
+              distance when processed -- just like a gate's setup time is
+              determined by the critical path.
+            </p>
+          </div>
+
+          <!-- C. Visual Explanation -->
+          <h3>C. Visual Explanation -- Dijkstra from Node A</h3>
+          <div class="diagram-container" id="dijk-anim-container">
+            <div class="diagram-title">
+              Dijkstra's Algorithm: Weighted Graph Shortest Paths
+            </div>
+            <svg id="dijk-svg" viewBox="0 0 650 380"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- D. How It Works -->
+          <h3>D. How It Works -- Step by Step</h3>
+          <ol>
+            <li>
+              <strong>Initialize distances:</strong>
+              <code>dist[source] = 0</code>, all others = infinity. Push
+              <code>(0, source)</code> to the min-heap.
+            </li>
+            <li>
+              <strong>Pop the minimum-distance node from the heap.</strong> This
+              is the closest unfinished node.
+            </li>
+            <li>
+              <strong>Check for staleness:</strong> If the popped distance is
+              greater than the recorded <code>dist[node]</code>, skip it -- we
+              already found a shorter path (lazy deletion).
+            </li>
+            <li>
+              <strong>Relax edges:</strong> For each neighbor, compute
+              <code>new_dist = dist[node] + weight</code>. If
+              <code>new_dist < dist[neighbor]</code>, update
+              <code>dist[neighbor]</code> and push
+              <code>(new_dist, neighbor)</code> to the heap.
+            </li>
+            <li>
+              <strong
+                >Repeat until the heap is empty or the target is found.</strong
+              >
+            </li>
+          </ol>
+
+          <h4>Why "Lazy Deletion"?</h4>
+          <p>
+            When we find a shorter path to a node, we push a new entry to the
+            heap but don't remove the old one (that would be O(n) in a binary
+            heap). Instead, when we pop a stale entry, we just skip it. This is
+            correct because the first time we pop a node, it's guaranteed to
+            have the shortest distance.
+          </p>
+
+          <!-- E. The Code -->
+          <h3>E. The Code</h3>
+          <pre><code><span class="kw">import</span> <span class="var">heapq</span>
+<span class="kw">from</span> <span class="var">collections</span> <span class="kw">import</span> <span class="var">defaultdict</span>
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graph, source):
+    <span class="str">"""Shortest path from source to all nodes.
+    graph: {node: [(neighbor, weight), ...]}
+    Returns: {node: shortest_distance}"""</span>
+
+    dist <span class="op">=</span> defaultdict(<span class="kw">lambda</span>: float(<span class="str">'inf'</span>))
+    dist[source] <span class="op">=</span> <span class="num">0</span>
+    heap <span class="op">=</span> [(<span class="num">0</span>, source)]    <span class="cm"># (distance, node)</span>
+
+    <span class="kw">while</span> heap:
+        d, node <span class="op">=</span> heapq.heappop(heap)
+
+        <span class="cm"># Stale entry? We already found a shorter path.</span>
+        <span class="kw">if</span> d <span class="op">&gt;</span> dist[node]:
+            <span class="kw">continue</span>
+
+        <span class="cm"># Relax all edges from this node</span>
+        <span class="kw">for</span> neighbor, weight <span class="kw">in</span> graph[node]:
+            new_dist <span class="op">=</span> d <span class="op">+</span> weight
+            <span class="kw">if</span> new_dist <span class="op">&lt;</span> dist[neighbor]:
+                dist[neighbor] <span class="op">=</span> new_dist
+                heapq.heappush(heap, (new_dist, neighbor))
+
+    <span class="kw">return</span> dict(dist)
+
+<span class="cm"># Example usage:</span>
+<span class="cm"># graph = {</span>
+<span class="cm">#     'A': [('B', 4), ('C', 1)],</span>
+<span class="cm">#     'B': [('D', 5)],</span>
+<span class="cm">#     'C': [('B', 2), ('D', 8), ('E', 3)],</span>
+<span class="cm">#     'E': [('D', 2)]</span>
+<span class="cm"># }</span>
+<span class="cm"># dijkstra(graph, 'A')  -> {'A': 0, 'C': 1, 'B': 3, 'E': 4, 'D': 6}</span></code></pre>
+
+          <!-- F. When to Reach for This -->
+          <h3>F. When to Reach for This</h3>
+          <div class="signals">
+            <span class="signal">shortest path (weighted)</span>
+            <span class="signal">minimum cost path</span>
+            <span class="signal">network delay time</span>
+            <span class="signal">cheapest flights</span>
+            <span class="signal">non-negative weights</span>
+            <span class="signal">minimum effort path</span>
+          </div>
+
+          <!-- G. Common Mistakes -->
+          <div class="callout callout-warning">
+            <div class="callout-title">G. Common Mistakes</div>
+            <ul>
+              <li>
+                <strong>Using with negative edges:</strong> Dijkstra does NOT
+                work with negative edge weights. The greedy "finalize closest
+                node" invariant breaks. Use Bellman-Ford instead.
+              </li>
+              <li>
+                <strong>Forgetting lazy deletion:</strong> If you don't skip
+                stale heap entries (<code>if d > dist[node]: continue</code>),
+                you process nodes multiple times and get wrong answers or TLE.
+              </li>
+              <li>
+                <strong>Confusing with BFS:</strong> BFS uses a regular queue
+                and gives shortest path by EDGE COUNT. Dijkstra uses a priority
+                queue (heap) and gives shortest path by WEIGHT SUM.
+              </li>
+              <li>
+                <strong>Not connecting to the heap pattern:</strong> Dijkstra's
+                efficiency comes entirely from the min-heap. Without it, you'd
+                scan all nodes to find the closest one -- O(V^2) total instead
+                of O((V+E) log V).
+              </li>
+            </ul>
+          </div>
+
+          <!-- H. Memory Palace Anchor -->
+          <div class="callout callout-ee">
+            <div class="callout-title">H. Memory Palace Anchor</div>
+            <p>
+              <strong
+                >Picture the timing analysis view in a digital design
+                tool.</strong
+              >
+              The clock edge launches from the flip-flop (source, distance 0).
+              The signal propagates through combinational logic -- each gate
+              adds its propagation delay. The tool shows arrival times at each
+              node. Closer nodes lock their arrival times first, and the
+              wavefront expands outward. A node's arrival time never decreases
+              once set (because no gate has negative delay).
+            </p>
+            <p>
+              Dijkstra = static timing analysis. Source = clock. Edge weight =
+              gate delay. Distance = arrival time. Non-negative weights = no
+              negative gate delays.
+            </p>
+          </div>
+
+          <!-- ===== END OF CONTENT ===== -->
+          <hr />
+
+          <div class="callout callout-success">
+            <div class="callout-title">What Next?</div>
+            <p>
+              These 8 patterns cover the hardest territory in algorithm
+              interviews. The path forward:
+            </p>
+            <ol>
+              <li>
+                Re-read the "Core Insight" and "EE Analogy" for each pattern
+                until you can recite them from memory.
+              </li>
+              <li>
+                Step through each animation until the mechanism feels intuitive.
+              </li>
+              <li>
+                Solve 2-3 canonical problems per pattern (see the
+                <a href="patterns.html">Pattern Catalog</a>).
+              </li>
+              <li>
+                Use the <a href="decision_tree.html">Decision Tree</a> to
+                practice recognizing which pattern to apply.
+              </li>
+            </ol>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+      // =========================================================================
+      // ANIMATION SCRIPTS
+      // =========================================================================
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // =====================================================================
+        // 1. TOPOLOGICAL SORT ANIMATION (Kahn's Algorithm)
+        // =====================================================================
+        (function () {
+          const svg = document.getElementById("topo-svg");
+          if (!svg) return;
+
+          // DAG: A->C, B->C, B->D, C->E, D->E, E->F
+          // Node positions
+          const nodes = [
+            { label: "A", x: 100, y: 60 }, // 0
+            { label: "B", x: 100, y: 200 }, // 1
+            { label: "C", x: 260, y: 100 }, // 2
+            { label: "D", x: 260, y: 220 }, // 3
+            { label: "E", x: 420, y: 160 }, // 4
+            { label: "F", x: 560, y: 160 }, // 5
+          ];
+          const edges = [
+            { from: 0, to: 2 }, // A->C
+            { from: 1, to: 2 }, // B->C
+            { from: 1, to: 3 }, // B->D
+            { from: 2, to: 4 }, // C->E
+            { from: 3, to: 4 }, // D->E
+            { from: 4, to: 5 }, // E->F
+          ];
+
+          buildGraphSVG("topo-svg", nodes, edges, {
+            width: 620,
+            height: 290,
+            nodeRadius: 24,
+            directed: true,
+          });
+
+          // Add in-degree labels
+          const inDegLabels = [0, 0, 2, 1, 2, 1];
+          nodes.forEach(function (n, i) {
+            var t = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "text",
+            );
+            t.setAttribute("id", "topo-indeg-" + i);
+            t.setAttribute("x", n.x);
+            t.setAttribute("y", n.y + 38);
+            t.setAttribute("class", "label-small");
+            t.textContent = "in:" + inDegLabels[i];
+            svg.appendChild(t);
+          });
+
+          // Add result display
+          var rt = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text",
+          );
+          rt.setAttribute("id", "topo-result");
+          rt.setAttribute("x", 310);
+          rt.setAttribute("y", 278);
+          rt.setAttribute("class", "label-value");
+          rt.textContent = "Order: [ ]";
+          svg.appendChild(rt);
+
+          var inDegs = inDegLabels.slice();
+          var order = [];
+
+          function resetTopo() {
+            inDegs = [0, 0, 2, 1, 2, 1];
+            order = [];
+            for (var i = 0; i < 6; i++) {
+              setClass("topo-svg-node-" + i, "node-fill node-stroke");
+              setText("topo-indeg-" + i, "in:" + inDegs[i]);
+            }
+            for (var i = 0; i < 6; i++) {
+              setClass("topo-svg-edge-" + i, "edge");
+            }
+            setText("topo-result", "Order: [ ]");
+          }
+
+          // Edge map: edge index -> {from, to}
+          // 0:A->C, 1:B->C, 2:B->D, 3:C->E, 4:D->E, 5:E->F
+
+          var topoSteps = [
+            {
+              description:
+                "Initial state. Compute in-degrees: A=0, B=0, C=2, D=1, E=2, F=1. Queue nodes with in-degree 0: {A, B}.",
+              apply: function () {
+                setClass("topo-svg-node-0", "node-fill node-current"); // A
+                setClass("topo-svg-node-1", "node-fill node-current"); // B
+              },
+            },
+            {
+              description:
+                "Process A (in-degree 0). Add A to order. Decrement in-degree of C (2->1). Remove edge A->C.",
+              apply: function () {
+                setClass("topo-svg-node-0", "node-fill node-visited"); // A done
+                setClass("topo-svg-edge-0", "edge-active"); // A->C active
+                inDegs[2] = 1;
+                setText("topo-indeg-2", "in:1");
+                order.push("A");
+                setText("topo-result", "Order: [" + order.join(", ") + "]");
+              },
+            },
+            {
+              description:
+                "Process B (in-degree 0). Add B to order. Decrement C (1->0) and D (1->0). Both become ready!",
+              apply: function () {
+                setClass("topo-svg-node-1", "node-fill node-visited"); // B done
+                setClass("topo-svg-edge-1", "edge-active"); // B->C
+                setClass("topo-svg-edge-2", "edge-active"); // B->D
+                inDegs[2] = 0;
+                inDegs[3] = 0;
+                setText("topo-indeg-2", "in:0");
+                setText("topo-indeg-3", "in:0");
+                setClass("topo-svg-node-2", "node-fill node-current"); // C ready
+                setClass("topo-svg-node-3", "node-fill node-current"); // D ready
+                order.push("B");
+                setText("topo-result", "Order: [" + order.join(", ") + "]");
+              },
+            },
+            {
+              description:
+                "Process C (in-degree 0). Add C to order. Decrement E (2->1). Edge C->E removed.",
+              apply: function () {
+                setClass("topo-svg-node-2", "node-fill node-visited");
+                setClass("topo-svg-edge-3", "edge-active"); // C->E
+                inDegs[4] = 1;
+                setText("topo-indeg-4", "in:1");
+                order.push("C");
+                setText("topo-result", "Order: [" + order.join(", ") + "]");
+              },
+            },
+            {
+              description:
+                "Process D (in-degree 0). Add D to order. Decrement E (1->0). E becomes ready!",
+              apply: function () {
+                setClass("topo-svg-node-3", "node-fill node-visited");
+                setClass("topo-svg-edge-4", "edge-active"); // D->E
+                inDegs[4] = 0;
+                setText("topo-indeg-4", "in:0");
+                setClass("topo-svg-node-4", "node-fill node-current"); // E ready
+                order.push("D");
+                setText("topo-result", "Order: [" + order.join(", ") + "]");
+              },
+            },
+            {
+              description:
+                "Process E (in-degree 0). Add E to order. Decrement F (1->0). F becomes ready!",
+              apply: function () {
+                setClass("topo-svg-node-4", "node-fill node-visited");
+                setClass("topo-svg-edge-5", "edge-active"); // E->F
+                inDegs[5] = 0;
+                setText("topo-indeg-5", "in:0");
+                setClass("topo-svg-node-5", "node-fill node-current");
+                order.push("E");
+                setText("topo-result", "Order: [" + order.join(", ") + "]");
+              },
+            },
+            {
+              description:
+                "Process F (in-degree 0). Add F to order. All 6 nodes processed -- no cycle! Final order: [A, B, C, D, E, F].",
+              apply: function () {
+                setClass("topo-svg-node-5", "node-fill node-visited");
+                order.push("F");
+                setText("topo-result", "Order: [" + order.join(", ") + "]");
+              },
+            },
+          ];
+
+          new AlgoAnimation("topo-anim-container", topoSteps, {
+            speed: 1200,
+            onReset: resetTopo,
+          });
+        })();
+
+        // =====================================================================
+        // 2. DP FIBONACCI ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("dp-fib-svg");
+          if (!svg) return;
+
+          svg.setAttribute("viewBox", "0 0 700 340");
+          // Left side: recursive call tree (simplified). Right side: table fill.
+          var html = "";
+
+          // Left label
+          html +=
+            '<text x="170" y="25" class="label-small" style="font-weight:600">Top-Down (Recursive)</text>';
+          // Right label
+          html +=
+            '<text x="520" y="25" class="label-small" style="font-weight:600">Bottom-Up (Table)</text>';
+
+          // Dividing line
+          html +=
+            '<line x1="370" y1="30" x2="370" y2="320" stroke="#30363d" stroke-width="1" stroke-dasharray="5,5"/>';
+
+          // Recursive tree for fib(5): simplified
+          // fib(5) -> fib(4), fib(3)
+          // fib(4) -> fib(3), fib(2)
+          // fib(3) -> fib(2), fib(1)
+          var treeNodes = [
+            { x: 180, y: 60, label: "f(5)", id: "td0" },
+            { x: 110, y: 130, label: "f(4)", id: "td1" },
+            { x: 250, y: 130, label: "f(3)", id: "td2" },
+            { x: 65, y: 200, label: "f(3)", id: "td3" },
+            { x: 155, y: 200, label: "f(2)", id: "td4" },
+            { x: 210, y: 200, label: "f(2)", id: "td5" },
+            { x: 290, y: 200, label: "f(1)", id: "td6" },
+            { x: 30, y: 265, label: "f(2)", id: "td7" },
+            { x: 100, y: 265, label: "f(1)", id: "td8" },
+          ];
+          // Edges
+          var treeEdges = [
+            [0, 1],
+            [0, 2],
+            [1, 3],
+            [1, 4],
+            [2, 5],
+            [2, 6],
+            [3, 7],
+            [3, 8],
+          ];
+          treeEdges.forEach(function (e, i) {
+            var f = treeNodes[e[0]],
+              t = treeNodes[e[1]];
+            html +=
+              '<line id="td-edge-' +
+              i +
+              '" class="edge" x1="' +
+              f.x +
+              '" y1="' +
+              (f.y + 14) +
+              '" x2="' +
+              t.x +
+              '" y2="' +
+              (t.y - 14) +
+              '"/>';
+          });
+          treeNodes.forEach(function (n) {
+            html +=
+              '<circle id="' +
+              n.id +
+              '" class="node-fill node-stroke" cx="' +
+              n.x +
+              '" cy="' +
+              n.y +
+              '" r="18"/>';
+            html +=
+              '<text id="' +
+              n.id +
+              '-t" class="label-small" x="' +
+              n.x +
+              '" y="' +
+              n.y +
+              '" style="font-size:11px">' +
+              n.label +
+              "</text>";
+          });
+
+          // Redundancy markers (will be shown later)
+          html +=
+            '<text id="td-dup1" x="250" y="155" style="fill:#f85149;font-size:11px;font-weight:700;display:none" text-anchor="middle">DUP</text>';
+          html +=
+            '<text id="td-dup2" x="210" y="225" style="fill:#f85149;font-size:11px;font-weight:700;display:none" text-anchor="middle">DUP</text>';
+          html +=
+            '<text id="td-dup3" x="30" y="290" style="fill:#f85149;font-size:11px;font-weight:700;display:none" text-anchor="middle">DUP</text>';
+
+          // Bottom-up table: dp[0]=0, dp[1]=1, dp[2]=1, dp[3]=2, dp[4]=3, dp[5]=5
+          var vals = ["0", "1", "?", "?", "?", "?"];
+          var cellW = 44,
+            gap = 4,
+            startX = 405,
+            startY = 130;
+          for (var i = 0; i < 6; i++) {
+            var cx = startX + i * (cellW + gap);
+            html +=
+              '<rect id="bu-cell-' +
+              i +
+              '" class="array-cell" x="' +
+              cx +
+              '" y="' +
+              startY +
+              '" width="' +
+              cellW +
+              '" height="' +
+              cellW +
+              '" rx="4"/>';
+            html +=
+              '<text id="bu-val-' +
+              i +
+              '" class="array-value" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (startY + cellW / 2) +
+              '">' +
+              vals[i] +
+              "</text>";
+            html +=
+              '<text class="array-index" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (startY - 8) +
+              '">dp[' +
+              i +
+              "]</text>";
+          }
+
+          // Arrow annotation area
+          html += '<g id="bu-arrows"></g>';
+
+          // Result text
+          html +=
+            '<text id="bu-result" x="520" y="240" class="label-value" style="display:none"></text>';
+
+          svg.innerHTML = html;
+
+          function resetDPFib() {
+            treeNodes.forEach(function (n) {
+              setClass(n.id, "node-fill node-stroke");
+            });
+            for (var i = 0; i < 6; i++) {
+              setClass("bu-cell-" + i, "array-cell");
+              setText("bu-val-" + i, i < 2 ? "" + i : "?");
+            }
+            hideEl("td-dup1");
+            hideEl("td-dup2");
+            hideEl("td-dup3");
+            hideEl("bu-result");
+            var arrowG = document.getElementById("bu-arrows");
+            if (arrowG) arrowG.innerHTML = "";
+          }
+
+          var fibSteps = [
+            {
+              description:
+                "Top-down starts at fib(5) and recurses down. It computes fib(3) TWICE (red DUP), fib(2) THREE times. Memoization caches results to avoid recomputation.",
+              apply: function () {
+                setClass("td0", "node-fill node-current");
+                treeNodes.forEach(function (n) {
+                  setClass(n.id, "node-fill node-active");
+                });
+                showEl("td-dup1");
+                showEl("td-dup2");
+                showEl("td-dup3");
+              },
+            },
+            {
+              description:
+                "Bottom-up starts from the base cases: dp[0]=0, dp[1]=1. These are the known inputs.",
+              apply: function () {
+                setClass("bu-cell-0", "array-cell-active");
+                setClass("bu-cell-1", "array-cell-active");
+              },
+            },
+            {
+              description:
+                "Compute dp[2] = dp[1] + dp[0] = 1 + 0 = 1. Fill left to right.",
+              apply: function () {
+                setClass("bu-cell-0", "array-cell-window");
+                setClass("bu-cell-1", "array-cell-window");
+                setClass("bu-cell-2", "array-cell-active");
+                setText("bu-val-2", "1");
+              },
+            },
+            {
+              description: "Compute dp[3] = dp[2] + dp[1] = 1 + 1 = 2.",
+              apply: function () {
+                setClass("bu-cell-0", "array-cell");
+                setClass("bu-cell-1", "array-cell-window");
+                setClass("bu-cell-2", "array-cell-window");
+                setClass("bu-cell-3", "array-cell-active");
+                setText("bu-val-3", "2");
+              },
+            },
+            {
+              description: "Compute dp[4] = dp[3] + dp[2] = 2 + 1 = 3.",
+              apply: function () {
+                setClass("bu-cell-1", "array-cell");
+                setClass("bu-cell-2", "array-cell-window");
+                setClass("bu-cell-3", "array-cell-window");
+                setClass("bu-cell-4", "array-cell-active");
+                setText("bu-val-4", "3");
+              },
+            },
+            {
+              description:
+                "Compute dp[5] = dp[4] + dp[3] = 3 + 2 = 5. Answer: fib(5) = 5. Same result, no recursion, no stack overflow risk.",
+              apply: function () {
+                setClass("bu-cell-2", "array-cell");
+                setClass("bu-cell-3", "array-cell-window");
+                setClass("bu-cell-4", "array-cell-window");
+                setClass("bu-cell-5", "array-cell-result");
+                setText("bu-val-5", "5");
+                showEl("bu-result");
+                setText("bu-result", "fib(5) = 5");
+              },
+            },
+          ];
+
+          new AlgoAnimation("dp-fib-container", fibSteps, {
+            speed: 1200,
+            onReset: resetDPFib,
+          });
+        })();
+
+        // =====================================================================
+        // 2b. DP LCS ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("dp-lcs-svg");
+          if (!svg) return;
+
+          // LCS of "ABCB" (rows) vs "BDCB" (cols)
+          // Grid: 5 rows x 5 cols (including empty prefix)
+          var t1 = ["", "A", "B", "C", "B"];
+          var t2 = ["", "B", "D", "C", "B"];
+          var cellW = 50,
+            cellH = 40,
+            startX = 80,
+            startY = 60;
+
+          var html = "";
+          // Column headers
+          for (var j = 0; j < 5; j++) {
+            html +=
+              '<text x="' +
+              (startX + j * cellW + cellW / 2) +
+              '" y="' +
+              (startY - 15) +
+              '" class="label-small" style="font-weight:600">' +
+              (t2[j] || "-") +
+              "</text>";
+          }
+          // Row headers
+          for (var i = 0; i < 5; i++) {
+            html +=
+              '<text x="' +
+              (startX - 20) +
+              '" y="' +
+              (startY + i * cellH + cellH / 2) +
+              '" class="label-small" style="font-weight:600">' +
+              (t1[i] || "-") +
+              "</text>";
+          }
+
+          // Cells
+          // The actual LCS table for ABCB vs BDCB:
+          //     ""  B  D  C  B
+          // ""   0  0  0  0  0
+          //  A   0  0  0  0  0
+          //  B   0  1  1  1  1
+          //  C   0  1  1  2  2
+          //  B   0  1  1  2  3
+          var lcsVals = [
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 1],
+            [0, 1, 1, 2, 2],
+            [0, 1, 1, 2, 3],
+          ];
+
+          for (var i = 0; i < 5; i++) {
+            for (var j = 0; j < 5; j++) {
+              var cx = startX + j * cellW;
+              var cy = startY + i * cellH;
+              html +=
+                '<rect id="lcs-cell-' +
+                i +
+                "-" +
+                j +
+                '" class="array-cell" x="' +
+                cx +
+                '" y="' +
+                cy +
+                '" width="' +
+                cellW +
+                '" height="' +
+                cellH +
+                '" rx="3"/>';
+              var initVal = i === 0 || j === 0 ? "0" : "";
+              html +=
+                '<text id="lcs-val-' +
+                i +
+                "-" +
+                j +
+                '" class="array-value" x="' +
+                (cx + cellW / 2) +
+                '" y="' +
+                (cy + cellH / 2) +
+                '">' +
+                initVal +
+                "</text>";
+            }
+          }
+
+          // Result
+          html +=
+            '<text id="lcs-result" x="230" y="' +
+            (startY + 5 * cellH + 30) +
+            '" class="label-value" style="display:none"></text>';
+
+          svg.innerHTML = html;
+
+          // Precompute fill order (row by row, col by col, skipping first row/col)
+          var fillSteps = [];
+          var stepData = [
+            // We'll group cells into meaningful steps
+            {
+              cells: [
+                [1, 1],
+                [1, 2],
+                [1, 3],
+                [1, 4],
+              ],
+              desc: 'Row "A": A != B, A != D, A != C, A != B. All 0 (max of up, left).',
+            },
+            {
+              cells: [[2, 1]],
+              desc: 'Row "B": B == B! dp[2][1] = dp[1][0] + 1 = 0 + 1 = 1. Characters match: take diagonal + 1.',
+            },
+            {
+              cells: [
+                [2, 2],
+                [2, 3],
+                [2, 4],
+              ],
+              desc: "B != D -> max(1,0)=1. B != C -> max(1,1)=1. B == B -> dp[1][3]+1=0+1=1. But max(up=0+1, left=1) already 1, so stays 1.",
+            },
+            {
+              cells: [
+                [3, 1],
+                [3, 2],
+              ],
+              desc: 'Row "C": C != B -> max(1,0)=1. C != D -> max(1,1)=1.',
+            },
+            {
+              cells: [[3, 3]],
+              desc: "C == C! dp[3][3] = dp[2][2] + 1 = 1 + 1 = 2. Match found: extend the subsequence.",
+            },
+            { cells: [[3, 4]], desc: "C != B -> max(up=1, left=2) = 2." },
+            {
+              cells: [[4, 1]],
+              desc: 'Row "B": B == B! dp[4][1] = dp[3][0] + 1 = 0 + 1 = 1.',
+            },
+            {
+              cells: [
+                [4, 2],
+                [4, 3],
+              ],
+              desc: "B != D -> max(1,1)=1. B != C -> max(2,1)=2.",
+            },
+            {
+              cells: [[4, 4]],
+              desc: 'B == B! dp[4][4] = dp[3][3] + 1 = 2 + 1 = 3. LCS length = 3! The subsequence is "BCB".',
+            },
+          ];
+
+          function resetLCS() {
+            for (var i = 0; i < 5; i++) {
+              for (var j = 0; j < 5; j++) {
+                setClass("lcs-cell-" + i + "-" + j, "array-cell");
+                var initVal = i === 0 || j === 0 ? "0" : "";
+                setText("lcs-val-" + i + "-" + j, initVal);
+              }
+            }
+            hideEl("lcs-result");
+          }
+
+          var lcsSteps = stepData.map(function (step, si) {
+            return {
+              description: step.desc,
+              apply: function () {
+                // Reset previous active/highlight
+                for (var i = 0; i < 5; i++) {
+                  for (var j = 0; j < 5; j++) {
+                    var cur = document.getElementById(
+                      "lcs-cell-" + i + "-" + j,
+                    );
+                    if (
+                      cur &&
+                      cur.getAttribute("class") === "array-cell-active"
+                    ) {
+                      setClass("lcs-cell-" + i + "-" + j, "array-cell-window");
+                    }
+                  }
+                }
+                step.cells.forEach(function (c) {
+                  var i = c[0],
+                    j = c[1];
+                  setText("lcs-val-" + i + "-" + j, "" + lcsVals[i][j]);
+                  // Highlight match cells differently
+                  if (t1[i] === t2[j] && t1[i] !== "") {
+                    setClass("lcs-cell-" + i + "-" + j, "array-cell-result");
+                  } else {
+                    setClass("lcs-cell-" + i + "-" + j, "array-cell-active");
+                  }
+                });
+                if (si === stepData.length - 1) {
+                  showEl("lcs-result");
+                  setText("lcs-result", 'LCS("ABCB","BDCB") = 3 ("BCB")');
+                }
+              },
+            };
+          });
+
+          new AlgoAnimation("dp-lcs-container", lcsSteps, {
+            speed: 1400,
+            onReset: resetLCS,
+          });
+        })();
+
+        // =====================================================================
+        // 3. BACKTRACKING ANIMATION (4-Queens)
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("bt-svg");
+          if (!svg) return;
+
+          svg.setAttribute("viewBox", "0 0 700 350");
+          var html = "";
+          var bsz = 40,
+            bx = 30,
+            by = 30;
+
+          // Draw 4x4 board
+          for (var r = 0; r < 4; r++) {
+            for (var c = 0; c < 4; c++) {
+              var dark = (r + c) % 2 === 1;
+              var fill = dark ? "#21262d" : "#161b22";
+              html +=
+                '<rect id="bq-cell-' +
+                r +
+                "-" +
+                c +
+                '" x="' +
+                (bx + c * bsz) +
+                '" y="' +
+                (by + r * bsz) +
+                '" width="' +
+                bsz +
+                '" height="' +
+                bsz +
+                '" fill="' +
+                fill +
+                '" stroke="#484f58" stroke-width="1"/>';
+              html +=
+                '<text id="bq-q-' +
+                r +
+                "-" +
+                c +
+                '" x="' +
+                (bx + c * bsz + bsz / 2) +
+                '" y="' +
+                (by + r * bsz + bsz / 2 + 2) +
+                '" text-anchor="middle" dominant-baseline="central" font-size="22" fill="#58a6ff" style="display:none">Q</text>';
+            }
+          }
+
+          // Board labels
+          html +=
+            '<text x="' +
+            (bx + 2 * bsz) +
+            '" y="' +
+            (by - 10) +
+            '" class="label-small" style="font-weight:600">4x4 Board</text>';
+
+          // Decision log on the right
+          html +=
+            '<text x="240" y="50" class="label-small" style="font-weight:600">Backtracking Trace</text>';
+          for (var i = 0; i < 8; i++) {
+            html +=
+              '<text id="bq-log-' +
+              i +
+              '" x="240" y="' +
+              (75 + i * 30) +
+              '" style="fill:#8b949e;font-size:12px;font-family:\'JetBrains Mono\',monospace;display:none"></text>';
+          }
+
+          svg.innerHTML = html;
+
+          var logIdx = 0;
+          function addLog(text, color) {
+            var el = document.getElementById("bq-log-" + logIdx);
+            if (el) {
+              el.textContent = text;
+              el.style.fill = color || "#8b949e";
+              el.style.display = "";
+            }
+            logIdx++;
+          }
+          function clearBoard() {
+            for (var r = 0; r < 4; r++)
+              for (var c = 0; c < 4; c++) {
+                hideEl("bq-q-" + r + "-" + c);
+                var dark = (r + c) % 2 === 1;
+                document
+                  .getElementById("bq-cell-" + r + "-" + c)
+                  .setAttribute("fill", dark ? "#21262d" : "#161b22");
+              }
+          }
+          function placeQ(r, c) {
+            showEl("bq-q-" + r + "-" + c);
+          }
+          function removeQ(r, c) {
+            hideEl("bq-q-" + r + "-" + c);
+          }
+          function markConflict(r, c) {
+            document
+              .getElementById("bq-cell-" + r + "-" + c)
+              .setAttribute("fill", "rgba(248,81,73,0.2)");
+          }
+          function clearConflicts() {
+            for (var r = 0; r < 4; r++)
+              for (var c = 0; c < 4; c++) {
+                var dark = (r + c) % 2 === 1;
+                document
+                  .getElementById("bq-cell-" + r + "-" + c)
+                  .setAttribute("fill", dark ? "#21262d" : "#161b22");
+              }
+          }
+
+          function resetBT() {
+            clearBoard();
+            logIdx = 0;
+            for (var i = 0; i < 8; i++) hideEl("bq-log-" + i);
+          }
+
+          // Trace a real 4-queens solve: Q at (0,1), (1,3), (2,0), (3,2)
+          // Show some failures first
+          var btSteps = [
+            {
+              description: "Row 0: Try column 0. Place Q at (0,0).",
+              apply: function () {
+                placeQ(0, 0);
+                addLog("Row 0: Place Q at col 0", "#58a6ff");
+              },
+            },
+            {
+              description:
+                "Row 1: Try col 0 -- same column as (0,0), conflict! Try col 1 -- same diagonal, conflict! Try col 2. Place Q at (1,2).",
+              apply: function () {
+                markConflict(1, 0);
+                markConflict(1, 1);
+                placeQ(1, 2);
+                addLog("Row 1: col 0 X, col 1 X, place col 2", "#d29922");
+              },
+            },
+            {
+              description:
+                "Row 2: All 4 columns conflict with existing queens. BACKTRACK! Remove Q from (1,2).",
+              apply: function () {
+                clearConflicts();
+                markConflict(2, 0);
+                markConflict(2, 1);
+                markConflict(2, 2);
+                markConflict(2, 3);
+                addLog("Row 2: all cols blocked!", "#f85149");
+                addLog("BACKTRACK: remove Q from (1,2)", "#f85149");
+                removeQ(1, 2);
+              },
+            },
+            {
+              description:
+                "Row 1: Continue from col 3. Place Q at (1,3). Row 2: col 0 blocked (diagonal), try col 1. Place Q at (2,1).",
+              apply: function () {
+                clearConflicts();
+                placeQ(1, 3);
+                placeQ(2, 1);
+                addLog("Row 1: try col 3. Row 2: place col 1", "#d29922");
+              },
+            },
+            {
+              description:
+                "Row 3: All columns conflict. BACKTRACK again! Remove (2,1) and (1,3). Backtrack removes (0,0) too.",
+              apply: function () {
+                clearConflicts();
+                markConflict(3, 0);
+                markConflict(3, 1);
+                markConflict(3, 2);
+                markConflict(3, 3);
+                removeQ(2, 1);
+                removeQ(1, 3);
+                removeQ(0, 0);
+                addLog("Row 3 blocked. Full backtrack!", "#f85149");
+              },
+            },
+            {
+              description:
+                "Row 0: Try col 1. Place Q at (0,1). Row 1: col 0 diagonal conflict. Try col 3. Place Q at (1,3).",
+              apply: function () {
+                clearConflicts();
+                placeQ(0, 1);
+                placeQ(1, 3);
+                addLog("Restart: (0,1) then (1,3)", "#58a6ff");
+              },
+            },
+            {
+              description:
+                "Row 2: col 0 works! Place Q at (2,0). Row 3: col 2 works! Place Q at (3,2). SOLUTION FOUND!",
+              apply: function () {
+                clearConflicts();
+                placeQ(2, 0);
+                placeQ(3, 2);
+                addLog("(2,0) and (3,2) -- SOLVED!", "#3fb950");
+                // Highlight solution cells
+                ["0-1", "1-3", "2-0", "3-2"].forEach(function (k) {
+                  document
+                    .getElementById("bq-cell-" + k)
+                    .setAttribute("fill", "rgba(63,185,80,0.2)");
+                });
+              },
+            },
+          ];
+
+          new AlgoAnimation("bt-anim-container", btSteps, {
+            speed: 1400,
+            onReset: resetBT,
+          });
+        })();
+
+        // =====================================================================
+        // 4. HEAP ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("heap-svg");
+          if (!svg) return;
+
+          svg.setAttribute("viewBox", "0 0 600 320");
+
+          // We'll draw the heap as a tree + array representation
+          // Insert sequence: 4, 10, 3, 5, 1
+          // Tree positions for up to 7 nodes
+          var treePos = [
+            { x: 300, y: 50 }, // 0: root
+            { x: 170, y: 130 }, // 1: left
+            { x: 430, y: 130 }, // 2: right
+            { x: 105, y: 210 }, // 3: left-left
+            { x: 235, y: 210 }, // 4: left-right
+            { x: 365, y: 210 }, // 5: right-left
+            { x: 495, y: 210 }, // 6: right-right
+          ];
+
+          var html = "";
+          // Tree edges (will be shown/hidden)
+          html +=
+            '<line id="hp-e-0-1" class="edge" x1="300" y1="70" x2="170" y2="110" style="display:none"/>';
+          html +=
+            '<line id="hp-e-0-2" class="edge" x1="300" y1="70" x2="430" y2="110" style="display:none"/>';
+          html +=
+            '<line id="hp-e-1-3" class="edge" x1="170" y1="150" x2="105" y2="190" style="display:none"/>';
+          html +=
+            '<line id="hp-e-1-4" class="edge" x1="170" y1="150" x2="235" y2="190" style="display:none"/>';
+
+          // Tree nodes (up to 5)
+          for (var i = 0; i < 5; i++) {
+            html +=
+              '<circle id="hp-tn-' +
+              i +
+              '" class="node-fill node-stroke" cx="' +
+              treePos[i].x +
+              '" cy="' +
+              treePos[i].y +
+              '" r="20" style="display:none"/>';
+            html +=
+              '<text id="hp-tv-' +
+              i +
+              '" class="label-text" x="' +
+              treePos[i].x +
+              '" y="' +
+              treePos[i].y +
+              '" style="display:none"></text>';
+          }
+
+          // Array representation at bottom
+          var arrY = 280;
+          html +=
+            '<text x="300" y="' +
+            (arrY - 15) +
+            '" class="label-small" style="font-weight:600">Array: </text>';
+          for (var i = 0; i < 5; i++) {
+            var ax = 200 + i * 50;
+            html +=
+              '<rect id="hp-ac-' +
+              i +
+              '" class="array-cell" x="' +
+              ax +
+              '" y="' +
+              arrY +
+              '" width="44" height="30" rx="3" style="display:none"/>';
+            html +=
+              '<text id="hp-av-' +
+              i +
+              '" class="array-value" x="' +
+              (ax + 22) +
+              '" y="' +
+              (arrY + 15) +
+              '" style="font-size:12px;display:none"></text>';
+          }
+
+          // Status text
+          html +=
+            '<text id="hp-status" x="300" y="310" class="label-value" style="font-size:12px"></text>';
+
+          svg.innerHTML = html;
+
+          var heapArr = [];
+          function drawHeap() {
+            for (var i = 0; i < 5; i++) {
+              if (i < heapArr.length) {
+                showEl("hp-tn-" + i);
+                showEl("hp-tv-" + i);
+                setText("hp-tv-" + i, "" + heapArr[i]);
+                showEl("hp-ac-" + i);
+                showEl("hp-av-" + i);
+                setText("hp-av-" + i, "" + heapArr[i]);
+                setClass("hp-tn-" + i, "node-fill node-stroke");
+                setClass("hp-ac-" + i, "array-cell");
+              } else {
+                hideEl("hp-tn-" + i);
+                hideEl("hp-tv-" + i);
+                hideEl("hp-ac-" + i);
+                hideEl("hp-av-" + i);
+              }
+            }
+            // Edges
+            if (heapArr.length > 1) showEl("hp-e-0-1");
+            else hideEl("hp-e-0-1");
+            if (heapArr.length > 2) showEl("hp-e-0-2");
+            else hideEl("hp-e-0-2");
+            if (heapArr.length > 3) showEl("hp-e-1-3");
+            else hideEl("hp-e-1-3");
+            if (heapArr.length > 4) showEl("hp-e-1-4");
+            else hideEl("hp-e-1-4");
+          }
+
+          function resetHeap() {
+            heapArr = [];
+            drawHeap();
+            setText("hp-status", "");
+          }
+
+          var heapSteps = [
+            {
+              description: "Insert 4. Heap has one element: [4]. Root = 4.",
+              apply: function () {
+                heapArr = [4];
+                drawHeap();
+                setClass("hp-tn-0", "node-fill node-current");
+              },
+            },
+            {
+              description:
+                "Insert 10. Add at end. 10 > 4 (parent), no swap needed. Heap: [4, 10].",
+              apply: function () {
+                heapArr = [4, 10];
+                drawHeap();
+                setClass("hp-tn-1", "node-fill node-active");
+              },
+            },
+            {
+              description:
+                "Insert 3. Add at end. 3 < 4 (parent at index 0), SWAP! Bubble up: 3 becomes root. Heap: [3, 10, 4].",
+              apply: function () {
+                heapArr = [3, 10, 4];
+                drawHeap();
+                setClass("hp-tn-0", "node-fill node-current");
+                setClass("hp-tn-2", "node-fill node-active");
+                setText("hp-status", "3 < 4: swap with parent");
+              },
+            },
+            {
+              description:
+                "Insert 5. Add at index 3 (child of 10). 5 < 10 (parent), SWAP. 5 < 3? No. Stop. Heap: [3, 5, 4, 10].",
+              apply: function () {
+                heapArr = [3, 5, 4, 10];
+                drawHeap();
+                setClass("hp-tn-1", "node-fill node-current");
+                setClass("hp-tn-3", "node-fill node-active");
+                setText("hp-status", "5 < 10: swap. 5 > 3: stop.");
+              },
+            },
+            {
+              description:
+                "Insert 1. Add at index 4 (child of 5). 1 < 5, SWAP. 1 < 3, SWAP again! 1 bubbles to root. Heap: [1, 3, 4, 10, 5].",
+              apply: function () {
+                heapArr = [1, 3, 4, 10, 5];
+                drawHeap();
+                setClass("hp-tn-0", "node-fill node-current");
+                setText("hp-status", "1 bubbles all the way up to root!");
+              },
+            },
+            {
+              description:
+                "Extract-Min: Remove root (1). Move last element (5) to root. Bubble down: 5 > 3, swap with smaller child (3). Heap: [3, 5, 4, 10].",
+              apply: function () {
+                heapArr = [3, 5, 4, 10];
+                drawHeap();
+                setClass("hp-tn-0", "node-fill node-visited");
+                setText(
+                  "hp-status",
+                  "Extracted 1. Moved 5 to root, bubbled down.",
+                );
+              },
+            },
+            {
+              description:
+                "Final heap: [3, 5, 4, 10]. Min-heap property satisfied: every parent <= its children. Extract-min always returns the root in O(log n).",
+              apply: function () {
+                heapArr = [3, 5, 4, 10];
+                drawHeap();
+                for (var i = 0; i < 4; i++)
+                  setClass("hp-tn-" + i, "node-fill node-visited");
+                setText(
+                  "hp-status",
+                  "Min-heap complete. Root is always the minimum.",
+                );
+              },
+            },
+          ];
+
+          new AlgoAnimation("heap-anim-container", heapSteps, {
+            speed: 1200,
+            onReset: resetHeap,
+          });
+        })();
+
+        // =====================================================================
+        // 5. MONOTONIC STACK ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("ms-svg");
+          if (!svg) return;
+
+          svg.setAttribute("viewBox", "0 0 700 350");
+          var arr = [2, 1, 5, 6, 2, 3];
+          var res = [-1, -1, -1, -1, -1, -1];
+          var html = "";
+
+          // Array display
+          var cellW = 50,
+            gap = 6,
+            startX = 50,
+            startY = 40;
+          html +=
+            '<text x="50" y="25" class="label-small" style="font-weight:600">Array</text>';
+          for (var i = 0; i < 6; i++) {
+            var cx = startX + i * (cellW + gap);
+            html +=
+              '<rect id="ms-cell-' +
+              i +
+              '" class="array-cell" x="' +
+              cx +
+              '" y="' +
+              startY +
+              '" width="' +
+              cellW +
+              '" height="' +
+              cellW +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (startY + cellW / 2) +
+              '">' +
+              arr[i] +
+              "</text>";
+            html +=
+              '<text class="array-index" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (startY - 8) +
+              '">' +
+              i +
+              "</text>";
+          }
+
+          // Result array
+          var resY = 130;
+          html +=
+            '<text x="50" y="' +
+            (resY - 5) +
+            '" class="label-small" style="font-weight:600">Result (Next Greater)</text>';
+          for (var i = 0; i < 6; i++) {
+            var cx = startX + i * (cellW + gap);
+            html +=
+              '<rect id="ms-res-' +
+              i +
+              '" class="array-cell" x="' +
+              cx +
+              '" y="' +
+              resY +
+              '" width="' +
+              cellW +
+              '" height="36" rx="4"/>';
+            html +=
+              '<text id="ms-rv-' +
+              i +
+              '" class="array-value" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (resY + 18) +
+              '" style="font-size:13px">-1</text>';
+          }
+
+          // Stack display (visual, horizontal for simplicity)
+          var stackY = 210;
+          html +=
+            '<text x="50" y="' +
+            (stackY - 5) +
+            '" class="label-small" style="font-weight:600">Stack (indices, decreasing values)</text>';
+          html +=
+            '<rect x="48" y="' +
+            stackY +
+            '" width="320" height="44" rx="6" fill="none" stroke="#484f58" stroke-width="1.5" stroke-dasharray="5,5"/>';
+          for (var i = 0; i < 6; i++) {
+            var sx = 55 + i * 52;
+            html +=
+              '<rect id="ms-sc-' +
+              i +
+              '" class="array-cell" x="' +
+              sx +
+              '" y="' +
+              (stackY + 7) +
+              '" width="44" height="30" rx="3" style="display:none"/>';
+            html +=
+              '<text id="ms-sv-' +
+              i +
+              '" class="array-value" x="' +
+              (sx + 22) +
+              '" y="' +
+              (stackY + 22) +
+              '" style="font-size:11px;display:none"></text>';
+          }
+
+          // Arrow annotations (next greater pointers)
+          html += '<g id="ms-arrows"></g>';
+
+          svg.innerHTML = html;
+
+          var stack = []; // indices
+          var result = [-1, -1, -1, -1, -1, -1];
+
+          function drawStack() {
+            for (var i = 0; i < 6; i++) {
+              if (i < stack.length) {
+                showEl("ms-sc-" + i);
+                showEl("ms-sv-" + i);
+                setText("ms-sv-" + i, stack[i] + "(" + arr[stack[i]] + ")");
+              } else {
+                hideEl("ms-sc-" + i);
+                hideEl("ms-sv-" + i);
+              }
+            }
+          }
+
+          function addArrow(fromIdx, toIdx) {
+            var g = document.getElementById("ms-arrows");
+            var fx = startX + fromIdx * (cellW + gap) + cellW / 2;
+            var tx = startX + toIdx * (cellW + gap) + cellW / 2;
+            var y1 = startY + cellW + 5;
+            var ym = y1 + 12 + (toIdx - fromIdx) * 3;
+            var path = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path",
+            );
+            path.setAttribute(
+              "d",
+              "M" +
+                fx +
+                " " +
+                y1 +
+                " Q " +
+                (fx + tx) / 2 +
+                " " +
+                ym +
+                " " +
+                tx +
+                " " +
+                y1,
+            );
+            path.setAttribute("fill", "none");
+            path.setAttribute("stroke", "#3fb950");
+            path.setAttribute("stroke-width", "2");
+            path.setAttribute("marker-end", "url(#ms-svg-arrow-path)");
+            g.appendChild(path);
+          }
+
+          function resetMS() {
+            stack = [];
+            result = [-1, -1, -1, -1, -1, -1];
+            drawStack();
+            for (var i = 0; i < 6; i++) {
+              setClass("ms-cell-" + i, "array-cell");
+              setClass("ms-res-" + i, "array-cell");
+              setText("ms-rv-" + i, "-1");
+            }
+            var g = document.getElementById("ms-arrows");
+            if (g) g.innerHTML = "";
+            // Ensure arrow marker exists
+            var defs = svg.querySelector("defs");
+            if (!defs) {
+              defs = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "defs",
+              );
+              defs.innerHTML =
+                '<marker id="ms-svg-arrow-path" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3fb950"/></marker>';
+              svg.insertBefore(defs, svg.firstChild);
+            }
+          }
+
+          var msSteps = [
+            {
+              description:
+                "i=0, value=2. Stack empty. Push index 0. Stack: [0(2)].",
+              apply: function () {
+                setClass("ms-cell-0", "array-cell-active");
+                stack = [0];
+                drawStack();
+              },
+            },
+            {
+              description:
+                "i=1, value=1. 1 < 2 (top), no pop. Push index 1. Stack: [0(2), 1(1)] -- decreasing.",
+              apply: function () {
+                setClass("ms-cell-0", "array-cell");
+                setClass("ms-cell-1", "array-cell-active");
+                stack = [0, 1];
+                drawStack();
+              },
+            },
+            {
+              description:
+                "i=2, value=5. 5 > 1 (top): POP index 1 -- result[1]=5. 5 > 2 (new top): POP index 0 -- result[0]=5. Push index 2. Stack: [2(5)].",
+              apply: function () {
+                setClass("ms-cell-1", "array-cell");
+                setClass("ms-cell-2", "array-cell-active");
+                result[1] = 5;
+                result[0] = 5;
+                setText("ms-rv-0", "5");
+                setText("ms-rv-1", "5");
+                setClass("ms-res-0", "array-cell-window");
+                setClass("ms-res-1", "array-cell-window");
+                addArrow(0, 2);
+                addArrow(1, 2);
+                stack = [2];
+                drawStack();
+              },
+            },
+            {
+              description:
+                "i=3, value=6. 6 > 5 (top): POP index 2 -- result[2]=6. Push index 3. Stack: [3(6)].",
+              apply: function () {
+                setClass("ms-cell-2", "array-cell");
+                setClass("ms-cell-3", "array-cell-active");
+                result[2] = 6;
+                setText("ms-rv-2", "6");
+                setClass("ms-res-2", "array-cell-window");
+                addArrow(2, 3);
+                stack = [3];
+                drawStack();
+              },
+            },
+            {
+              description:
+                "i=4, value=2. 2 < 6 (top), no pop. Push index 4. Stack: [3(6), 4(2)] -- decreasing.",
+              apply: function () {
+                setClass("ms-cell-3", "array-cell");
+                setClass("ms-cell-4", "array-cell-active");
+                stack = [3, 4];
+                drawStack();
+              },
+            },
+            {
+              description:
+                "i=5, value=3. 3 > 2 (top): POP index 4 -- result[4]=3. 3 < 6 (top), stop. Push index 5. Stack: [3(6), 5(3)].",
+              apply: function () {
+                setClass("ms-cell-4", "array-cell");
+                setClass("ms-cell-5", "array-cell-active");
+                result[4] = 3;
+                setText("ms-rv-4", "3");
+                setClass("ms-res-4", "array-cell-window");
+                addArrow(4, 5);
+                stack = [3, 5];
+                drawStack();
+              },
+            },
+            {
+              description:
+                "Done! Indices 3 and 5 remain on stack -- no next greater element (result stays -1). Final: [5, 5, 6, -1, 3, -1]. Each element pushed and popped at most once: O(n).",
+              apply: function () {
+                setClass("ms-cell-5", "array-cell");
+                setClass("ms-res-3", "array-cell-pointer");
+                setClass("ms-res-5", "array-cell-pointer");
+              },
+            },
+          ];
+
+          new AlgoAnimation("ms-anim-container", msSteps, {
+            speed: 1200,
+            onReset: resetMS,
+          });
+        })();
+
+        // =====================================================================
+        // 6. UNION FIND ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("uf-svg");
+          if (!svg) return;
+
+          svg.setAttribute("viewBox", "0 0 650 300");
+          var labels = ["A", "B", "C", "D", "E", "F"];
+          // Initial positions: separate nodes in a row
+          var initPos = [
+            { x: 70, y: 80 },
+            { x: 170, y: 80 },
+            { x: 290, y: 80 },
+            { x: 390, y: 80 },
+            { x: 500, y: 80 },
+            { x: 600, y: 80 },
+          ];
+
+          var html = "";
+          // Phase indicator
+          html +=
+            '<text id="uf-phase" x="325" y="30" class="label-small" style="font-weight:600;text-anchor:middle">Initial: 6 separate components</text>';
+
+          // Nodes (circles)
+          for (var i = 0; i < 6; i++) {
+            html +=
+              '<circle id="uf-n-' +
+              i +
+              '" class="node-fill node-stroke" cx="' +
+              initPos[i].x +
+              '" cy="' +
+              initPos[i].y +
+              '" r="22"/>';
+            html +=
+              '<text id="uf-nl-' +
+              i +
+              '" class="label-text" x="' +
+              initPos[i].x +
+              '" y="' +
+              initPos[i].y +
+              '">' +
+              labels[i] +
+              "</text>";
+          }
+
+          // Parent labels below each node
+          for (var i = 0; i < 6; i++) {
+            html +=
+              '<text id="uf-p-' +
+              i +
+              '" x="' +
+              initPos[i].x +
+              '" y="' +
+              (initPos[i].y + 38) +
+              '" class="label-small">parent: ' +
+              labels[i] +
+              "</text>";
+          }
+
+          // Edges (drawn dynamically)
+          html += '<g id="uf-edges"></g>';
+
+          // Component count
+          html +=
+            '<text id="uf-comp" x="325" y="280" class="label-value" style="text-anchor:middle">Components: 6</text>';
+
+          svg.innerHTML = html;
+
+          function resetUF() {
+            setText("uf-phase", "Initial: 6 separate components");
+            setText("uf-comp", "Components: 6");
+            for (var i = 0; i < 6; i++) {
+              setClass("uf-n-" + i, "node-fill node-stroke");
+              setText("uf-p-" + i, "parent: " + labels[i]);
+            }
+            var eg = document.getElementById("uf-edges");
+            if (eg) eg.innerHTML = "";
+          }
+
+          // We'll rearrange nodes into tree formations as unions happen
+          // For simplicity, use fixed positions for each step
+
+          function drawEdge(fromIdx, toIdx, cls) {
+            var eg = document.getElementById("uf-edges");
+            var fi = initPos[fromIdx],
+              ti = initPos[toIdx];
+            var line = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line",
+            );
+            line.setAttribute("x1", fi.x);
+            line.setAttribute("y1", fi.y + 22);
+            line.setAttribute("x2", ti.x);
+            line.setAttribute("y2", ti.y + 22);
+            line.setAttribute("class", cls || "edge-active");
+            eg.appendChild(line);
+          }
+
+          // Repositioning for later steps
+          var stepPositions = {
+            // After union(A,B): A is root, B child
+            step1: [
+              { x: 120, y: 60 },
+              { x: 120, y: 150 },
+              { x: 290, y: 80 },
+              { x: 390, y: 80 },
+              { x: 500, y: 80 },
+              { x: 600, y: 80 },
+            ],
+            // After union(C,D): A root of {A,B}, C root of {C,D}
+            step2: [
+              { x: 100, y: 60 },
+              { x: 100, y: 150 },
+              { x: 340, y: 60 },
+              { x: 340, y: 150 },
+              { x: 500, y: 80 },
+              { x: 600, y: 80 },
+            ],
+            // After union(A,C): A root of {A,B,C,D}
+            step3: [
+              { x: 200, y: 50 },
+              { x: 120, y: 150 },
+              { x: 280, y: 150 },
+              { x: 340, y: 230 },
+              { x: 500, y: 80 },
+              { x: 600, y: 80 },
+            ],
+            // After path compression on find(D): D points directly to A
+            step4: [
+              { x: 200, y: 50 },
+              { x: 120, y: 150 },
+              { x: 200, y: 150 },
+              { x: 280, y: 150 },
+              { x: 500, y: 80 },
+              { x: 600, y: 80 },
+            ],
+          };
+
+          function moveNodes(posMap) {
+            for (var i = 0; i < 6; i++) {
+              var n = document.getElementById("uf-n-" + i);
+              var l = document.getElementById("uf-nl-" + i);
+              var p = document.getElementById("uf-p-" + i);
+              if (n) {
+                n.setAttribute("cx", posMap[i].x);
+                n.setAttribute("cy", posMap[i].y);
+              }
+              if (l) {
+                l.setAttribute("x", posMap[i].x);
+                l.setAttribute("y", posMap[i].y);
+              }
+              if (p) {
+                p.setAttribute("x", posMap[i].x);
+                p.setAttribute("y", posMap[i].y + 38);
+              }
+              initPos[i] = { x: posMap[i].x, y: posMap[i].y };
+            }
+          }
+
+          var ufSteps = [
+            {
+              description:
+                "Initial state: each node is its own parent (its own root). 6 separate components.",
+              apply: function () {
+                for (var i = 0; i < 6; i++)
+                  setClass("uf-n-" + i, "node-fill node-active");
+              },
+            },
+            {
+              description:
+                "union(A, B): find(A)=A, find(B)=B. Different roots, so merge. B's parent becomes A. Components: 5.",
+              apply: function () {
+                moveNodes(stepPositions.step1);
+                var eg = document.getElementById("uf-edges");
+                eg.innerHTML = "";
+                drawEdge(1, 0, "edge-active");
+                setText("uf-p-1", "parent: A");
+                setClass("uf-n-0", "node-fill node-current");
+                setClass("uf-n-1", "node-fill node-active");
+                setText("uf-comp", "Components: 5");
+                setText("uf-phase", "union(A, B): B becomes child of A");
+              },
+            },
+            {
+              description:
+                "union(C, D): find(C)=C, find(D)=D. Different roots, so merge. D's parent becomes C. Components: 4.",
+              apply: function () {
+                moveNodes(stepPositions.step2);
+                var eg = document.getElementById("uf-edges");
+                eg.innerHTML = "";
+                drawEdge(1, 0, "edge-active");
+                drawEdge(3, 2, "edge-active");
+                setText("uf-p-3", "parent: C");
+                setClass("uf-n-0", "node-fill node-visited");
+                setClass("uf-n-1", "node-fill node-visited");
+                setClass("uf-n-2", "node-fill node-current");
+                setClass("uf-n-3", "node-fill node-active");
+                setText("uf-comp", "Components: 4");
+                setText("uf-phase", "union(C, D): D becomes child of C");
+              },
+            },
+            {
+              description:
+                "union(A, C): find(A)=A, find(C)=C. Different roots. A has rank 1, C has rank 1 -- equal, so attach C under A. Components: 3.",
+              apply: function () {
+                moveNodes(stepPositions.step3);
+                var eg = document.getElementById("uf-edges");
+                eg.innerHTML = "";
+                drawEdge(1, 0, "edge-active");
+                drawEdge(2, 0, "edge-active");
+                drawEdge(3, 2, "edge-active");
+                setText("uf-p-2", "parent: A");
+                setClass("uf-n-0", "node-fill node-current");
+                setClass("uf-n-1", "node-fill node-visited");
+                setClass("uf-n-2", "node-fill node-visited");
+                setClass("uf-n-3", "node-fill node-visited");
+                setText("uf-comp", "Components: 3");
+                setText("uf-phase", "union(A, C): C's tree goes under A");
+              },
+            },
+            {
+              description:
+                "find(D): Trace D -> C -> A (root). PATH COMPRESSION: set D's parent directly to A. Next find(D) is O(1)!",
+              apply: function () {
+                moveNodes(stepPositions.step4);
+                var eg = document.getElementById("uf-edges");
+                eg.innerHTML = "";
+                drawEdge(1, 0, "edge-active");
+                drawEdge(2, 0, "edge-active");
+                drawEdge(3, 0, "edge-path");
+                setText("uf-p-3", "parent: A");
+                setClass("uf-n-3", "node-fill node-current");
+                setClass("uf-n-0", "node-fill node-current");
+                setText(
+                  "uf-phase",
+                  "find(D): path compression! D -> A directly",
+                );
+              },
+            },
+            {
+              description:
+                "Final state: {A,B,C,D} are one component (root A). E and F are separate. Total: 3 components. All future find() operations on B, C, D go directly to A.",
+              apply: function () {
+                for (var i = 0; i < 4; i++)
+                  setClass("uf-n-" + i, "node-fill node-visited");
+                setClass("uf-n-4", "node-fill node-active");
+                setClass("uf-n-5", "node-fill node-active");
+                setText("uf-phase", "Final: {A,B,C,D}, {E}, {F}");
+              },
+            },
+          ];
+
+          new AlgoAnimation("uf-anim-container", ufSteps, {
+            speed: 1400,
+            onReset: resetUF,
+          });
+        })();
+
+        // =====================================================================
+        // 7. PREFIX SUM ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("ps-svg");
+          if (!svg) return;
+
+          svg.setAttribute("viewBox", "0 0 650 280");
+          var arr = [1, 2, 3, 4, 5];
+          var prefix = [0, 1, 3, 6, 10, 15];
+          var html = "";
+          var cellW = 50,
+            gap = 6,
+            startX = 70;
+
+          // Original array
+          var arrY = 40;
+          html +=
+            '<text x="20" y="' +
+            (arrY + 25) +
+            '" class="label-small" style="font-weight:600">arr</text>';
+          for (var i = 0; i < 5; i++) {
+            var cx = startX + i * (cellW + gap);
+            html +=
+              '<rect id="ps-arr-' +
+              i +
+              '" class="array-cell" x="' +
+              cx +
+              '" y="' +
+              arrY +
+              '" width="' +
+              cellW +
+              '" height="' +
+              cellW +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (arrY + cellW / 2) +
+              '">' +
+              arr[i] +
+              "</text>";
+            html +=
+              '<text class="array-index" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (arrY - 8) +
+              '">' +
+              i +
+              "</text>";
+          }
+
+          // Prefix array
+          var pfY = 130;
+          html +=
+            '<text x="10" y="' +
+            (pfY + 25) +
+            '" class="label-small" style="font-weight:600">prefix</text>';
+          for (var i = 0; i < 6; i++) {
+            var cx = startX + i * (cellW + gap) - (cellW + gap) / 2; // shifted left by half cell to show 0 before index 0
+            html +=
+              '<rect id="ps-pf-' +
+              i +
+              '" class="array-cell" x="' +
+              cx +
+              '" y="' +
+              pfY +
+              '" width="' +
+              cellW +
+              '" height="' +
+              cellW +
+              '" rx="4"/>';
+            html +=
+              '<text id="ps-pv-' +
+              i +
+              '" class="array-value" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (pfY + cellW / 2) +
+              '"></text>';
+            html +=
+              '<text class="array-index" x="' +
+              (cx + cellW / 2) +
+              '" y="' +
+              (pfY - 8) +
+              '">' +
+              i +
+              "</text>";
+          }
+
+          // Query result
+          html +=
+            '<text id="ps-query" x="325" y="240" class="label-value" style="text-anchor:middle;display:none"></text>';
+          html +=
+            '<text id="ps-calc" x="325" y="265" class="label-small" style="text-anchor:middle;display:none"></text>';
+
+          svg.innerHTML = html;
+
+          function resetPS() {
+            for (var i = 0; i < 5; i++) setClass("ps-arr-" + i, "array-cell");
+            for (var i = 0; i < 6; i++) {
+              setClass("ps-pf-" + i, "array-cell");
+              setText("ps-pv-" + i, "");
+            }
+            hideEl("ps-query");
+            hideEl("ps-calc");
+          }
+
+          var psSteps = [
+            {
+              description:
+                "Start building prefix sum. prefix[0] = 0 (the empty sum -- no elements).",
+              apply: function () {
+                setText("ps-pv-0", "0");
+                setClass("ps-pf-0", "array-cell-active");
+              },
+            },
+            {
+              description: "prefix[1] = prefix[0] + arr[0] = 0 + 1 = 1.",
+              apply: function () {
+                setClass("ps-pf-0", "array-cell-window");
+                setClass("ps-arr-0", "array-cell-active");
+                setClass("ps-pf-1", "array-cell-active");
+                setText("ps-pv-1", "1");
+              },
+            },
+            {
+              description:
+                "prefix[2] = prefix[1] + arr[1] = 1 + 2 = 3. prefix[3] = 3 + 3 = 6. prefix[4] = 6 + 4 = 10. prefix[5] = 10 + 5 = 15.",
+              apply: function () {
+                for (var i = 0; i < 5; i++)
+                  setClass("ps-arr-" + i, "array-cell-window");
+                for (var i = 0; i < 6; i++) {
+                  setClass("ps-pf-" + i, "array-cell-window");
+                  setText("ps-pv-" + i, "" + prefix[i]);
+                }
+              },
+            },
+            {
+              description:
+                "Prefix array built: [0, 1, 3, 6, 10, 15]. Now: query sum(1..3) = sum of arr[1]+arr[2]+arr[3] = 2+3+4 = 9.",
+              apply: function () {
+                for (var i = 0; i < 5; i++)
+                  setClass("ps-arr-" + i, "array-cell");
+                setClass("ps-arr-1", "array-cell-result");
+                setClass("ps-arr-2", "array-cell-result");
+                setClass("ps-arr-3", "array-cell-result");
+                for (var i = 0; i < 6; i++)
+                  setClass("ps-pf-" + i, "array-cell");
+              },
+            },
+            {
+              description:
+                "Formula: sum(1..3) = prefix[3+1] - prefix[1] = prefix[4] - prefix[1] = 10 - 1 = 9. One subtraction!",
+              apply: function () {
+                setClass("ps-pf-4", "array-cell-active");
+                setClass("ps-pf-1", "array-cell-pointer");
+                showEl("ps-query");
+                setText(
+                  "ps-query",
+                  "sum(1..3) = prefix[4] - prefix[1] = 10 - 1 = 9",
+                );
+              },
+            },
+            {
+              description:
+                "O(1) per query after O(n) build. For Q queries, total is O(n + Q) instead of O(n * Q). The integrator reads two values and subtracts.",
+              apply: function () {
+                showEl("ps-calc");
+                setText(
+                  "ps-calc",
+                  "Build: O(n) | Each query: O(1) | Total: O(n + Q)",
+                );
+                setClass("ps-pf-4", "array-cell-result");
+                setClass("ps-pf-1", "array-cell-result");
+              },
+            },
+          ];
+
+          new AlgoAnimation("ps-anim-container", psSteps, {
+            speed: 1200,
+            onReset: resetPS,
+          });
+        })();
+
+        // =====================================================================
+        // 8. DIJKSTRA ANIMATION
+        // =====================================================================
+        (function () {
+          var svg = document.getElementById("dijk-svg");
+          if (!svg) return;
+
+          // Graph: A-(4)-B, A-(1)-C, C-(2)-B, B-(5)-D, C-(8)-D, C-(3)-E, E-(2)-D
+          var nodes = [
+            { label: "A", x: 80, y: 180 },
+            { label: "B", x: 260, y: 70 },
+            { label: "C", x: 260, y: 280 },
+            { label: "D", x: 500, y: 140 },
+            { label: "E", x: 420, y: 300 },
+          ];
+          var edges = [
+            { from: 0, to: 1, weight: 4 },
+            { from: 0, to: 2, weight: 1 },
+            { from: 2, to: 1, weight: 2 },
+            { from: 1, to: 3, weight: 5 },
+            { from: 2, to: 3, weight: 8 },
+            { from: 2, to: 4, weight: 3 },
+            { from: 4, to: 3, weight: 2 },
+          ];
+
+          buildGraphSVG("dijk-svg", nodes, edges, {
+            width: 600,
+            height: 370,
+            nodeRadius: 24,
+            directed: true,
+          });
+
+          // Distance table
+          var tableY = 345;
+          var html2 = "";
+          var tableX = 70;
+          var labels = ["A", "B", "C", "D", "E"];
+          for (var i = 0; i < 5; i++) {
+            var tx = tableX + i * 100;
+            html2 +=
+              '<text x="' +
+              tx +
+              '" y="' +
+              tableY +
+              '" class="label-small" style="font-weight:600">' +
+              labels[i] +
+              "</text>";
+            html2 +=
+              '<text id="dj-dist-' +
+              i +
+              '" x="' +
+              (tx + 25) +
+              '" y="' +
+              tableY +
+              '" class="label-value" style="font-size:13px;text-anchor:start"></text>';
+          }
+          var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+          g.innerHTML = html2;
+          svg.appendChild(g);
+
+          var dists = [Infinity, Infinity, Infinity, Infinity, Infinity];
+
+          function setDist(i, val) {
+            dists[i] = val;
+            setText("dj-dist-" + i, val === Infinity ? "inf" : "" + val);
+          }
+          function resetDijk() {
+            dists = [Infinity, Infinity, Infinity, Infinity, Infinity];
+            for (var i = 0; i < 5; i++) {
+              setClass("dijk-svg-node-" + i, "node-fill node-stroke");
+              setDist(i, Infinity);
+            }
+            for (var i = 0; i < 7; i++) {
+              setClass("dijk-svg-edge-" + i, "edge");
+            }
+          }
+
+          var dijkSteps = [
+            {
+              description:
+                "Initialize: dist[A]=0, all others=infinity. Push (0, A) to min-heap. A is the source.",
+              apply: function () {
+                setDist(0, 0);
+                setClass("dijk-svg-node-0", "node-fill node-current");
+              },
+            },
+            {
+              description:
+                "Pop (0, A) from heap. Process A. Relax edges: A->B (0+4=4 < inf), A->C (0+1=1 < inf). Update dist[B]=4, dist[C]=1.",
+              apply: function () {
+                setClass("dijk-svg-node-0", "node-fill node-visited");
+                setClass("dijk-svg-edge-0", "edge-active");
+                setClass("dijk-svg-edge-1", "edge-active");
+                setDist(1, 4);
+                setDist(2, 1);
+                setClass("dijk-svg-node-1", "node-fill node-active");
+                setClass("dijk-svg-node-2", "node-fill node-active");
+              },
+            },
+            {
+              description:
+                "Pop (1, C) from heap -- closest unvisited. Process C. Relax: C->B (1+2=3 < 4!), C->D (1+8=9), C->E (1+3=4). Update dist[B]=3, dist[D]=9, dist[E]=4.",
+              apply: function () {
+                setClass("dijk-svg-node-2", "node-fill node-visited");
+                setClass("dijk-svg-edge-2", "edge-path"); // C->B, shorter!
+                setClass("dijk-svg-edge-1", "edge-path"); // A->C
+                setClass("dijk-svg-edge-4", "edge-active"); // C->D
+                setClass("dijk-svg-edge-5", "edge-active"); // C->E
+                setDist(1, 3);
+                setDist(3, 9);
+                setDist(4, 4);
+                setClass("dijk-svg-node-4", "node-fill node-active");
+              },
+            },
+            {
+              description:
+                "Pop (3, B) from heap. Process B. Relax: B->D (3+5=8 < 9!). Update dist[D]=8.",
+              apply: function () {
+                setClass("dijk-svg-node-1", "node-fill node-visited");
+                setClass("dijk-svg-edge-3", "edge-active"); // B->D
+                setDist(3, 8);
+              },
+            },
+            {
+              description:
+                "Pop (4, E) from heap. Process E. Relax: E->D (4+2=6 < 8!). Update dist[D]=6. Even shorter path found through E!",
+              apply: function () {
+                setClass("dijk-svg-node-4", "node-fill node-visited");
+                setClass("dijk-svg-edge-6", "edge-path"); // E->D, shorter!
+                setClass("dijk-svg-edge-5", "edge-path"); // C->E
+                setClass("dijk-svg-edge-3", "edge"); // B->D no longer best
+                setDist(3, 6);
+              },
+            },
+            {
+              description:
+                "Pop (6, D) from heap. Process D. No outgoing edges. D is finalized with distance 6.",
+              apply: function () {
+                setClass("dijk-svg-node-3", "node-fill node-visited");
+              },
+            },
+            {
+              description:
+                "Heap empty. All nodes finalized. Shortest distances from A: A=0, C=1, B=3, E=4, D=6. Best path to D: A->C->E->D (cost 6), not A->B->D (cost 9).",
+              apply: function () {
+                for (var i = 0; i < 5; i++)
+                  setClass("dijk-svg-node-" + i, "node-fill node-visited");
+                // Highlight the optimal path A->C->E->D
+                setClass("dijk-svg-edge-1", "edge-path"); // A->C
+                setClass("dijk-svg-edge-5", "edge-path"); // C->E
+                setClass("dijk-svg-edge-6", "edge-path"); // E->D
+              },
+            },
+          ];
+
+          new AlgoAnimation("dijk-anim-container", dijkSteps, {
+            speed: 1400,
+            onReset: resetDijk,
+          });
+        })();
+      }); // end DOMContentLoaded
+    </script>
+  </body>
+</html>

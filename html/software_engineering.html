@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Software Engineering — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Software Engineering Practices</h1>
+          <p>For Staff Engineers</p>
+          <p>
+            This covers the engineering practices that separate professional
+            software from one-off scripts. As an EE, you know the difference
+            between a prototype on a breadboard and a production PCB. This guide
+            is that gap for software.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 1: Design Principles -->
+          <!-- ============================================================ -->
+          <h2 id="design-principles">
+            Part 1: Design Principles (The Laws of Software Physics)
+          </h2>
+
+          <h3 id="solid">1.1 SOLID Principles</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>SOLID</strong> is an acronym coined by Michael Feathers
+              for five principles articulated by Robert C. Martin ("Uncle Bob").
+              Each letter names the principle's core idea:
+              <strong>S</strong>ingle responsibility,
+              <strong>O</strong>pen-closed, <strong>L</strong>iskov
+              substitution, <strong>I</strong>nterface segregation,
+              <strong>D</strong>ependency inversion. The word "SOLID" itself was
+              chosen to evoke structural integrity -- solid code, solid
+              foundations.
+            </p>
+          </div>
+
+          <p>
+            These are not academic abstractions — they are the mechanical
+            engineering equivalent of stress analysis applied to code. Each one
+            prevents a specific class of maintenance nightmare.
+          </p>
+
+          <!-- SVG: SOLID Principles Cards -->
+          <div class="diagram-container">
+            <div class="diagram-title">SOLID Principles</div>
+            <svg viewBox="0 0 820 160" xmlns="http://www.w3.org/2000/svg">
+              <!-- S -->
+              <rect
+                x="10"
+                y="15"
+                width="148"
+                height="130"
+                rx="10"
+                class="node-active"
+              />
+              <text
+                x="84"
+                y="50"
+                class="label-text"
+                font-size="28"
+                font-weight="800"
+                fill="#58a6ff"
+              >
+                S
+              </text>
+              <text
+                x="84"
+                y="75"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Single
+              </text>
+              <text
+                x="84"
+                y="90"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Responsibility
+              </text>
+              <text x="84" y="115" class="label-small" font-size="10">
+                One module,
+              </text>
+              <text x="84" y="128" class="label-small" font-size="10">
+                one reason to change
+              </text>
+
+              <!-- O -->
+              <rect
+                x="174"
+                y="15"
+                width="148"
+                height="130"
+                rx="10"
+                class="node-visited"
+              />
+              <text
+                x="248"
+                y="50"
+                class="label-text"
+                font-size="28"
+                font-weight="800"
+                fill="#3fb950"
+              >
+                O
+              </text>
+              <text
+                x="248"
+                y="75"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Open/Closed
+              </text>
+              <text x="248" y="115" class="label-small" font-size="10">
+                Open for extension,
+              </text>
+              <text x="248" y="128" class="label-small" font-size="10">
+                closed for modification
+              </text>
+
+              <!-- L -->
+              <rect
+                x="338"
+                y="15"
+                width="148"
+                height="130"
+                rx="10"
+                class="node-current"
+              />
+              <text
+                x="412"
+                y="50"
+                class="label-text"
+                font-size="28"
+                font-weight="800"
+                fill="#d29922"
+              >
+                L
+              </text>
+              <text
+                x="412"
+                y="75"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Liskov
+              </text>
+              <text
+                x="412"
+                y="90"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Substitution
+              </text>
+              <text x="412" y="115" class="label-small" font-size="10">
+                Subtypes must be
+              </text>
+              <text x="412" y="128" class="label-small" font-size="10">
+                substitutable for base
+              </text>
+
+              <!-- I -->
+              <rect
+                x="502"
+                y="15"
+                width="148"
+                height="130"
+                rx="10"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="576"
+                y="50"
+                class="label-text"
+                font-size="28"
+                font-weight="800"
+                fill="#bc8cff"
+              >
+                I
+              </text>
+              <text
+                x="576"
+                y="75"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Interface
+              </text>
+              <text
+                x="576"
+                y="90"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Segregation
+              </text>
+              <text x="576" y="115" class="label-small" font-size="10">
+                Don't force unused
+              </text>
+              <text x="576" y="128" class="label-small" font-size="10">
+                method dependencies
+              </text>
+
+              <!-- D -->
+              <rect
+                x="666"
+                y="15"
+                width="148"
+                height="130"
+                rx="10"
+                class="node-highlight"
+              />
+              <text
+                x="740"
+                y="50"
+                class="label-text"
+                font-size="28"
+                font-weight="800"
+                fill="#f85149"
+              >
+                D
+              </text>
+              <text
+                x="740"
+                y="75"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Dependency
+              </text>
+              <text
+                x="740"
+                y="90"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+              >
+                Inversion
+              </text>
+              <text x="740" y="115" class="label-small" font-size="10">
+                Depend on abstractions,
+              </text>
+              <text x="740" y="128" class="label-small" font-size="10">
+                not concretions
+              </text>
+            </svg>
+          </div>
+
+          <h4>S -- Single Responsibility Principle</h4>
+          <p>A module should have one reason to change.</p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              A voltage regulator regulates voltage. It does not also do clock
+              generation. If you need both, use two ICs.
+            </p>
+          </div>
+
+          <pre><code><span class="cm"># BAD: One class does user auth AND email formatting AND database access</span>
+<span class="kw">class</span> <span class="ty">UserManager</span>:
+    <span class="kw">def</span> <span class="fn">authenticate</span>(<span class="var">self</span>, <span class="var">user</span>, <span class="var">password</span>): ...
+    <span class="kw">def</span> <span class="fn">format_welcome_email</span>(<span class="var">self</span>, <span class="var">user</span>): ...
+    <span class="kw">def</span> <span class="fn">save_to_database</span>(<span class="var">self</span>, <span class="var">user</span>): ...
+
+<span class="cm"># GOOD: Each class has one job</span>
+<span class="kw">class</span> <span class="ty">Authenticator</span>:
+    <span class="kw">def</span> <span class="fn">authenticate</span>(<span class="var">self</span>, <span class="var">user</span>, <span class="var">password</span>): ...
+
+<span class="kw">class</span> <span class="ty">EmailFormatter</span>:
+    <span class="kw">def</span> <span class="fn">format_welcome_email</span>(<span class="var">self</span>, <span class="var">user</span>): ...
+
+<span class="kw">class</span> <span class="ty">UserRepository</span>:
+    <span class="kw">def</span> <span class="fn">save</span>(<span class="var">self</span>, <span class="var">user</span>): ...</code></pre>
+
+          <h4>O -- Open/Closed Principle</h4>
+          <p>Open for extension, closed for modification.</p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              A bus protocol (I2C, SPI) is closed -- you do not change the
+              protocol spec when adding a new device. But it is open -- you add
+              new devices on the bus that speak the existing protocol.
+            </p>
+          </div>
+
+          <pre><code><span class="cm"># BAD: Adding a new shape requires modifying existing code</span>
+<span class="kw">def</span> <span class="fn">area</span>(<span class="var">shape</span>):
+    <span class="kw">if</span> <span class="var">shape</span>.type <span class="op">==</span> <span class="str">"circle"</span>:
+        <span class="kw">return</span> <span class="num">3.14</span> <span class="op">*</span> <span class="var">shape</span>.radius <span class="op">**</span> <span class="num">2</span>
+    <span class="kw">elif</span> <span class="var">shape</span>.type <span class="op">==</span> <span class="str">"rectangle"</span>:
+        <span class="kw">return</span> <span class="var">shape</span>.width <span class="op">*</span> <span class="var">shape</span>.height
+
+<span class="cm"># GOOD: New shapes are added without modifying existing code</span>
+<span class="kw">class</span> <span class="ty">Shape</span>:
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="var">self</span>) <span class="op">-></span> <span class="ty">float</span>: ...
+
+<span class="kw">class</span> <span class="ty">Circle</span>(<span class="ty">Shape</span>):
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="var">self</span>): <span class="kw">return</span> <span class="num">3.14</span> <span class="op">*</span> <span class="var">self</span>.radius <span class="op">**</span> <span class="num">2</span>
+
+<span class="kw">class</span> <span class="ty">Rectangle</span>(<span class="ty">Shape</span>):
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="var">self</span>): <span class="kw">return</span> <span class="var">self</span>.width <span class="op">*</span> <span class="var">self</span>.height</code></pre>
+
+          <h4>L -- Liskov Substitution Principle</h4>
+          <p>
+            Subtypes must be substitutable for their base types without breaking
+            behavior.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              A pin-compatible IC replacement must meet all the specs of the
+              original. A "faster" replacement that draws more power than the
+              supply can provide violates substitutability.
+            </p>
+          </div>
+
+          <h4>I -- Interface Segregation Principle</h4>
+          <p>Don't force clients to depend on methods they don't use.</p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              Don't require a device to implement the full SPI protocol if it
+              only needs MOSI. Provide a simpler interface.
+            </p>
+          </div>
+
+          <h4>D -- Dependency Inversion Principle</h4>
+          <p>
+            High-level modules should not depend on low-level modules. Both
+            should depend on abstractions.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              Your control logic depends on the DAC interface specification, not
+              on a specific DAC chip. If you swap the DAC, the control logic
+              doesn't change.
+            </p>
+          </div>
+
+          <pre><code><span class="cm"># BAD: Business logic depends directly on a specific database</span>
+<span class="kw">class</span> <span class="ty">OrderService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>):
+        <span class="var">self</span>.db <span class="op">=</span> <span class="ty">PostgresDatabase</span>()  <span class="cm"># hard-coded dependency</span>
+
+<span class="cm"># GOOD: Depend on abstraction</span>
+<span class="kw">class</span> <span class="ty">OrderService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">repository</span>: <span class="ty">OrderRepository</span>):  <span class="cm"># injected</span>
+        <span class="var">self</span>.repository <span class="op">=</span> <span class="var">repository</span>
+
+<span class="cm"># Now you can swap PostgreSQL for DynamoDB without touching OrderService</span></code></pre>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- 1.2 Design Patterns -->
+          <!-- ============================================================ -->
+          <h3 id="design-patterns">
+            1.2 The Design Patterns That Actually Matter
+          </h3>
+
+          <p>
+            Of the 23 GoF patterns, ~8 come up regularly in modern software.
+            Learn these:
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Pattern</th>
+                <th>What it does</th>
+                <th>When to use</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Strategy</strong></td>
+                <td>Swap algorithms at runtime</td>
+                <td>
+                  Multiple ways to do the same thing (sort, compress, validate)
+                </td>
+                <td>Selectable clock source</td>
+              </tr>
+              <tr>
+                <td><strong>Observer</strong></td>
+                <td>Notify subscribers when state changes</td>
+                <td>Events, UI updates, pub/sub</td>
+                <td>Interrupt-driven I/O</td>
+              </tr>
+              <tr>
+                <td><strong>Factory</strong></td>
+                <td>Create objects without specifying exact class</td>
+                <td>When the type to create depends on config/input</td>
+                <td>Component selector based on BoM</td>
+              </tr>
+              <tr>
+                <td><strong>Decorator</strong></td>
+                <td>Add behavior to objects without inheritance</td>
+                <td>Logging, caching, auth wrappers</td>
+                <td>Signal conditioning chain</td>
+              </tr>
+              <tr>
+                <td><strong>Adapter</strong></td>
+                <td>Make incompatible interfaces work together</td>
+                <td>Integrating third-party libraries</td>
+                <td>Level shifter / protocol bridge</td>
+              </tr>
+              <tr>
+                <td><strong>Command</strong></td>
+                <td>Encapsulate a request as an object</td>
+                <td>Undo/redo, queued operations, macros</td>
+                <td>Command register / instruction encoding</td>
+              </tr>
+              <tr>
+                <td><strong>Iterator</strong></td>
+                <td>Traverse a collection without exposing internals</td>
+                <td>Any time you loop over data</td>
+                <td>DMA controller scanning a buffer</td>
+              </tr>
+              <tr>
+                <td><strong>Singleton</strong></td>
+                <td>Ensure only one instance exists</td>
+                <td>Config, connection pools (use sparingly!)</td>
+                <td>System clock -- only one</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origins -- Design Patterns</div>
+            <p>
+              <strong>Singleton:</strong> "Single" + "-ton" = only one instance.
+              Named because there can only ever be one. Like there is only one
+              sun in the solar system.<br /><br />
+              <strong>Factory:</strong> Named after a real factory -- it
+              manufactures objects. You tell the factory what you want, it
+              builds and returns it for you. You never call the constructor
+              directly.<br /><br />
+              <strong>Observer:</strong> Named for the act of observing.
+              Observers watch a subject and react when it changes state. Like
+              newspaper subscribers observing a publisher -- when a new edition
+              comes out, all subscribers are notified.<br /><br />
+              <strong>Strategy:</strong> Named because you can swap strategies
+              (algorithms) at runtime. Like a general choosing different battle
+              strategies depending on terrain -- the army (context) stays the
+              same, the strategy changes.<br /><br />
+              <strong>Decorator:</strong> Named because it "decorates" (wraps)
+              an object with additional behavior, like decorating a cake with
+              frosting. The original object is unchanged underneath -- you just
+              add layers around it.
+            </p>
+          </div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Important</div>
+            <p>
+              Do NOT memorize all 23. Know these 8 cold. Recognize the others
+              when you see them.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 2: Testing -->
+          <!-- ============================================================ -->
+          <h2 id="testing">Part 2: Testing</h2>
+
+          <h3 id="testing-pyramid">2.1 The Testing Pyramid</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>Testing Pyramid:</strong> Named for its shape. Many unit
+              tests at the base (wide), fewer integration tests in the middle,
+              fewest end-to-end tests at the top (narrow). The pyramid shape
+              shows the ideal distribution -- if your shape is inverted (more
+              E2E than unit tests), you have an "ice cream cone" anti-pattern.
+            </p>
+          </div>
+
+          <!-- SVG: Testing Pyramid -->
+          <div class="diagram-container">
+            <div class="diagram-title">Testing Pyramid</div>
+            <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Pyramid layers (bottom to top) -->
+              <!-- Unit Tests (base) -->
+              <polygon
+                points="60,270 440,270 350,180 150,180"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="250"
+                y="235"
+                class="label-text"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                Unit Tests
+              </text>
+              <text x="250" y="255" class="label-small">
+                Many, fast, cheap (hundreds)
+              </text>
+
+              <!-- Integration Tests (middle) -->
+              <polygon
+                points="150,180 350,180 300,110 200,110"
+                fill="rgba(210,153,34,0.2)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="250"
+                y="150"
+                class="label-text"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Integration
+              </text>
+              <text x="250" y="170" class="label-small">
+                Some, moderate (dozens)
+              </text>
+
+              <!-- E2E Tests (top) -->
+              <polygon
+                points="200,110 300,110 265,55 235,55"
+                fill="rgba(248,81,73,0.2)"
+                stroke="#f85149"
+                stroke-width="2"
+              />
+              <text
+                x="250"
+                y="80"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#f85149"
+              >
+                E2E
+              </text>
+              <text x="250" y="95" class="label-small" font-size="9">
+                Few, slow (critical paths)
+              </text>
+
+              <!-- Side annotations -->
+              <text
+                x="460"
+                y="235"
+                class="label-small"
+                text-anchor="start"
+                fill="#3fb950"
+              >
+                ms, isolated
+              </text>
+              <text
+                x="365"
+                y="150"
+                class="label-small"
+                text-anchor="start"
+                fill="#d29922"
+              >
+                seconds, real DB
+              </text>
+              <text
+                x="315"
+                y="80"
+                class="label-small"
+                text-anchor="start"
+                fill="#f85149"
+              >
+                minutes, full system
+              </text>
+
+              <!-- Arrow: Cost/Speed -->
+              <line
+                x1="30"
+                y1="270"
+                x2="30"
+                y2="55"
+                stroke="#484f58"
+                stroke-width="1.5"
+                marker-end="url(#arr-pyr)"
+              />
+              <text
+                x="25"
+                y="160"
+                class="label-small"
+                text-anchor="end"
+                transform="rotate(-90, 25, 160)"
+              >
+                Cost / Slowness
+              </text>
+
+              <defs>
+                <marker
+                  id="arr-pyr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              Unit test = testing a single IC on the bench. Integration test =
+              testing a subsystem on the board. E2E test = full system test with
+              real inputs/outputs.
+            </p>
+          </div>
+
+          <p>
+            <strong>Unit tests:</strong> Test one function/class in isolation.
+            Mock all dependencies. Fast (milliseconds). You should have
+            hundreds.
+          </p>
+          <p>
+            <strong>Integration tests:</strong> Test that components work
+            together. Use real database (or test container). Slower (seconds).
+            You should have dozens.
+          </p>
+          <p>
+            <strong>End-to-end tests:</strong> Test the full system from user's
+            perspective. Slow (minutes). You should have a few critical paths.
+          </p>
+
+          <h3 id="what-to-test">2.2 What to Test</h3>
+
+          <pre><code>Test behavior, not implementation.
+
+BAD:  "assert function called database.save() exactly once"
+GOOD: "assert user is persisted and can be retrieved by ID"</code></pre>
+
+          <p>
+            Test the contract (inputs -> outputs), not the internals. This
+            allows you to refactor the implementation without breaking tests.
+          </p>
+
+          <h3 id="tdd">2.3 Test-Driven Development (TDD)</h3>
+
+          <p>
+            The loop: <span class="badge badge-red">Red</span> (write failing
+            test) -> <span class="badge badge-green">Green</span> (minimal code
+            to pass) -> <span class="badge badge-blue">Refactor</span>.
+          </p>
+
+          <p>
+            You do not need to practice strict TDD, but the discipline of
+            writing the test BEFORE or alongside the code prevents the common
+            trap of writing untestable code.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Practice</div>
+            <p>
+              For the next 5 features you build, write the test first. Not
+              because TDD is dogma, but because it forces you to think about the
+              interface before the implementation.
+            </p>
+          </div>
+
+          <h3 id="testing-python">2.4 Testing in Python</h3>
+
+          <pre><code><span class="kw">import</span> pytest
+
+<span class="kw">def</span> <span class="fn">test_deposit_increases_balance</span>():
+    account <span class="op">=</span> <span class="ty">Account</span>(balance<span class="op">=</span><span class="num">100</span>)
+    account.deposit(<span class="num">50</span>)
+    <span class="kw">assert</span> account.balance <span class="op">==</span> <span class="num">150</span>
+
+<span class="kw">def</span> <span class="fn">test_withdraw_insufficient_funds_raises</span>():
+    account <span class="op">=</span> <span class="ty">Account</span>(balance<span class="op">=</span><span class="num">100</span>)
+    <span class="kw">with</span> pytest.raises(<span class="ty">InsufficientFunds</span>):
+        account.withdraw(<span class="num">200</span>)
+
+<span class="cm"># Parameterized test -- multiple inputs, same logic</span>
+<span class="op">@</span>pytest.mark.parametrize(<span class="str">"input,expected"</span>, [
+    (<span class="str">"hello"</span>, <span class="str">"HELLO"</span>),
+    (<span class="str">""</span>, <span class="str">""</span>),
+    (<span class="str">"Hello World"</span>, <span class="str">"HELLO WORLD"</span>),
+])
+<span class="kw">def</span> <span class="fn">test_uppercase</span>(input, expected):
+    <span class="kw">assert</span> to_upper(input) <span class="op">==</span> expected</code></pre>
+
+          <p>
+            <strong>Key pytest concepts:</strong> fixtures, parametrize,
+            mock/patch, conftest.py, markers, coverage.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 3: Code Review -->
+          <!-- ============================================================ -->
+          <h2 id="code-review">Part 3: Code Review</h2>
+
+          <h3 id="review-checklist">3.1 What Staff Engineers Look For</h3>
+
+          <p>When reviewing code, evaluate in this order:</p>
+          <ol>
+            <li>
+              <strong>Correctness:</strong> Does it do what it claims? Edge
+              cases?
+            </li>
+            <li>
+              <strong>Design:</strong> Is this the right approach? Right
+              abstraction level?
+            </li>
+            <li>
+              <strong>Readability:</strong> Can someone new understand this in 5
+              minutes?
+            </li>
+            <li>
+              <strong>Performance:</strong> Any obvious bottlenecks? (Only after
+              the above pass)
+            </li>
+            <li>
+              <strong>Testing:</strong> Are the important behaviors tested?
+            </li>
+          </ol>
+
+          <h3 id="giving-feedback">3.2 How to Give Feedback</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>When to use</th>
+                <th>Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Blocking</strong> ("Request changes")</td>
+                <td>Bugs, security issues, design flaws</td>
+                <td>Must fix before merge</td>
+              </tr>
+              <tr>
+                <td><strong>Non-blocking</strong> ("Suggestion")</td>
+                <td>Style preferences, alternative approaches</td>
+                <td>Consider for improvement</td>
+              </tr>
+              <tr>
+                <td><strong>Praise</strong></td>
+                <td>Good patterns, clean code</td>
+                <td>Reinforcement works</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>Frame feedback as questions when possible:</p>
+          <ul>
+            <li>
+              "What happens if <code>user</code> is None here?" (better than
+              "This will crash on None")
+            </li>
+            <li>
+              "Have you considered using X instead?" (better than "This should
+              use X")
+            </li>
+          </ul>
+
+          <h3 id="receiving-feedback">3.3 How to Receive Feedback</h3>
+          <ul>
+            <li>
+              Don't defend -- understand. The reviewer sees something you don't.
+            </li>
+            <li>Ask clarifying questions if the feedback is unclear.</li>
+            <li>
+              If you disagree, explain your reasoning with evidence, not
+              authority.
+            </li>
+          </ul>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 4: Git -->
+          <!-- ============================================================ -->
+          <h2 id="git">Part 4: Version Control (Git) at Staff Level</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>Git:</strong> Named by Linus Torvalds. "Git" is British
+              slang for an annoying, unpleasant person. Torvalds said: "I'm an
+              egotistical bastard, so I name all my projects after myself. First
+              Linux, now git." It also works as a backronym:
+              <strong>G</strong>lobal <strong>I</strong>nformation
+              <strong>T</strong>racker (when it works), or "Goddamn Idiotic
+              Truckload of sh*t" (when it doesn't, per Torvalds' README).
+            </p>
+          </div>
+
+          <p>You know the basics. Here is what staff-level looks like:</p>
+
+          <h3 id="branching">4.1 Branching Strategy</h3>
+
+          <!-- SVG: Git Branching Diagram -->
+          <div class="diagram-container">
+            <div class="diagram-title">Git Feature Branch Workflow</div>
+            <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arr-git"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="5"
+                  markerHeight="5"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Main branch line -->
+              <line
+                x1="50"
+                y1="110"
+                x2="650"
+                y2="110"
+                stroke="#3fb950"
+                stroke-width="3"
+              />
+              <text
+                x="30"
+                y="114"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#3fb950"
+                text-anchor="end"
+              >
+                main
+              </text>
+
+              <!-- Main branch commits -->
+              <circle
+                cx="100"
+                cy="110"
+                r="8"
+                fill="#3fb950"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="250"
+                cy="110"
+                r="8"
+                fill="#3fb950"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="400"
+                cy="110"
+                r="8"
+                fill="#3fb950"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="550"
+                cy="110"
+                r="8"
+                fill="#3fb950"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="640"
+                cy="110"
+                r="8"
+                fill="#3fb950"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+
+              <!-- Feature branch A (top) -->
+              <line
+                x1="100"
+                y1="110"
+                x2="140"
+                y2="50"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <line
+                x1="140"
+                y1="50"
+                x2="220"
+                y2="50"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <line
+                x1="220"
+                y1="50"
+                x2="250"
+                y2="110"
+                stroke="#58a6ff"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+              <circle
+                cx="140"
+                cy="50"
+                r="6"
+                fill="#58a6ff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="180"
+                cy="50"
+                r="6"
+                fill="#58a6ff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="220"
+                cy="50"
+                r="6"
+                fill="#58a6ff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text x="180" y="35" class="label-small" fill="#58a6ff">
+                feature/auth
+              </text>
+
+              <!-- Feature branch B (bottom) -->
+              <line
+                x1="250"
+                y1="110"
+                x2="290"
+                y2="170"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <line
+                x1="290"
+                y1="170"
+                x2="370"
+                y2="170"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <line
+                x1="370"
+                y1="170"
+                x2="400"
+                y2="110"
+                stroke="#bc8cff"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+              <circle
+                cx="290"
+                cy="170"
+                r="6"
+                fill="#bc8cff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="330"
+                cy="170"
+                r="6"
+                fill="#bc8cff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="370"
+                cy="170"
+                r="6"
+                fill="#bc8cff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text x="330" y="195" class="label-small" fill="#bc8cff">
+                feature/cache
+              </text>
+
+              <!-- Feature branch C (top) -->
+              <line
+                x1="400"
+                y1="110"
+                x2="440"
+                y2="50"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <line
+                x1="440"
+                y1="50"
+                x2="520"
+                y2="50"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <line
+                x1="520"
+                y1="50"
+                x2="550"
+                y2="110"
+                stroke="#d29922"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+              <circle
+                cx="440"
+                cy="50"
+                r="6"
+                fill="#d29922"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="480"
+                cy="50"
+                r="6"
+                fill="#d29922"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <circle
+                cx="520"
+                cy="50"
+                r="6"
+                fill="#d29922"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text x="480" y="35" class="label-small" fill="#d29922">
+                fix/rate-limit
+              </text>
+
+              <!-- Merge markers -->
+              <text x="250" y="135" class="label-small" fill="#8b949e">
+                merge
+              </text>
+              <text x="400" y="135" class="label-small" fill="#8b949e">
+                merge
+              </text>
+              <text x="550" y="135" class="label-small" fill="#8b949e">
+                merge
+              </text>
+            </svg>
+          </div>
+
+          <ul>
+            <li>
+              <strong>Feature branches:</strong> One branch per feature/fix,
+              branched from main
+            </li>
+            <li>
+              <strong>Short-lived:</strong> Merge within 1-3 days. Long branches
+              = merge hell
+            </li>
+            <li>
+              <strong>Pull requests:</strong> Every change reviewed before merge
+            </li>
+          </ul>
+
+          <h3 id="commit-discipline">4.2 Commit Discipline</h3>
+
+          <pre><code><span class="cm"># GOOD: Each commit is a single logical change</span>
+git log --oneline
+a1b2c3 Add user authentication endpoint
+d4e5f6 Add password hashing with bcrypt
+g7h8i9 Add login rate limiting
+
+<span class="cm"># BAD: Commits are random save points</span>
+git log --oneline
+a1b2c3 WIP
+d4e5f6 more stuff
+g7h8i9 fix</code></pre>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Rule</div>
+            <p>
+              Each commit should pass all tests. You should be able to
+              <code>git bisect</code> to find when a bug was introduced.
+            </p>
+          </div>
+
+          <h3 id="rebase-merge">4.3 Rebase vs Merge</h3>
+          <ul>
+            <li>
+              <strong>Rebase</strong> for keeping your branch up to date with
+              main (clean linear history)
+            </li>
+            <li>
+              <strong>Merge</strong> for integrating your branch INTO main
+              (preserves branch history)
+            </li>
+            <li>Never rebase shared/public branches</li>
+          </ul>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 5: CI/CD -->
+          <!-- ============================================================ -->
+          <h2 id="cicd">
+            Part 5: CI/CD (Continuous Integration / Continuous Deployment)
+          </h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>CI/CD:</strong> <strong>C</strong>ontinuous
+              <strong>I</strong>ntegration / <strong>C</strong>ontinuous
+              <strong>D</strong>elivery (or Deployment). "Continuous" means
+              always running, never stopping. "Integration" means merging code
+              together. Named because you <em>continuously</em> integrate small
+              changes rather than doing painful big-bang merges. CD extends
+              this: continuously deliver (to staging) or deploy (to production).
+              The name encodes the philosophy -- never stop the flow.
+            </p>
+          </div>
+
+          <h3>The Pipeline</h3>
+
+          <pre><code>Code Push -> Lint -> Unit Tests -> Build -> Integration Tests
+     -> Security Scan -> Deploy to Staging -> Deploy to Production</code></pre>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              This is your DFT (Design for Test) and production test flow,
+              automated. Lint = DRC, Unit tests = functional simulation,
+              Integration tests = board-level test, Deploy = manufacturing.
+            </p>
+          </div>
+
+          <h3>Key Principles</h3>
+          <ul>
+            <li>
+              <strong>Every commit triggers the pipeline</strong> -- no manual
+              builds
+            </li>
+            <li>
+              <strong>If the pipeline fails, fix it immediately</strong> --
+              broken pipeline = broken assembly line
+            </li>
+            <li>
+              <strong>Deploy frequently</strong> -- small changes are easier to
+              debug than big releases
+            </li>
+            <li>
+              <strong>Feature flags</strong> -- deploy code to production
+              disabled, enable incrementally
+            </li>
+          </ul>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 6: Technical Debt -->
+          <!-- ============================================================ -->
+          <h2 id="tech-debt">Part 6: Technical Debt</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>Technical Debt:</strong> Coined by Ward Cunningham in 1992
+              as a deliberate financial metaphor. Shortcuts in code are like
+              taking out a loan -- you get speed now but pay "interest"
+              (maintenance cost, bug rate, slower feature development) later. If
+              you never "pay it back" (refactor), the interest compounds until
+              the codebase becomes unmaintainable. The metaphor is powerful
+              because it lets you explain engineering tradeoffs to business
+              stakeholders in their own language.
+            </p>
+          </div>
+
+          <h3>What It Is</h3>
+          <p>
+            Technical debt is the gap between the current state of the code and
+            the ideal state. Like deferred maintenance on equipment -- it
+            accrues interest (slower development, more bugs).
+          </p>
+
+          <h3>Types</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+                <th>How to address</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Deliberate</strong></td>
+                <td>"We'll use a simple approach now and refactor later"</td>
+                <td>OK if tracked</td>
+              </tr>
+              <tr>
+                <td><strong>Accidental</strong></td>
+                <td>"We didn't know there was a better way"</td>
+                <td>Fixed by learning</td>
+              </tr>
+              <tr>
+                <td><strong>Bit rot</strong></td>
+                <td>Gradual degradation as requirements change</td>
+                <td>Continuous refactoring</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Staff Engineer's Role</h3>
+          <p>
+            You don't fix all tech debt -- you <strong>manage</strong> it
+            strategically:
+          </p>
+          <ol>
+            <li>
+              <strong>Track it:</strong> Label tech debt tickets, quantify
+              impact
+            </li>
+            <li>
+              <strong>Prioritize:</strong> Fix debt on the critical path, ignore
+              debt in stable code
+            </li>
+            <li>
+              <strong>Prevent:</strong> Set quality standards in code review
+            </li>
+            <li>
+              <strong>Budget:</strong> Advocate for 15-20% of sprint capacity
+              for debt reduction
+            </li>
+          </ol>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- References -->
+          <!-- ============================================================ -->
+          <h2 id="references">References</h2>
+
+          <h3>Books</h3>
+          <ul>
+            <li>
+              <strong>"Clean Code" by Robert Martin</strong> -- Read chapters
+              1-6 for the core message. Skip the later chapters (overly
+              dogmatic). The first 100 pages will change how you write code.
+            </li>
+            <li>
+              <strong>"Refactoring" by Martin Fowler</strong> -- The catalog of
+              refactoring patterns. Read the first 4 chapters, then use the rest
+              as a reference.
+            </li>
+            <li>
+              <strong
+                >"A Philosophy of Software Design" by John Ousterhout</strong
+              >
+              -- Short, opinionated, and practical. Better than Clean Code for
+              experienced engineers.
+            </li>
+          </ul>
+
+          <h3>Online</h3>
+          <ul>
+            <li>
+              <strong>Google Engineering Practices documentation</strong> -- How
+              Google does code review:
+              <a href="https://google.github.io/eng-practices/"
+                >https://google.github.io/eng-practices/</a
+              >
+            </li>
+            <li>
+              <strong>The Pragmatic Engineer newsletter</strong> (Gergely Orosz)
+              -- Industry practices at top tech companies
+            </li>
+          </ul>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

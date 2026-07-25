@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Month 2: Architecture (Days 25-44) — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Month 2: Architecture</h1>
+          <p>
+            By the end of this month you will: design systems at a whiteboard,
+            build a production-quality REST API, understand distributed systems
+            trade-offs, and have completed 8+ system design exercises.
+          </p>
+
+          <hr />
+
+          <!-- ========== WEEK 5 ========== -->
+          <h2>WEEK 5: System Design Foundations</h2>
+
+          <!-- Day 25 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 25</span>
+              <div class="card-title">Distributed Systems Deep Dive</div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <ul>
+              <li>
+                <a href="systems_design.html">Systems Design guide</a> — Re-read
+                <strong>Part 2: Distributed Systems Fundamentals</strong> fully.
+              </li>
+              <li>
+                This time, take notes on:
+                <ul>
+                  <li>
+                    CAP theorem: write 1 sentence explaining it to a colleague
+                  </li>
+                  <li>
+                    Consistency models: write the 4 levels in order (strongest
+                    to weakest)
+                  </li>
+                  <li>
+                    Consensus: what is the difference between 2PC and Saga
+                    pattern?
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Read the latency numbers table again. Write them on a sticky
+                note by your monitor.
+              </li>
+            </ul>
+
+            <h4>Practice (50 min)</h4>
+            <p>System design exercise: <strong>Rate Limiter</strong></p>
+            <p>Timer: 35 minutes. On paper or text file:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Per-user or global? Fixed window or sliding
+                window? Distributed?
+              </li>
+              <li>(5 min) Estimate: 1000 users, 100 requests/sec/user limit</li>
+              <li>
+                (10 min) High-level: Token bucket vs sliding window? Where does
+                state live? (Redis)
+              </li>
+              <li>
+                (10 min) Deep dive: How to handle distributed rate limiting
+                across multiple servers?
+              </li>
+              <li>
+                (5 min) Bottlenecks: What if Redis goes down? (Fail open or fail
+                closed?)
+              </li>
+            </ol>
+            <p>
+              Compare with
+              <a href="systems_design.html">Systems Design guide</a> Part 4,
+              problem 2.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "CAP theorem in my own words: <strong>___</strong>. Rate
+                limiter: I chose <strong>___</strong> algorithm because
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 26 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 26</span>
+              <div class="card-title">Message Queues + Third System Design</div>
+            </div>
+
+            <h4>Read (40 min)</h4>
+            <ul>
+              <li>
+                <a href="systems_design.html">Systems Design guide</a> section
+                1.3 (Message Queues and Event Streaming) — re-read.
+              </li>
+              <li>
+                Research one of these (pick whichever you can install easiest):
+                <ul>
+                  <li>
+                    Redis Pub/Sub: <code>pip install redis</code>, read Redis
+                    docs on Pub/Sub
+                  </li>
+                  <li>
+                    Python's built-in <code>queue</code> module for local
+                    message passing (already done in Day 15)
+                  </li>
+                </ul>
+              </li>
+              <li>
+                Key concept: understand at-most-once vs at-least-once vs
+                exactly-once delivery.
+              </li>
+            </ul>
+
+            <h4>Practice (70 min)</h4>
+            <p>System design exercise: <strong>Paste Bin</strong></p>
+            <p>Timer: 35 minutes. On paper or text file:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Max paste size? Expiration? Public vs private?
+              </li>
+              <li>
+                (5 min) Estimate: 5M pastes/day, average 10KB, 50GB/day storage
+              </li>
+              <li>
+                (10 min) High-level: Object storage (S3) for paste content, DB
+                for metadata, CDN for reads
+              </li>
+              <li>
+                (10 min) Deep dive: How to generate unique paste URLs? How to
+                handle expiration (TTL)?
+              </li>
+              <li>
+                (5 min) Bottlenecks: What if storage fills up? How to handle
+                viral pastes? (CDN caching)
+              </li>
+            </ol>
+
+            <p>
+              Then create a file <code>exercises/message_queue_demo.py</code>:
+            </p>
+            <pre><code><span class="str">"""
+Exercise: Simulate a message queue with producers and consumers.
+"""</span>
+<span class="kw">import</span> queue
+<span class="kw">import</span> threading
+<span class="kw">import</span> time
+<span class="kw">import</span> json
+
+message_queue = queue.Queue()
+
+<span class="kw">def</span> <span class="fn">producer</span>(name, messages):
+    <span class="kw">for</span> msg <span class="kw">in</span> messages:
+        event = {<span class="str">"producer"</span>: name, <span class="str">"data"</span>: msg, <span class="str">"time"</span>: time.time()}
+        message_queue.put(json.dumps(event))
+        <span class="fn">print</span>(<span class="str">f"[{name}] Published: {msg}"</span>)
+        time.sleep(<span class="num">0.1</span>)
+
+<span class="kw">def</span> <span class="fn">consumer</span>(name):
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="kw">try</span>:
+            raw = message_queue.get(timeout=<span class="num">2</span>)
+            event = json.loads(raw)
+            <span class="fn">print</span>(<span class="str">f"  [{name}] Consumed: {event['data']} from {event['producer']}"</span>)
+            message_queue.task_done()
+        <span class="kw">except</span> queue.Empty:
+            <span class="fn">print</span>(<span class="str">f"  [{name}] No more messages, shutting down"</span>)
+            <span class="kw">break</span>
+
+<span class="cm"># 2 producers, 2 consumers</span>
+threads = [
+    threading.Thread(target=producer, args=(<span class="str">"P1"</span>, [<span class="str">"order-1"</span>, <span class="str">"order-2"</span>, <span class="str">"order-3"</span>])),
+    threading.Thread(target=producer, args=(<span class="str">"P2"</span>, [<span class="str">"payment-1"</span>, <span class="str">"payment-2"</span>])),
+    threading.Thread(target=consumer, args=(<span class="str">"C1"</span>,)),
+    threading.Thread(target=consumer, args=(<span class="str">"C2"</span>,)),
+]
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.start()
+<span class="kw">for</span> t <span class="kw">in</span> threads: t.join()</code></pre>
+            <p>Run it. Notice how consumers share the work.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Message queue mental model: producer &rarr; queue &rarr;
+                consumer. EE equivalent: <strong>___</strong>. Paste Bin design:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 27 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 27</span>
+              <div class="card-title">DDIA Chapters 1-2 + Load Balancing</div>
+            </div>
+
+            <h4>Read (80 min)</h4>
+            <ul>
+              <li>
+                <strong>"Designing Data-Intensive Applications" (DDIA)</strong>
+                by Martin Kleppmann — Chapter 1: Reliable, Scalable, and
+                Maintainable Applications — Chapter 2: Data Models and Query
+                Languages
+              </li>
+              <li>
+                If you don't have the book, read the summaries at:
+                <a
+                  href="https://github.com/keyvanakbary/learning-notes/blob/master/books/designing-data-intensive-applications.md"
+                  target="_blank"
+                  >github.com/keyvanakbary/learning-notes</a
+                >
+              </li>
+              <li>
+                Take notes on: What are the 3 concerns (reliability,
+                scalability, maintainability)? What is the difference between
+                relational and document data models?
+              </li>
+            </ul>
+
+            <h4>Practice (30 min)</h4>
+            <p>
+              <a href="systems_design.html">Systems Design guide</a> section 1.4
+              (Load Balancers) — re-read. In your journal, draw a diagram
+              showing: Client &rarr; Load Balancer &rarr; 3 app servers &rarr;
+              Database. Label the load balancing strategy you'd use. Write one
+              sentence about what happens if one app server goes down.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "DDIA key insight from ch1-2: <strong>___</strong>. Load
+                balancer distributes traffic like <strong>___</strong> in my EE
+                experience."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 28 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 28</span>
+              <div class="card-title">DDIA Chapters 3-4 + API Design</div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <ul>
+              <li>
+                DDIA Chapter 3: Storage and Retrieval (focus on B-trees vs
+                LSM-trees)
+              </li>
+              <li>
+                DDIA Chapter 4: Encoding and Evolution (focus on schema
+                evolution)
+              </li>
+            </ul>
+
+            <h4>Read (20 min)</h4>
+            <p>
+              <a href="systems_design.html">Systems Design guide</a> — Read
+              <strong>Part 5: API Design</strong> fully.
+            </p>
+
+            <h4>Practice (30 min)</h4>
+            <p>Design a REST API for a book review platform. Define:</p>
+            <ul>
+              <li>Resources: books, authors, reviews, users</li>
+              <li>
+                Endpoints (at least 8): GET/POST/PUT/DELETE for the main
+                resources
+              </li>
+              <li>Response format: JSON with consistent structure</li>
+              <li>
+                Error format:
+                <code
+                  >{"error": {"code": "NOT_FOUND", "message": "Book not
+                  found"}}</code
+                >
+              </li>
+              <li>Pagination: <code>GET /books?page=2&amp;limit=20</code></li>
+            </ul>
+            <p>
+              Write this API spec in a text file
+              <code>exercises/book_api_design.txt</code>.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "B-tree vs LSM-tree: <strong>___</strong>. API design principles
+                I'll follow: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 29 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 29</span>
+              <div class="card-title">
+                DDIA Chapters 5-6 + Fourth System Design
+              </div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <ul>
+              <li>
+                DDIA Chapter 5: Replication (leader-based, multi-leader,
+                leaderless)
+              </li>
+              <li>DDIA Chapter 6: Partitioning (key-range, hash-based)</li>
+              <li>
+                Key questions to answer in your notes:
+                <ul>
+                  <li>
+                    What is the difference between synchronous and asynchronous
+                    replication?
+                  </li>
+                  <li>
+                    What is a split-brain scenario and how is it prevented?
+                  </li>
+                  <li>
+                    What is consistent hashing and why does it help with
+                    partitioning?
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>Practice (50 min)</h4>
+            <p>System design exercise: <strong>Twitter/X News Feed</strong></p>
+            <p>Timer: 40 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: What operations? Post tweet, read feed,
+                follow/unfollow. Scale?
+              </li>
+              <li>
+                (5 min) Estimate: 200M users, 100M tweets/day, average 200
+                followers
+              </li>
+              <li>
+                (15 min) High-level: Fan-out on write vs fan-out on read. When
+                to use which?
+                <ul>
+                  <li>
+                    Fan-out on write: pre-compute feeds, push to follower
+                    caches. Fast reads. Expensive for celebrities.
+                  </li>
+                  <li>
+                    Fan-out on read: query followers' tweets at read time. No
+                    pre-computation. Slow reads.
+                  </li>
+                  <li>
+                    Hybrid: fan-out on write for normal users, fan-out on read
+                    for celebrities (>10K followers)
+                  </li>
+                </ul>
+              </li>
+              <li>
+                (10 min) Deep dive: Feed cache structure. How to merge and rank
+                tweets? Timeline caching with Redis sorted sets.
+              </li>
+              <li>
+                (5 min) Bottlenecks: Celebrity posting causes write
+                amplification. Rate limiting on writes.
+              </li>
+            </ol>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Replication insight: <strong>___</strong>. Fan-out on write vs
+                read: I'd choose <strong>___</strong> for most cases because
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 30 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 30</span>
+              <div class="card-title">
+                SWE Practices: SOLID + Design Patterns
+              </div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <ul>
+              <li>
+                <a href="software_engineering.html"
+                  >Software Engineering guide</a
+                >
+                — Read <strong>Part 1: Design Principles</strong> fully
+                (sections 1.1 and 1.2).
+              </li>
+              <li>
+                For each SOLID principle, identify one place in your current
+                codebase at work where it applies.
+              </li>
+              <li>
+                For the 8 design patterns: focus on Strategy, Observer, Factory,
+                and Adapter. These 4 come up most.
+              </li>
+            </ul>
+
+            <h4>Practice (50 min)</h4>
+            <p>Create <code>exercises/design_patterns.py</code>:</p>
+            <pre><code><span class="str">"""
+Exercise: Implement the Strategy pattern.
+Scenario: A notification system that can send via email, SMS, or push.
+"""</span>
+<span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+
+<span class="kw">class</span> <span class="ty">NotificationStrategy</span>(ABC):
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">send</span>(self, user: <span class="ty">str</span>, message: <span class="ty">str</span>) -> <span class="kw">None</span>: ...
+
+<span class="kw">class</span> <span class="ty">EmailNotification</span>(<span class="ty">NotificationStrategy</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(self, user: <span class="ty">str</span>, message: <span class="ty">str</span>) -> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="str">f"[EMAIL] To: {user} | {message}"</span>)
+
+<span class="kw">class</span> <span class="ty">SMSNotification</span>(<span class="ty">NotificationStrategy</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(self, user: <span class="ty">str</span>, message: <span class="ty">str</span>) -> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="str">f"[SMS] To: {user} | {message}"</span>)
+
+<span class="kw">class</span> <span class="ty">PushNotification</span>(<span class="ty">NotificationStrategy</span>):
+    <span class="kw">def</span> <span class="fn">send</span>(self, user: <span class="ty">str</span>, message: <span class="ty">str</span>) -> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="str">f"[PUSH] To: {user} | {message}"</span>)
+
+<span class="kw">class</span> <span class="ty">NotificationService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, strategy: <span class="ty">NotificationStrategy</span>):
+        self.strategy = strategy
+
+    <span class="kw">def</span> <span class="fn">notify</span>(self, user: <span class="ty">str</span>, message: <span class="ty">str</span>):
+        self.strategy.send(user, message)
+
+<span class="cm"># Usage — swap strategy without changing the service</span>
+<span class="kw">for</span> strategy <span class="kw">in</span> [<span class="fn">EmailNotification</span>(), <span class="fn">SMSNotification</span>(), <span class="fn">PushNotification</span>()]:
+    service = <span class="fn">NotificationService</span>(strategy)
+    service.notify(<span class="str">"alice"</span>, <span class="str">"Your order shipped!"</span>)</code></pre>
+            <p>
+              Run it. Then add a fourth strategy:
+              <code>SlackNotification</code>. Notice: you did NOT modify
+              <code>NotificationService</code>. That is the Open/Closed
+              principle.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "SOLID principle that clicked most: <strong>___</strong>. Design
+                pattern I'll use at work: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 6 ========== -->
+          <h2>WEEK 6: Build Project 1</h2>
+
+          <!-- Day 31 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 31</span>
+              <div class="card-title">Project 1 Setup: Task Management API</div>
+            </div>
+
+            <h4>Read (20 min)</h4>
+            <p>
+              <a href="three_month_plan.html">Three Month Plan</a> — Re-read the
+              <strong>Project 1: Task Management API</strong> requirements.
+              Decide your stack: <strong>FastAPI</strong> (recommended) or
+              <strong>Flask</strong>. <strong>SQLite</strong> for now.
+              <strong>pytest</strong> for testing.
+            </p>
+
+            <h4>Practice (90 min)</h4>
+            <p>Install dependencies:</p>
+            <pre><code>pip install fastapi uvicorn sqlalchemy pydantic pytest httpx</code></pre>
+            <p>Create your project structure:</p>
+            <pre><code>project1/
+  app/
+    __init__.py
+    main.py          <span class="cm"># FastAPI app, routes</span>
+    models.py         <span class="cm"># SQLAlchemy models</span>
+    schemas.py        <span class="cm"># Pydantic schemas</span>
+    database.py       <span class="cm"># Database connection</span>
+  tests/
+    __init__.py
+    test_tasks.py
+  requirements.txt</code></pre>
+            <p>
+              Implement <code>database.py</code> (SQLAlchemy setup with SQLite),
+              <code>models.py</code> (Task model: id, title, description,
+              status, assignee, due_date, created_at),
+              <code>schemas.py</code> (Pydantic models for
+              create/update/response). Run a basic test: create the database and
+              verify the Task table exists.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Project 1 started. Stack: <strong>___</strong>. Schema defined
+                with <strong>___</strong> fields. First challenge:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 32 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 32</span>
+              <div class="card-title">Project 1: CRUD Endpoints</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Implement these endpoints in <code>app/main.py</code>:</p>
+            <ul>
+              <li><code>POST /tasks</code> — Create a new task</li>
+              <li>
+                <code>GET /tasks</code> — List all tasks (with pagination:
+                <code>?skip=0&amp;limit=10</code>)
+              </li>
+              <li><code>GET /tasks/{id}</code> — Get a single task</li>
+              <li><code>PUT /tasks/{id}</code> — Update a task</li>
+              <li><code>DELETE /tasks/{id}</code> — Delete a task</li>
+            </ul>
+            <p>Test each endpoint using the FastAPI auto-docs:</p>
+            <pre><code>cd project1 && uvicorn app.main:app --reload</code></pre>
+            <p>
+              Open
+              <a href="http://127.0.0.1:8000/docs" target="_blank"
+                >http://127.0.0.1:8000/docs</a
+              >
+              in your browser. Test each endpoint interactively. Add proper
+              error handling: 404 when task not found, 422 when validation
+              fails.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Implemented <strong>___/5</strong> CRUD endpoints. FastAPI
+                auto-docs feel like <strong>___</strong>. Error I hit:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 33 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 33</span>
+              <div class="card-title">Project 1: Filtering + Tests</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Add filtering to <code>GET /tasks</code>:
+              <code>?status=todo</code>, <code>?assignee=alice</code>,
+              <code>?due_before=2024-12-31</code>. Add sorting:
+              <code>?sort_by=created_at&amp;order=desc</code>.
+            </p>
+            <p>Write tests in <code>tests/test_tasks.py</code>:</p>
+            <pre><code><span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> app.main <span class="kw">import</span> app
+
+client = <span class="fn">TestClient</span>(app)
+
+<span class="kw">def</span> <span class="fn">test_create_task</span>():
+    response = client.post(<span class="str">"/tasks"</span>, json={
+        <span class="str">"title"</span>: <span class="str">"Test task"</span>,
+        <span class="str">"description"</span>: <span class="str">"A test"</span>,
+        <span class="str">"status"</span>: <span class="str">"todo"</span>
+    })
+    <span class="kw">assert</span> response.status_code == <span class="num">201</span>
+    <span class="kw">assert</span> response.json()[<span class="str">"title"</span>] == <span class="str">"Test task"</span>
+
+<span class="kw">def</span> <span class="fn">test_get_task_not_found</span>():
+    response = client.get(<span class="str">"/tasks/99999"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="num">404</span>
+
+<span class="kw">def</span> <span class="fn">test_list_tasks_pagination</span>():
+    <span class="cm"># Create 3 tasks, request page of 2</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+        client.post(<span class="str">"/tasks"</span>, json={<span class="str">"title"</span>: <span class="str">f"Task {i}"</span>, <span class="str">"status"</span>: <span class="str">"todo"</span>})
+    response = client.get(<span class="str">"/tasks?limit=2"</span>)
+    <span class="kw">assert</span> <span class="fn">len</span>(response.json()) <= <span class="num">2</span></code></pre>
+            <p>Write at least 10 test functions. Run tests:</p>
+            <pre><code>cd project1 && pytest tests/ -v</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Wrote <strong>___</strong> tests. All passing: yes/no.
+                Filtering implementation approach: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 34 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 34</span>
+              <div class="card-title">
+                Project 1: State Machine + Validation + Fifth System Design
+              </div>
+            </div>
+
+            <h4>Practice — Project (60 min)</h4>
+            <p>
+              Implement a state machine for task status transitions: Valid
+              transitions: todo &rarr; in_progress, in_progress &rarr; done, any
+              &rarr; cancelled. Invalid transitions should return 400. Implement
+              input validation: Title (1-200 chars), Status (enum), Due date
+              (future). Write tests for valid AND invalid transitions.
+            </p>
+
+            <h4>Practice — System design (50 min)</h4>
+            <p>
+              System design exercise: <strong>Chat System (WhatsApp)</strong>
+            </p>
+            <p>Timer: 40 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: 1-on-1 and group chat? Media? Read receipts?
+                Scale?
+              </li>
+              <li>
+                (5 min) Estimate: 50M users, 100 messages/user/day, 5B
+                messages/day
+              </li>
+              <li>
+                (15 min) High-level: WebSocket for real-time, message queue for
+                delivery, database for history
+              </li>
+              <li>
+                (10 min) Deep dive: Message ordering? Offline users? Group
+                message fan-out?
+              </li>
+              <li>
+                (5 min) Bottlenecks: WebSocket connection limits, message
+                storage at scale
+              </li>
+            </ol>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "State machine in code feels like <strong>___</strong> from my
+                EE design work. Chat system key challenge:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 35 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 35</span>
+              <div class="card-title">Project 1: Caching + Logging</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Add in-memory caching (use <code>functools.lru_cache</code> or a
+              simple dict with TTL): Cache
+              <code>GET /tasks/{id}</code> responses. Invalidate cache when a
+              task is updated or deleted. Add a <code>X-Cache: HIT</code> or
+              <code>X-Cache: MISS</code> response header.
+            </p>
+            <p>Add structured logging:</p>
+            <pre><code><span class="kw">import</span> logging
+<span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+logger = logging.getLogger(<span class="str">"taskapi"</span>)
+
+<span class="kw">def</span> <span class="fn">log_request</span>(method, path, status, duration_ms):
+    logger.info(json.dumps({
+        <span class="str">"timestamp"</span>: datetime.utcnow().isoformat(),
+        <span class="str">"method"</span>: method,
+        <span class="str">"path"</span>: path,
+        <span class="str">"status"</span>: status,
+        <span class="str">"duration_ms"</span>: <span class="fn">round</span>(duration_ms, <span class="num">2</span>),
+    }))</code></pre>
+            <p>
+              Add a FastAPI middleware that logs every request. Write tests that
+              verify caching works (check the <code>X-Cache</code> header).
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Cache hit rate after running tests: roughly
+                <strong>___</strong>%. Logging added: structured JSON format.
+                Middleware feels like <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 36 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 36</span>
+              <div class="card-title">Project 1: Finalize + Write RFC</div>
+            </div>
+
+            <h4>Practice (50 min)</h4>
+            <p>
+              Final touches on Project 1: Add a health check endpoint
+              <code>GET /health</code> returning <code>{"status": "ok"}</code>.
+              Add <code>requirements.txt</code> with all dependencies. Add a
+              <code>README.md</code>. Run all tests one final time:
+              <code>pytest tests/ -v</code>.
+            </p>
+
+            <h4>Practice — RFC (60 min)</h4>
+            <p>
+              Write a design document (RFC) for Project 1
+              <strong>retroactively</strong>. Use the template from
+              <a href="staff_level.html">Staff Level guide</a> section 2.1. Save
+              as <code>project1/DESIGN.md</code>. Include: Context,
+              Goals/Non-Goals, Architecture, Data model, API contract,
+              Alternatives considered, Risks.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Project 1 complete. Total lines of code: roughly
+                <strong>___</strong>. Total tests: <strong>___</strong>. Writing
+                the RFC took <strong>___</strong> min and revealed
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 7 ========== -->
+          <h2>WEEK 7: DDIA + More System Designs</h2>
+
+          <!-- Day 37 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 37</span>
+              <div class="card-title">DDIA Chapters 7-8</div>
+            </div>
+
+            <h4>Read (80 min)</h4>
+            <ul>
+              <li>
+                DDIA Chapter 7: Transactions — Key: isolation levels (read
+                committed, snapshot isolation, serializable). What is a write
+                skew?
+              </li>
+              <li>
+                DDIA Chapter 8: The Trouble with Distributed Systems — Key: 3
+                types of problems (unreliable networks, unreliable clocks,
+                process pauses).
+              </li>
+            </ul>
+
+            <h4>Practice (30 min)</h4>
+            <p>
+              In your journal, write a 1-paragraph summary of each chapter in
+              your own words. For each, write one thing that surprised you and
+              one thing you already knew from EE.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Transaction isolation level I'd use for most apps:
+                <strong>___</strong>. Distributed systems problem that maps to
+                EE: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 38 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 38</span>
+              <div class="card-title">Sixth System Design + Git Practices</div>
+            </div>
+
+            <h4>Practice — System design (50 min)</h4>
+            <p>System design exercise: <strong>Notification System</strong></p>
+            <p>Timer: 40 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Channels (push, SMS, email)? Priority levels?
+                Rate limiting per user?
+              </li>
+              <li>
+                (5 min) Estimate: 100M users, 10 notifications/user/day = 1B/day
+              </li>
+              <li>
+                (15 min) High-level: API &rarr; Priority queue &rarr;
+                Channel-specific workers &rarr; Delivery services
+              </li>
+              <li>
+                (10 min) Deep dive: User preferences (opt-out per channel)?
+                Message templating? Rate limiting (max 5 push/hour)?
+              </li>
+              <li>
+                (5 min) Bottlenecks: Email delivery latency, push notification
+                service limits
+              </li>
+            </ol>
+
+            <h4>Read (30 min)</h4>
+            <p>
+              <a href="software_engineering.html">Software Engineering guide</a>
+              — Read <strong>Part 4: Version Control</strong> (sections 4.1
+              through 4.3). Key: Feature branches, short-lived branches, commit
+              discipline.
+            </p>
+
+            <h4>Practice (30 min)</h4>
+            <p>Initialize a git repo for Project 1 if you haven't:</p>
+            <pre><code>cd project1 && git init && git add . && git commit -m <span class="str">"Initial commit: Task Management API"</span></code></pre>
+            <p>
+              Create a feature branch, add a search endpoint, commit with a good
+              message, merge back to main.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Notification system priority queue reminds me of
+                <strong>___</strong> in hardware. Git branching: I now
+                understand <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 39 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 39</span>
+              <div class="card-title">
+                DDIA Chapter 9 + Seventh System Design
+              </div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <p>
+              DDIA Chapter 9: Consistency and Consensus — Focus on
+              linearizability, ordering guarantees, distributed transactions,
+              and the Raft consensus algorithm (high-level).
+            </p>
+
+            <h4>Practice (50 min)</h4>
+            <p>
+              System design exercise:
+              <strong>Distributed Task Scheduler</strong>
+            </p>
+            <p>Timer: 45 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: One-time or recurring? Priority? At-least-once
+                or exactly-once?
+              </li>
+              <li>(5 min) Estimate: 10M scheduled tasks, 1M executions/hour</li>
+              <li>
+                (15 min) High-level: Task store (DB), scheduler service, worker
+                pool, result store
+              </li>
+              <li>
+                (15 min) Deep dive: Worker failure (heartbeat + timeout +
+                retry)? Duplicate prevention (compare-and-swap)? Recurring tasks
+                (re-schedule on completion)?
+              </li>
+              <li>
+                (5 min) Bottlenecks: Hot partition if many tasks due at same
+                time. Fan out across sharded queues.
+              </li>
+            </ol>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Consensus in distributed systems is like
+                <strong>___</strong> in hardware. Task scheduler: the hardest
+                part is <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 40 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 40</span>
+              <div class="card-title">Eighth System Design + CI/CD</div>
+            </div>
+
+            <h4>Practice — System design (50 min)</h4>
+            <p>System design exercise: <strong>Search Autocomplete</strong></p>
+            <p>Timer: 45 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Top-K suggestions? Personalized? How fast
+                (<100ms)?
+              </li>
+              <li>(5 min) Estimate: 10M users, 10 queries/day/user</li>
+              <li>
+                (15 min) High-level: Trie data structure for prefix matching,
+                cached at CDN edge
+              </li>
+              <li>
+                (15 min) Deep dive: Ranking (frequency + recency + user
+                history)? Trie update (offline batch vs real-time)? Multi-word
+                queries?
+              </li>
+              <li>
+                (5 min) Bottlenecks: Trie memory. Serve from cache/CDN, rebuild
+                periodically.
+              </li>
+            </ol>
+
+            <h4>Read (30 min)</h4>
+            <p>
+              <a href="software_engineering.html">Software Engineering guide</a>
+              — Read <strong>Part 5: CI/CD</strong> fully.
+            </p>
+
+            <h4>Practice (30 min)</h4>
+            <p>
+              If you have a GitHub account, create a repo for Project 1 and push
+              it. Create <code>.github/workflows/test.yml</code>:
+            </p>
+            <pre><code><span class="cm">name: Tests</span>
+<span class="cm">on: [push]</span>
+<span class="cm">jobs:</span>
+<span class="cm">  test:</span>
+<span class="cm">    runs-on: ubuntu-latest</span>
+<span class="cm">    steps:</span>
+<span class="cm">      - uses: actions/checkout@v4</span>
+<span class="cm">      - uses: actions/setup-python@v5</span>
+<span class="cm">        with:</span>
+<span class="cm">          python-version: "3.12"</span>
+<span class="cm">      - run: pip install -r requirements.txt</span>
+<span class="cm">      - run: pytest tests/ -v</span></code></pre>
+            <p>Push and verify the workflow runs.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Search autocomplete: trie is like <strong>___</strong> in
+                hardware. CI/CD pipeline: my build runs automatically on
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 8 ========== -->
+          <h2>WEEK 8: Docker + Advanced System Design + Month 2 Wrap</h2>
+
+          <!-- Day 41 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 41</span>
+              <div class="card-title">Docker Fundamentals</div>
+            </div>
+
+            <h4>Read (30 min)</h4>
+            <p>
+              Docker basics: A container is a lightweight, isolated process with
+              its own filesystem.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p>
+                It is like a virtual machine but sharing the host OS kernel —
+                like multiple isolated partitions on the same FPGA.
+              </p>
+            </div>
+            <p>
+              Key concepts: Image (blueprint), Container (running instance),
+              Dockerfile (build instructions).
+            </p>
+
+            <h4>Practice (80 min)</h4>
+            <p>Create <code>project1/Dockerfile</code>:</p>
+            <pre><code>FROM python:3.12-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+            <p>Build and run:</p>
+            <pre><code>cd project1
+docker build -t task-api .
+docker run -p 8000:8000 task-api</code></pre>
+            <p>
+              Test that the API works via
+              <a href="http://127.0.0.1:8000/docs" target="_blank"
+                >http://127.0.0.1:8000/docs</a
+              >. Create <code>project1/docker-compose.yml</code> for future
+              expansion.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Docker container is like <strong>___</strong> in my hardware
+                experience. My API now runs in a container."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 42 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 42</span>
+              <div class="card-title">Ninth System Design (Staff-Level)</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              System design exercise:
+              <strong>Distributed Key-Value Store</strong>
+            </p>
+            <p>This is a staff-level problem. Timer: 50 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Consistency or availability priority?
+                Read/write ratio? Data size per key?
+              </li>
+              <li>
+                (5 min) Estimate: 100TB data, 100K reads/sec, 10K writes/sec
+              </li>
+              <li>
+                (20 min) High-level: Consistent hashing for partitioning,
+                replication factor of 3, coordinator node receives requests
+              </li>
+              <li>
+                (15 min) Deep dive: Node failure (hinted handoff)? Conflict
+                resolution (vector clocks or LWW)? Adding/removing nodes
+                (virtual nodes)?
+              </li>
+              <li>
+                (5 min) Bottlenecks: Hot keys, rebalancing during node addition
+              </li>
+            </ol>
+            <p>
+              After the timer, compare your design to Amazon Dynamo key
+              concepts: consistent hashing with virtual nodes, sloppy quorum +
+              hinted handoff, vector clocks, Merkle trees for anti-entropy.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Distributed KV store: consistent hashing is like
+                <strong>___</strong>. This was the hardest design so far because
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 43 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 43</span>
+              <div class="card-title">Technical Debt + Code Review</div>
+            </div>
+
+            <h4>Read (50 min)</h4>
+            <ul>
+              <li>
+                <a href="software_engineering.html"
+                  >Software Engineering guide</a
+                >
+                — Read <strong>Part 3: Code Review</strong> (sections 3.1
+                through 3.3).
+              </li>
+              <li>
+                <a href="software_engineering.html"
+                  >Software Engineering guide</a
+                >
+                — Read <strong>Part 6: Technical Debt</strong> fully.
+              </li>
+            </ul>
+
+            <h4>Practice (60 min)</h4>
+            <p>
+              Do a self-code-review of Project 1: Read every file as if someone
+              else wrote it. Write down 5 things you would change. Pick the 3
+              most impactful and fix them. Commit.
+            </p>
+            <p>
+              Identify 2 pieces of technical debt: what it is, why it exists,
+              impact if unfixed, effort to fix.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Self-review found <strong>___</strong> issues. Most important
+                refactoring: <strong>___</strong>. Tech debt I'm deliberately
+                carrying: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 44 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-green">Day 44</span>
+              <div class="card-title">
+                Algorithm Refresh + Month 2 Assessment
+              </div>
+            </div>
+
+            <h4>Practice — Algorithms (50 min)</h4>
+            <pre><code>python main.py --train --train-limit 15</code></pre>
+            <p>
+              Quick pattern recognition refresh. Target: >85%. Then re-solve 2
+              algorithm problems you previously struggled with:
+            </p>
+            <pre><code>python main.py --run &lt;problem_id&gt;
+python main.py --run &lt;problem_id&gt;</code></pre>
+
+            <h4>Practice — System design review (60 min)</h4>
+            <p>
+              Review all 9 system designs you have completed. For each: write 1
+              sentence for the key insight and 1 sentence for what you'd do
+              differently. Compile into
+              <code>exercises/system_design_notes.md</code>.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Pattern recognition: <strong>___/15</strong>. System designs
+                completed: 9. Most confident about: <strong>___</strong>. Least
+                confident: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ===== MONTH 2 CHECKPOINT ===== -->
+          <h2>Month 2 Checkpoint</h2>
+          <p>
+            Before proceeding to <a href="daily_month3.html">Month 3</a>,
+            verify:
+          </p>
+
+          <ul class="checklist">
+            <li>
+              9 system designs completed (URL shortener, rate limiter, paste
+              bin, Twitter feed, chat, notification, task scheduler, search
+              autocomplete, distributed KV store)
+            </li>
+            <li>
+              Project 1 complete with: CRUD, filtering, caching, logging, tests,
+              Docker, RFC
+            </li>
+            <li>DDIA chapters 1-9 read (or summaries)</li>
+            <li>
+              Pattern recognition still >85% (<code>python main.py --train</code
+              >)
+            </li>
+            <li>
+              Understand: SOLID, Strategy/Observer/Factory patterns, testing
+              pyramid, CI/CD, git branching
+            </li>
+            <li>
+              Can explain: CAP theorem, consistency models, replication,
+              partitioning, consensus
+            </li>
+          </ul>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Behind schedule?</div>
+            <p>
+              If you are behind on any of these, spend Days 45-46 catching up
+              before starting Month 3.
+            </p>
+          </div>
+
+          <p>
+            Ready? Continue to
+            <a href="daily_month3.html">Month 3: Staff Impact + Capstone</a>.
+          </p>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

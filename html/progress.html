@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress — Offline Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Progress Dashboard</h1>
+          <p>
+            Browser progress uses <code>localStorage</code> (offline). CLI
+            progress uses <code>results/progress.json</code>. They are separate
+            on purpose so flights with only HTML still work.
+          </p>
+          <div data-progress></div>
+
+          <h2>CLI progress</h2>
+          <pre><code>python main.py --seed-cards
+python main.py --progress
+python main.py --done dsa_05</code></pre>
+
+          <h2>Recommended daily loop</h2>
+          <ol>
+            <li><a href="algo_memory.html">Memory Lab</a> — clear due cards</li>
+            <li><a href="practice.html">Practice Arena</a> — 3 generated problems</li>
+            <li>One track lesson from <a href="catalog.html">Catalog</a></li>
+            <li>Optional: <code>python main.py --quiz --topic dsa</code></li>
+          </ol>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js"></script>
+  </body>
+</html>

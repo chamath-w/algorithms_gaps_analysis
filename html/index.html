@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff SDE Course — Algorithm Gaps Analysis</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <div class="hero">
+            <h1>Offline CS / SWE Mastery</h1>
+            <p class="tagline">
+              An interactive undergrad-shaped textbook plus staff path —
+              animations, SRS algorithm memory, dynamic drills, and a local
+              tutor. Built for an EE-background engineer. Works on long flights.
+            </p>
+
+            <div class="hero-stats">
+              <div class="stat animate-in">
+                <div class="stat-number">13</div>
+                <div class="stat-label">Course Tracks</div>
+              </div>
+              <div class="stat animate-in">
+                <div class="stat-number">16</div>
+                <div class="stat-label">Algorithm Patterns</div>
+              </div>
+              <div class="stat animate-in">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Generated Drills</div>
+              </div>
+              <div class="stat animate-in">
+                <div class="stat-number">72</div>
+                <div class="stat-label">Day Plan</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Start here</div>
+            <p>
+              Open the <a href="catalog.html">Full Catalog</a>, then the
+              <a href="algo_memory.html">Algorithm Memory Lab</a> (SRS +
+              animations). Generate endless practice with
+              <a href="practice.html">Practice Arena</a> or
+              <code>python main.py --drill</code>.
+            </p>
+          </div>
+
+          <div data-flight-prep></div>
+
+          <h2>Course Modules</h2>
+
+          <div class="card-grid">
+            <a
+              href="catalog.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon cyan">&#9776;</div>
+                <div class="card-title">Full Catalog</div>
+              </div>
+              <div class="card-desc">
+                Undergrad-shaped navigator: discrete math, theory, architecture,
+                compilers, security, plus the staff track.
+              </div>
+            </a>
+
+            <a
+              href="algo_memory.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon purple">&#9733;</div>
+                <div class="card-title">Algorithm Memory Lab</div>
+              </div>
+              <div class="card-desc">
+                Spaced-repetition flashcards, skeletons, and animated movies —
+                built for algorithms that refuse to stick.
+              </div>
+            </a>
+
+            <a
+              href="practice.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon green">&#9654;</div>
+                <div class="card-title">Practice Arena</div>
+              </div>
+              <div class="card-desc">
+                Dynamic problems with an offline tutor that repairs mental
+                models when you miss.
+              </div>
+            </a>
+
+            <a
+              href="mental_models.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon purple">&#9881;</div>
+                <div class="card-title">Mental Models</div>
+              </div>
+              <div class="card-desc">
+                6 mental model shifts from EE to SDE thinking. Bridges your
+                hardware intuition to software architecture.
+              </div>
+            </a>
+
+            <a
+              href="patterns.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon blue">&#9670;</div>
+                <div class="card-title">Algorithm Patterns</div>
+              </div>
+              <div class="card-desc">
+                21 patterns with templates and trigger signals. Sliding window,
+                BS-on-answer, sweep line, linked list, bits, and more.
+              </div>
+            </a>
+
+            <a
+              href="decision_tree.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon cyan">&#9733;</div>
+                <div class="card-title">Pattern Decision Tree</div>
+              </div>
+              <div class="card-desc">
+                Interactive flowchart: given a problem, which pattern should you
+                use? Follow the signals.
+              </div>
+            </a>
+
+            <a
+              href="systems_design.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon green">&#9635;</div>
+                <div class="card-title">Systems Design</div>
+              </div>
+              <div class="card-desc">
+                Building blocks, distributed systems, CAP theorem, 9 practice
+                problems, API design.
+              </div>
+            </a>
+
+            <a
+              href="software_engineering.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon orange">&#9874;</div>
+                <div class="card-title">Software Engineering</div>
+              </div>
+              <div class="card-desc">
+                SOLID, design patterns, testing pyramid, code review, git,
+                CI/CD, tech debt management.
+              </div>
+            </a>
+
+            <a
+              href="cs_fundamentals.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon red">&#9851;</div>
+                <div class="card-title">CS Fundamentals</div>
+              </div>
+              <div class="card-desc">
+                OS internals, networking L4-7, databases, SQL, concurrency
+                patterns in Python.
+              </div>
+            </a>
+
+            <a
+              href="staff_level.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon pink">&#9733;</div>
+                <div class="card-title">Staff-Level Skills</div>
+              </div>
+              <div class="card-desc">
+                RFC writing, technical decisions, cross-team influence,
+                observability, incident response.
+              </div>
+            </a>
+          </div>
+
+          <h2>Study Plan</h2>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <h4>
+                <a href="daily_month1.html">Month 1: Foundations</a>
+                <span class="badge badge-blue">Days 1-24</span>
+              </h4>
+              <p>
+                Mental models, 16 algorithm patterns, decision tree, pattern
+                training, 26 coding problems, pytest, concurrency, SQL.
+              </p>
+            </div>
+            <div class="timeline-item">
+              <h4>
+                <a href="daily_month2.html">Month 2: Architecture</a>
+                <span class="badge badge-green">Days 25-44</span>
+              </h4>
+              <p>
+                DDIA chapters 1-9, 9 system designs, Project 1 (Task Management
+                API), SOLID, design patterns, Git, CI/CD, Docker.
+              </p>
+            </div>
+            <div class="timeline-item">
+              <h4>
+                <a href="daily_month3.html">Month 3: Staff Impact</a>
+                <span class="badge badge-purple">Days 45-72</span>
+              </h4>
+              <p>
+                Staff skills (RFCs/ADRs), Project 2 (URL Shortener with
+                Analytics), load testing, observability, final assessments.
+              </p>
+            </div>
+          </div>
+
+          <h2>How to Use This Course</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Start with the Mental Models</div>
+            <p>
+              If you come from EE, begin with
+              <a href="mental_models.html">Mental Models</a> to bridge your
+              hardware intuition to software thinking. Then learn the
+              <a href="patterns.html">Algorithm Patterns</a> before attempting
+              any coding problems.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogies Throughout</div>
+            <p>
+              Every concept is explained with EE analogies — circuits, buses,
+              protocols, signal processing. Your hardware background is an
+              asset, not a gap.
+            </p>
+          </div>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Pattern Recognition Before Coding</div>
+            <p>
+              The biggest interview failure mode is not recognizing the pattern.
+              Train classification separately from coding using the
+              <a href="patterns.html">pattern trainer</a> (<code
+                >python main.py --train</code
+              >).
+            </p>
+          </div>
+
+          <h2>CLI Quick Reference</h2>
+
+          <pre><code><span class="cm"># Offline course</span>
+python main.py --catalog --verbose             <span class="cm"># Full track catalog</span>
+python main.py --quiz --topic dsa              <span class="cm"># Quiz + tutor on miss</span>
+python main.py --drill --pattern bfs           <span class="cm"># Generate a problem</span>
+python main.py --drill-check gen_bfs_123       <span class="cm"># Grade it</span>
+python main.py --tutor --topic dp --wrong "..." --right "..."
+python main.py --progress                      <span class="cm"># SRS / lesson progress</span>
+
+<span class="cm"># Pattern study</span>
+python main.py --patterns                      <span class="cm"># All 21 patterns</span>
+python main.py --pattern sliding_window        <span class="cm"># Deep dive</span>
+python main.py --decision-tree                 <span class="cm"># Selection flowchart</span>
+python main.py --train                         <span class="cm"># Classification trainer</span>
+
+<span class="cm"># Coding assessment bank</span>
+python main.py --list                          <span class="cm"># List all problems</span>
+python main.py --generate                      <span class="cm"># Create templates</span>
+python main.py --run dp_01                     <span class="cm"># Test one solution</span>
+python main.py --report                        <span class="cm"># Full gap analysis</span></code></pre>
+
+          <div class="footer">
+            Offline CS/SWE Course &mdash; Python 3.12+ stdlib + static HTML. No
+            network required.
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/offline-pack.js"></script>
+  </body>
+</html>

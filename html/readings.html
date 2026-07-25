@@ -1,0 +1,2774 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recommended Readings — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <!-- HERO -->
+          <div class="hero">
+            <h1>Recommended Readings</h1>
+            <p class="tagline">
+              A curated library of books, papers, and resources for the journey
+              from EE-background engineer to staff-level SDE. Organized by topic
+              with reading-order guidance tied to the 72-day plan.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">How to Use This Page</div>
+            <p style="margin-bottom: 0">
+              Each resource includes a difficulty badge, a description of what
+              you will gain from it, and a
+              <strong>"Read this when..."</strong> note that maps to specific
+              days in the 72-day study plan. You do not need to read everything
+              &mdash; the <a href="#priority-stack">Priority Stack</a> at the
+              bottom shows the five essential books if time is limited.
+            </p>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- SECTION 1: ALGORITHMS & DATA STRUCTURES -->
+          <!-- ============================================================ -->
+          <h2 id="algorithms">Section 1: Algorithms &amp; Data Structures</h2>
+
+          <h3>Essential (Month 1)</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Introduction to Algorithms (CLRS)</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest,
+                  Clifford Stein
+                </p>
+              </div>
+              <span class="badge badge-orange">Advanced</span>
+            </div>
+            <p>
+              The definitive algorithms textbook. Dense, mathematically
+              rigorous, and encyclopedic. Do <em>not</em> attempt to read
+              cover-to-cover; treat it as a reference manual you consult when
+              you need the canonical explanation of a technique. The proofs
+              build real intuition if you invest the time.
+            </p>
+            <p>
+              <strong>Key chapters:</strong> Sorting (6-9), Dynamic Programming
+              (15), Greedy Algorithms (16), Graph Algorithms (22-25).
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                CLRS is the <em>"Art of Electronics"</em> of computer science.
+                Just as Horowitz &amp; Hill is the reference you keep on your
+                bench for circuit design, CLRS is the reference you keep on your
+                desk for algorithm design. You learn from it selectively, not
+                sequentially.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 5-24 (Month 1). Look up specific chapters as you encounter
+                each pattern in the study plan. Return to it throughout all
+                three months as a reference.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Algorithm Design Manual</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Steven S. Skiena
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              More practical and approachable than CLRS. Skiena's "war stories"
+              show how algorithms solve real-world problems, giving you the
+              contextual intuition that pure theory alone cannot. Part II is a
+              catalog of algorithmic problems &mdash; invaluable when you
+              recognize a problem shape but cannot name the technique.
+            </p>
+            <p>
+              The catalog format (indexed by problem type) trains the exact
+              skill interviews test: given a novel problem, which algorithm
+              family applies?
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                Think of Part II like a component selection guide. Just as you
+                would look up "I need a low-noise amplifier for 2.4 GHz" and
+                find candidate topologies, you look up "I need shortest path
+                with negative weights" and find Bellman-Ford.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 5-18 (Weeks 2-3). Read Part I chapters alongside your
+                pattern study. Keep Part II as a permanent reference.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Grokking Algorithms</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Aditya Y. Bhargava
+                </p>
+              </div>
+              <span class="badge badge-green">Beginner</span>
+            </div>
+            <p>
+              A visual, illustrated, beginner-friendly introduction to
+              algorithms. If CLRS feels like drinking from a fire hose, start
+              here. The hand-drawn diagrams make binary search, BFS, dynamic
+              programming, and greedy algorithms click in a way that pseudocode
+              alone never will.
+            </p>
+            <p>
+              Short enough to finish in a weekend. Gives you the scaffolding to
+              make heavier books productive rather than overwhelming.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                This is your "Getting Started in Electronics" by Forrest Mims
+                &mdash; the friendly illustrated guide that makes you
+                comfortable with the territory before you crack open the
+                heavyweight references.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 1-4 (Week 1). Read this first, before anything else. It
+                builds the visual vocabulary the rest of the plan assumes.
+              </p>
+            </div>
+          </div>
+
+          <h3>Deep Dives (Month 2-3)</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Algorithms (4th Edition)</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Robert Sedgewick &amp; Kevin Wayne
+                  </p>
+                </div>
+                <span class="badge badge-blue">Intermediate</span>
+              </div>
+              <p>
+                Excellent visualizations and clean Java implementations. Strikes
+                the best balance between mathematical rigor and practical code.
+                The companion website has animations for every algorithm &mdash;
+                particularly useful for understanding sorting, trees, and graph
+                algorithms.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 25-44 (Month 2). Use selectively to deepen understanding
+                  of algorithms you struggled with in Month 1.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Competitive Programming 3</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Steven Halim
+                  </p>
+                </div>
+                <span class="badge badge-red">Expert</span>
+              </div>
+              <p>
+                For going deep on problem-solving patterns and contest-style
+                thinking. Covers advanced techniques like segment trees, suffix
+                arrays, and network flow that occasionally appear in staff-level
+                interviews. Only read this if you have exhausted the essentials
+                and want a competitive edge.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 60+ (Month 3) or post-plan. Only after you are
+                  consistently solving medium LeetCode problems in under 25
+                  minutes.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3>Online Resources</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">NeetCode.io</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Curated Problem Lists
+                  </p>
+                </div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+              <p>
+                Curated problem lists organized by pattern: Blind 75, NeetCode
+                150, and NeetCode All. The pattern-based organization mirrors
+                this course's approach &mdash; study a pattern, then drill
+                problems in that pattern. Video explanations for every problem.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 10+ (ongoing). Use alongside pattern study to find
+                  practice problems grouped by technique.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">VisuAlgo.net</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Algorithm Visualizations
+                  </p>
+                </div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+              <p>
+                Animated visualizations for sorting, graph traversal, DP, and
+                data structures. Step through algorithms frame by frame to build
+                spatial intuition. Especially useful for BFS/DFS, Dijkstra, and
+                tree rotations.
+              </p>
+              <div class="callout callout-ee">
+                <div class="callout-title">EE Analogy</div>
+                <p style="margin-bottom: 0">
+                  This is the oscilloscope for algorithms &mdash; it lets you
+                  watch the signal (data) flow through the system (algorithm) in
+                  real time, catching behavior you would miss from code alone.
+                </p>
+              </div>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 5-18 (Weeks 2-3). Use whenever a pattern's behavior is
+                  hard to visualize from code.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">LeetCode</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Practice Platform
+                  </p>
+                </div>
+                <span class="badge badge-blue">Intermediate</span>
+              </div>
+              <p>
+                The standard practice platform. Focus on medium difficulty. Do
+                problems by pattern (all sliding window, then all two pointers,
+                etc.) rather than randomly. Random practice builds breadth
+                without depth; pattern-grouped practice builds transferable
+                recognition.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 10-72 (ongoing). 2-3 problems per day, grouped by the
+                  pattern you studied that week.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- SECTION 2: SYSTEMS DESIGN -->
+          <!-- ============================================================ -->
+          <h2 id="systems-design">Section 2: Systems Design</h2>
+
+          <h3>Essential (Month 2)</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Designing Data-Intensive Applications (DDIA)
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Martin Kleppmann
+                </p>
+              </div>
+              <span class="badge badge-orange">Advanced</span>
+            </div>
+            <p>
+              <strong>THE</strong> book for systems design. Kleppmann explains
+              the fundamental trade-offs behind databases, replication,
+              partitioning, transactions, batch/stream processing, and
+              consistency models. It does not teach you to design a specific
+              system; it teaches you to <em>think</em> about distributed data
+              systems so you can design any system.
+            </p>
+            <p>
+              <strong>Recommended chapter order:</strong> 1, 2, 3, 5, 6, 7, 8,
+              9, then 4. Chapters 5-9 are the core &mdash; replication,
+              partitioning, transactions, distributed systems challenges, and
+              consistency/consensus.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                DDIA is like understanding semiconductor physics. It explains
+                <em>WHY</em> systems behave the way they do, not just HOW to use
+                them. Just as understanding carrier mobility and band gaps lets
+                you predict transistor behavior in novel circuits, understanding
+                replication log ordering and consensus protocols lets you
+                predict system behavior under novel failure modes.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 25-40 (Weeks 5-7). One chapter per day. This is the single
+                most important book in Month 2.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  System Design Interview (Volumes 1 &amp; 2)
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Alex Xu
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              15+ end-to-end system design walkthroughs across two volumes. Each
+              chapter takes a system (URL shortener, chat application, news
+              feed, notification system, payment system, hotel reservation) and
+              walks through requirements, estimation, API design, data model,
+              high-level architecture, and deep dives.
+            </p>
+            <p>
+              <strong>Volume 1:</strong> URL shortener, consistent hashing, rate
+              limiter, web crawler, notification system, news feed, chat system,
+              search autocomplete.<br />
+              <strong>Volume 2:</strong> Proximity service, nearby friends,
+              Google Maps, payment system, hotel reservation, email delivery,
+              S3-like object storage, real-time gaming leaderboard.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Vol 1: Days 30-44 (Weeks 6-8). Vol 2: Days 45-60 (Month 3). Read
+                one design per sitting, then attempt it yourself from scratch
+                before checking the walkthrough.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Building Microservices (2nd Edition)
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Sam Newman
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Practical guidance on when and how to decompose systems into
+              services. Covers communication patterns (sync vs async), service
+              boundaries, data ownership, deployment strategies, and the
+              organizational implications of microservices. The second edition
+              adds coverage of serverless and event-driven patterns.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                Microservices are like modular PCB design. Each board (service)
+                has defined connectors (APIs), its own power regulation
+                (independent deployment), and you can swap one board without
+                redesigning the whole system &mdash; but the connector standards
+                and signal integrity across boards become the hard problem.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 35-44 (Weeks 7-8). Read after DDIA, as the distributed
+                systems foundations make microservices trade-offs much clearer.
+              </p>
+            </div>
+          </div>
+
+          <h3>Deep Dives</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Database Internals</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Alex Petrov
+                  </p>
+                </div>
+                <span class="badge badge-red">Expert</span>
+              </div>
+              <p>
+                How databases actually work under the hood: B-trees, LSM trees,
+                write-ahead logs, buffer management, consensus algorithms, and
+                distributed transactions. Read this to move beyond "I know
+                Postgres" to "I understand why Postgres makes the trade-offs it
+                does."
+              </p>
+              <div class="callout callout-ee">
+                <div class="callout-title">EE Analogy</div>
+                <p style="margin-bottom: 0">
+                  If DDIA teaches you digital logic design, this book teaches
+                  you the transistor-level implementation. It is the VLSI design
+                  course for databases.
+                </p>
+              </div>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 55+ (Month 3) or post-plan. Only after completing DDIA.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Understanding Distributed Systems
+                  </div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Roberto Vitillo
+                  </p>
+                </div>
+                <span class="badge badge-blue">Intermediate</span>
+              </div>
+              <p>
+                A concise, accessible overview of distributed systems concepts.
+                Covers similar ground to DDIA but in roughly half the page
+                count. Good as a complement or as a quicker alternative if time
+                is extremely limited.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 25-35 (Weeks 5-6). Can be read in parallel with DDIA to
+                  get a second perspective, or as a substitute if DDIA's depth
+                  is too much.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3>Foundational Papers</h3>
+          <p>
+            Read 1-2 of these during Month 3. Each shaped how modern distributed
+            systems are built. They are surprisingly readable.
+          </p>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Dynamo: Amazon's Highly Available Key-Value Store
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  DeCandia, Hastorun, Jampani, et al. (2007)
+                </p>
+              </div>
+              <span class="badge badge-orange">Advanced</span>
+            </div>
+            <p>
+              Introduces consistent hashing, vector clocks, sloppy quorum, and
+              hinted handoff. These techniques are the foundation for DynamoDB,
+              Cassandra, Riak, and Voldemort. Understanding this paper lets you
+              reason about eventual consistency in any system that uses these
+              patterns.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                Consistent hashing is like a ring oscillator with tap points
+                &mdash; data flows around the ring and gets captured by the
+                nearest node, and adding/removing nodes only perturbs the local
+                neighborhood, not the entire system.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 50-55 (Week 9). After DDIA Chapter 6 (partitioning), which
+                provides the prerequisite context.
+              </p>
+            </div>
+          </div>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    MapReduce: Simplified Data Processing on Large Clusters
+                  </div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Jeffrey Dean &amp; Sanjay Ghemawat (2004)
+                  </p>
+                </div>
+                <span class="badge badge-blue">Intermediate</span>
+              </div>
+              <p>
+                The paper that launched big data processing. The concept is
+                deceptively simple &mdash; map and reduce &mdash; but the
+                engineering of fault tolerance, data locality, and stragglers is
+                where the depth lies. Still the mental model behind Spark,
+                Flink, and most batch processing.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 50-55 (Week 9). Pairs well with DDIA Chapter 10 (batch
+                  processing).
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">The Google File System</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Ghemawat, Gobioff, Leung (2003)
+                  </p>
+                </div>
+                <span class="badge badge-orange">Advanced</span>
+              </div>
+              <p>
+                How to build a distributed file system that handles hardware
+                failures as routine events. Chunk-based storage, single-master
+                architecture with relaxed consistency, and append-optimized
+                design. The concepts underpin HDFS and influence object storage
+                systems like S3.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 55-60 (Week 10). After the Dynamo and MapReduce papers
+                  for context.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Raft: In Search of an Understandable Consensus Algorithm
+                  </div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Diego Ongaro &amp; John Ousterhout (2014)
+                  </p>
+                </div>
+                <span class="badge badge-blue">Intermediate</span>
+              </div>
+              <p>
+                Consensus made understandable. Raft was explicitly designed to
+                be easier to learn than Paxos while providing equivalent
+                guarantees. Leader election, log replication, and safety are
+                cleanly separated. Read this instead of the Paxos paper &mdash;
+                it teaches the same concepts with far less pain.
+              </p>
+              <div class="callout callout-ee">
+                <div class="callout-title">EE Analogy</div>
+                <p style="margin-bottom: 0">
+                  Consensus is the distributed systems equivalent of clock
+                  synchronization in multi-chip systems. Just as you need a
+                  clock tree to ensure all flip-flops sample data at the same
+                  moment, you need consensus to ensure all nodes agree on the
+                  order of operations.
+                </p>
+              </div>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 45-50 (Week 9). After DDIA Chapter 9 (consistency and
+                  consensus). The raft.github.io visualization is essential
+                  supplementary material.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- SECTION 3: SOFTWARE ENGINEERING & CRAFT -->
+          <!-- ============================================================ -->
+          <h2 id="software-engineering">
+            Section 3: Software Engineering &amp; Craft
+          </h2>
+
+          <h3>Essential</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Clean Code</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Robert C. Martin
+                </p>
+              </div>
+              <span class="badge badge-green">Beginner</span>
+            </div>
+            <p>
+              Naming conventions, function design, comment philosophy,
+              formatting, error handling, and the discipline of writing code
+              that humans can read. Controversial in some circles &mdash; some
+              examples are over-engineered &mdash; but the core principles
+              (small functions, meaningful names, no side effects) are
+              foundational.
+            </p>
+            <p>
+              Take the principles, not the dogma. The chapters on naming (2),
+              functions (3), and error handling (7) are the most valuable.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                Clean code is like clean schematic design. Proper net labels,
+                hierarchical sheets, consistent component naming, and clear
+                signal flow make a schematic maintainable. The same discipline
+                applied to code makes it maintainable. You would never ship a
+                schematic with unlabeled nets; do not ship code with unlabeled
+                variables.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 1-10 (Weeks 1-2). Read early so the principles inform all
+                code you write during the plan.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  A Philosophy of Software Design (2nd Edition)
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  John Ousterhout
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Short (under 200 pages), opinionated, and brilliant. Ousterhout
+              argues that the primary goal of software design is
+              <strong>reducing complexity</strong>. Key concepts: deep modules
+              (simple interface, complex implementation), information hiding,
+              strategic vs. tactical programming, and the "define errors out of
+              existence" principle.
+            </p>
+            <p>
+              Better than Clean Code for experienced engineers. Where Clean Code
+              is about code hygiene, this book is about design judgment.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                "Deep modules" are like well-designed ICs. A UART chip has a
+                simple interface (TX, RX, a few config registers) hiding
+                enormous complexity (baud rate generation, framing, parity,
+                FIFOs). A shallow module is like exposing every internal
+                flip-flop as a pin &mdash; technically functional but a
+                nightmare to use.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 30-35 (Week 6). Read before starting the capstone projects
+                so you apply these design principles from day one.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  The Pragmatic Programmer (20th Anniversary Edition)
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  David Thomas &amp; Andrew Hunt
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Timeless engineering wisdom distilled into practical principles.
+              DRY (Don't Repeat Yourself), orthogonality, tracer bullets,
+              pragmatic paranoia, design by contract, and "good enough"
+              software. Each topic is a self-contained essay you can read in 10
+              minutes, making it ideal for daily study sessions.
+            </p>
+            <p>
+              The 20th anniversary edition is significantly updated with modern
+              examples. The original (1999) holds up but the new edition is
+              worth the upgrade.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 25-44 (Month 2). Read one or two topics per day as
+                supplementary material alongside systems design study.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Refactoring (2nd Edition)</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Martin Fowler
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              A catalog of refactoring patterns: extract method, move field,
+              replace conditional with polymorphism, and dozens more. JavaScript
+              examples in the 2nd edition, but the patterns are universal. The
+              first three chapters on <em>when</em> and <em>why</em> to refactor
+              are more valuable than the catalog itself.
+            </p>
+            <p>
+              The key insight: refactoring is not rewriting. It is a disciplined
+              sequence of small, behavior-preserving transformations, each
+              verified by tests.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 35-44 (Weeks 7-8). Read the introductory chapters, then use
+                the catalog as a reference during the capstone projects.
+              </p>
+            </div>
+          </div>
+
+          <h3>Design Patterns</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Head First Design Patterns (2nd Edition)
+                  </div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Eric Freeman &amp; Elisabeth Robson
+                  </p>
+                </div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+              <p>
+                Visual, engaging, and pedagogically effective introduction to
+                design patterns. Uses the "Head First" learning methodology
+                (images, puzzles, conversation) to make patterns stick. Covers
+                Observer, Decorator, Factory, Singleton, Command, Adapter,
+                Facade, Template Method, Iterator, Composite, State, Proxy, and
+                MVC.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 30-38 (Weeks 6-7). Use this to learn the patterns. Then
+                  reference the GoF book for completeness.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Design Patterns (GoF)</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Gamma, Helm, Johnson, Vlissides
+                  </p>
+                </div>
+                <span class="badge badge-orange">Advanced</span>
+              </div>
+              <p>
+                The classic reference that defined the field. 23 patterns
+                organized as creational, structural, and behavioral. Dense and
+                academic. Do not start here &mdash; use Head First to learn,
+                then GoF as a reference when you need the precise definition or
+                C++ implementation details for a specific pattern.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 35+ (reference only). Keep it on your desk. Look up
+                  specific patterns when you encounter them in code reviews or
+                  architecture discussions.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3>Testing</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Unit Testing Principles, Practices, and Patterns
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Vladimir Khorikov
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              The best book on testing <em>strategy</em>. Goes beyond "how to
+              write a unit test" to answer the harder questions: what should you
+              test? What makes a good test vs. a fragile one? When are
+              integration tests better than unit tests? How do you avoid the
+              trap of 100% coverage with 0% confidence?
+            </p>
+            <p>
+              Key framework: tests should verify
+              <strong>observable behavior</strong>, not implementation details.
+              Tests coupled to implementation break on every refactor and
+              provide no safety net.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                Good tests are like test points on a PCB &mdash; you measure at
+                the functional boundaries (input/output connectors, power rails,
+                key signal paths), not at every internal node. Testing every
+                internal node (implementation detail) creates a measurement
+                setup that is more fragile than the circuit itself.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 20-25 (Weeks 4-5). Read before the capstone projects so you
+                can apply proper testing strategy from the start.
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- SECTION 4: STAFF ENGINEER & LEADERSHIP -->
+          <!-- ============================================================ -->
+          <h2 id="staff-leadership">
+            Section 4: Staff Engineer &amp; Leadership
+          </h2>
+
+          <h3>Essential</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Staff Engineer</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Will Larson
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Defines what staff engineers actually do through interviews with
+              staff+ engineers at major companies. Covers the four archetypes
+              (Tech Lead, Architect, Solver, Right Hand), how to operate at
+              staff scope, and the transition from "doing the work" to "enabling
+              the work." Short, practical, and immediately applicable.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 45-50 (Week 9). Read at the start of Month 3 when the focus
+                shifts from technical skills to staff-level impact.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">The Staff Engineer's Path</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Tanya Reilly
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              A practical guide to the staff+ individual contributor track.
+              Covers three pillars: big-picture thinking (technical vision,
+              architecture), execution (project leadership, unblocking), and
+              leveling up (growing other engineers, organizational influence).
+              More actionable than Larson's book, with concrete exercises.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 50-60 (Weeks 9-10). Read after "Staff Engineer" for
+                complementary perspectives. This is the more prescriptive of the
+                two.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  An Elegant Puzzle: Systems of Engineering Management
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Will Larson
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Even if you are not a manager, understanding how engineering
+              organizations work is essential at staff level. Covers team
+              sizing, tech debt prioritization, succession planning, and
+              organizational design. Helps you understand <em>why</em> managers
+              make certain decisions and how to influence those decisions
+              effectively.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 55-65 (Weeks 10-11). Useful context for the staff-level
+                skills modules on cross-team influence and technical direction.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Thinking in Systems: A Primer</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Donella H. Meadows
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Mental models for complex systems: stocks, flows, feedback loops,
+              delays, and leverage points. Applies to everything from software
+              architecture to team dynamics to organizational change. Teaches
+              you to see the system beneath the symptoms &mdash; a skill that
+              separates staff engineers from senior engineers.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                This is control systems theory applied to organizations and
+                software. Feedback loops, gain margins, oscillation, and
+                stability &mdash; the same concepts you learned in EE for PID
+                controllers and op-amp circuits apply to understanding why
+                adding engineers slows a project (negative feedback delay) or
+                why a quick fix creates three new bugs (positive feedback).
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 60-72 (Weeks 11-12). A capstone read that reframes
+                everything you have learned through a systems-thinking lens.
+              </p>
+            </div>
+          </div>
+
+          <h3>Communication &amp; Influence</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Writing for Engineers</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Gergely Orosz (articles &amp; newsletter)
+                  </p>
+                </div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+              <p>
+                Practical guidance on writing RFCs, design documents, and
+                technical proposals. Orosz's "The Pragmatic Engineer" newsletter
+                regularly covers how to write documents that drive decisions,
+                not just describe systems. Free articles cover the essentials;
+                the newsletter goes deeper.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 45-55 (Weeks 9-10). Read before writing your first RFC
+                  for the capstone project.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Turn the Ship Around!</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    L. David Marquet
+                  </p>
+                </div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+              <p>
+                Leadership through intent-based leadership on a nuclear
+                submarine. Replace "permission to..." with "I intend to..."
+                Directly applicable to staff engineering: you propose direction
+                and take ownership rather than waiting for permission. Teaches
+                influence without authority &mdash; the core staff engineer
+                skill.
+              </p>
+              <div class="callout callout-ee">
+                <div class="callout-title">EE Analogy</div>
+                <p style="margin-bottom: 0">
+                  Intent-based leadership is like moving from a centralized
+                  clock distribution (everything waits for the master clock) to
+                  a source-synchronous design (each module drives its own timing
+                  alongside its data). It reduces the bottleneck at the center
+                  and increases throughput across the system.
+                </p>
+              </div>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 60-72 (Weeks 11-12). A light but transformative read for
+                  the final stretch.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- SECTION 5: CS FUNDAMENTALS (FOR EE BACKGROUND) -->
+          <!-- ============================================================ -->
+          <h2 id="cs-fundamentals">
+            Section 5: CS Fundamentals (for EE Background)
+          </h2>
+
+          <h3>Essential</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Operating Systems: Three Easy Pieces (OSTEP)
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Remzi H. Arpaci-Dusseau &amp; Andrea C. Arpaci-Dusseau
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              The best operating systems textbook, and it is free online.
+              Organized into three sections: virtualization (processes, memory),
+              concurrency (threads, locks, condition variables, semaphores), and
+              persistence (I/O, file systems, disks). The writing is remarkably
+              clear and engaging. Each chapter ends with practical exercises.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                This book bridges your EE knowledge directly to software. You
+                understand how a processor executes instructions, how caches
+                work, how interrupts fire. OSTEP shows you how the OS builds
+                abstractions (processes, virtual memory, file systems) on top of
+                that hardware. It is the firmware layer you already intuitively
+                understand, made explicit.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 15-24 (Weeks 3-4). Focus on concurrency chapters (threads,
+                locks, condition variables) as these directly apply to Python
+                threading/asyncio work in Month 1.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  Computer Networking: A Top-Down Approach
+                </div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  James F. Kurose &amp; Keith W. Ross
+                </p>
+              </div>
+              <span class="badge badge-blue">Intermediate</span>
+            </div>
+            <p>
+              Networking from the application layer down to the physical layer.
+              The "top-down" approach means you start with HTTP and DNS (things
+              you use daily) and progressively understand TCP, UDP, IP, and
+              link-layer protocols beneath them. Excellent Wireshark labs
+              available online.
+            </p>
+            <p>
+              Focus on: application layer (HTTP, DNS), transport layer (TCP,
+              UDP, congestion control), and network layer (IP, routing).
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                As an EE, you likely already understand the physical and link
+                layers (RS-232, Ethernet PHY, modulation). This book fills the
+                gap upward from there &mdash; how the upper protocol layers use
+                the reliable byte streams your hardware provides to build
+                application-level communication.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 20-30 (Weeks 4-5). Read the application and transport layer
+                chapters. Skim the lower layers since your EE background already
+                covers them.
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">The Linux Command Line</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  William Shotts
+                </p>
+              </div>
+              <span class="badge badge-green">Beginner</span>
+            </div>
+            <p>
+              Free online textbook covering the Linux shell from basics to shell
+              scripting. If your Linux-fu needs sharpening, this fills the gap.
+              Covers navigation, file manipulation, I/O redirection, pipes,
+              permissions, processes, environment, and shell scripting with
+              bash.
+            </p>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Days 1-10 (Weeks 1-2). Skim the basics (you likely know them),
+                then focus on scripting, process management, and permissions
+                chapters.
+              </p>
+            </div>
+          </div>
+
+          <h3>Python-Specific</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Fluent Python (2nd Edition)</div>
+                <p
+                  style="
+                    margin: 0;
+                    color: var(--text-muted);
+                    font-size: 0.85rem;
+                  "
+                >
+                  Luciano Ramalho
+                </p>
+              </div>
+              <span class="badge badge-orange">Advanced</span>
+            </div>
+            <p>
+              Advanced Python mastery: the data model (dunder methods),
+              sequences, dictionaries, functions as objects, decorators,
+              closures, iterators, generators, context managers, concurrency
+              (threads, processes, asyncio), and metaprogramming. This book
+              transforms a Python user into a Python expert.
+            </p>
+            <p>
+              Read after you are comfortable with basic Python. Each chapter
+              reveals a layer of the language you did not know existed.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Analogy</div>
+              <p style="margin-bottom: 0">
+                This is the datasheet deep-dive for Python. Just as reading the
+                full STM32 reference manual reveals peripheral features you
+                never knew existed (DMA chaining, timer synchronization, analog
+                watchdogs), this book reveals Python features (descriptors,
+                metaclasses, generator pipelines) that let you write radically
+                better code.
+              </p>
+            </div>
+            <div class="callout callout-info">
+              <div class="callout-title">Read this when...</div>
+              <p style="margin-bottom: 0">
+                Ongoing, starting Day 15. Read one chapter per week alongside
+                other study. The concurrency chapters (19-21) align with Month 1
+                async/threading work; the data model chapters (1-5) are
+                universally applicable.
+              </p>
+            </div>
+          </div>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">
+                    Architecture Patterns with Python
+                  </div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Harry Percival &amp; Bob Gregory
+                  </p>
+                </div>
+                <span class="badge badge-orange">Advanced</span>
+              </div>
+              <p>
+                Domain-Driven Design, event-driven architecture, CQRS (Command
+                Query Responsibility Segregation), and the Repository pattern,
+                all implemented in Python. Directly applicable to the capstone
+                projects, especially the URL Shortener with Analytics (Project
+                2) which uses an event pipeline.
+              </p>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 40-55 (Weeks 8-10). Read before or during the capstone
+                  projects to apply these architectural patterns.
+                </p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Python Concurrency with asyncio</div>
+                  <p
+                    style="
+                      margin: 0;
+                      color: var(--text-muted);
+                      font-size: 0.85rem;
+                    "
+                  >
+                    Matthew Fowler
+                  </p>
+                </div>
+                <span class="badge badge-blue">Intermediate</span>
+              </div>
+              <p>
+                Deep dive into asyncio: event loops, coroutines, tasks, futures,
+                synchronization primitives, async generators, and async context
+                managers. Essential for building modern Python services. Covers
+                the mental model shift from synchronous to asynchronous
+                thinking.
+              </p>
+              <div class="callout callout-ee">
+                <div class="callout-title">EE Analogy</div>
+                <p style="margin-bottom: 0">
+                  asyncio is cooperative multitasking &mdash; like a
+                  single-threaded interrupt-driven firmware architecture
+                  (super-loop with ISRs). Each coroutine yields at I/O
+                  boundaries (like returning from an ISR), and the event loop
+                  schedules the next ready coroutine (like the main loop polling
+                  flags).
+                </p>
+              </div>
+              <div class="callout callout-info">
+                <div class="callout-title">Read this when...</div>
+                <p style="margin-bottom: 0">
+                  Days 18-24 (Weeks 3-4). Aligns with the concurrency and
+                  asyncio modules in the daily plan.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- SECTION 6: READING ROADMAP -->
+          <!-- ============================================================ -->
+          <h2 id="reading-roadmap">Section 6: Reading Roadmap</h2>
+
+          <p>
+            This visual timeline shows when to read each resource across the
+            72-day plan. Books are placed at their recommended starting point.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">72-Day Reading Timeline</div>
+            <svg viewBox="0 0 1100 620" xmlns="http://www.w3.org/2000/svg">
+              <!-- Background -->
+              <rect width="1100" height="620" fill="none" />
+
+              <!-- Month labels -->
+              <text
+                x="210"
+                y="30"
+                fill="#3fb950"
+                font-size="16"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                MONTH 1: Foundations
+              </text>
+              <text
+                x="560"
+                y="30"
+                fill="#58a6ff"
+                font-size="16"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                MONTH 2: Architecture
+              </text>
+              <text
+                x="900"
+                y="30"
+                fill="#bc8cff"
+                font-size="16"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                MONTH 3: Staff Impact
+              </text>
+
+              <!-- Timeline axis -->
+              <line
+                x1="50"
+                y1="55"
+                x2="1060"
+                y2="55"
+                stroke="#30363d"
+                stroke-width="3"
+              />
+
+              <!-- Week markers -->
+              <line
+                x1="50"
+                y1="45"
+                x2="50"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="50"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W1
+              </text>
+
+              <line
+                x1="140"
+                y1="45"
+                x2="140"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="140"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W2
+              </text>
+
+              <line
+                x1="225"
+                y1="45"
+                x2="225"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="225"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W3
+              </text>
+
+              <line
+                x1="310"
+                y1="45"
+                x2="310"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="310"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W4
+              </text>
+
+              <line
+                x1="395"
+                y1="45"
+                x2="395"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="395"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W5
+              </text>
+
+              <line
+                x1="480"
+                y1="45"
+                x2="480"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="480"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W6
+              </text>
+
+              <line
+                x1="565"
+                y1="45"
+                x2="565"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="565"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W7
+              </text>
+
+              <line
+                x1="650"
+                y1="45"
+                x2="650"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="650"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W8
+              </text>
+
+              <line
+                x1="730"
+                y1="45"
+                x2="730"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="730"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W9
+              </text>
+
+              <line
+                x1="815"
+                y1="45"
+                x2="815"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="815"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W10
+              </text>
+
+              <line
+                x1="900"
+                y1="45"
+                x2="900"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="900"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W11
+              </text>
+
+              <line
+                x1="980"
+                y1="45"
+                x2="980"
+                y2="65"
+                stroke="#484f58"
+                stroke-width="2"
+              />
+              <text
+                x="980"
+                y="80"
+                fill="#6e7681"
+                font-size="10"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                W12
+              </text>
+
+              <!-- Month dividers -->
+              <line
+                x1="365"
+                y1="40"
+                x2="365"
+                y2="590"
+                stroke="#30363d"
+                stroke-width="1"
+                stroke-dasharray="6,4"
+              />
+              <line
+                x1="730"
+                y1="40"
+                x2="730"
+                y2="590"
+                stroke="#30363d"
+                stroke-width="1"
+                stroke-dasharray="6,4"
+              />
+
+              <!-- ROW 1: Month 1 books (green) -->
+              <!-- Grokking Algorithms -->
+              <rect
+                x="50"
+                y="100"
+                width="170"
+                height="58"
+                rx="8"
+                fill="rgba(63,185,80,0.12)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="135"
+                y="122"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Grokking Algorithms
+              </text>
+              <text
+                x="135"
+                y="140"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 1-4 | Visual intro
+              </text>
+
+              <!-- Clean Code -->
+              <rect
+                x="50"
+                y="168"
+                width="260"
+                height="58"
+                rx="8"
+                fill="rgba(63,185,80,0.12)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="180"
+                y="190"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Clean Code
+              </text>
+              <text
+                x="180"
+                y="208"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 1-10 | Code hygiene
+              </text>
+
+              <!-- OSTEP -->
+              <rect
+                x="225"
+                y="100"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(63,185,80,0.12)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="312"
+                y="122"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                OSTEP (selected ch.)
+              </text>
+              <text
+                x="312"
+                y="140"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 15-24 | OS internals
+              </text>
+
+              <!-- Python Concurrency -->
+              <rect
+                x="225"
+                y="236"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(63,185,80,0.12)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="312"
+                y="258"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Python asyncio
+              </text>
+              <text
+                x="312"
+                y="276"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 18-24 | Concurrency
+              </text>
+
+              <!-- Testing -->
+              <rect
+                x="310"
+                y="168"
+                width="170"
+                height="58"
+                rx="8"
+                fill="rgba(63,185,80,0.12)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="395"
+                y="190"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Unit Testing (Khorikov)
+              </text>
+              <text
+                x="395"
+                y="208"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 20-25 | Test strategy
+              </text>
+
+              <!-- ROW 2: Month 2 books (blue) -->
+              <!-- DDIA -->
+              <rect
+                x="395"
+                y="100"
+                width="260"
+                height="58"
+                rx="8"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="525"
+                y="122"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                DDIA (Kleppmann)
+              </text>
+              <text
+                x="525"
+                y="140"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 25-40 | THE systems book
+              </text>
+
+              <!-- Philosophy of Software Design -->
+              <rect
+                x="480"
+                y="168"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="567"
+                y="190"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Philosophy of SW Design
+              </text>
+              <text
+                x="567"
+                y="208"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 30-35 | Deep modules
+              </text>
+
+              <!-- System Design Interview Vol 1 -->
+              <rect
+                x="480"
+                y="236"
+                width="260"
+                height="58"
+                rx="8"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="610"
+                y="258"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                System Design Interview V1
+              </text>
+              <text
+                x="610"
+                y="276"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 30-44 | Design walkthroughs
+              </text>
+
+              <!-- Head First Design Patterns -->
+              <rect
+                x="480"
+                y="304"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="567"
+                y="326"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Head First Patterns
+              </text>
+              <text
+                x="567"
+                y="344"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 30-38 | Design patterns
+              </text>
+
+              <!-- Building Microservices -->
+              <rect
+                x="565"
+                y="168"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="652"
+                y="190"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Building Microservices
+              </text>
+              <text
+                x="652"
+                y="208"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 35-44 | Service arch
+              </text>
+
+              <!-- Pragmatic Programmer -->
+              <rect
+                x="395"
+                y="304"
+                width="170"
+                height="58"
+                rx="8"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="480"
+                y="326"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Pragmatic Programmer
+              </text>
+              <text
+                x="480"
+                y="344"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 25-44 | Daily wisdom
+              </text>
+
+              <!-- ROW 3: Month 3 books (purple) -->
+              <!-- Staff Engineer -->
+              <rect
+                x="730"
+                y="100"
+                width="170"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="815"
+                y="122"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Staff Engineer
+              </text>
+              <text
+                x="815"
+                y="140"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 45-50 | Staff role
+              </text>
+
+              <!-- Staff Engineer's Path -->
+              <rect
+                x="815"
+                y="100"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="902"
+                y="122"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Staff Engineer's Path
+              </text>
+              <text
+                x="902"
+                y="140"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 50-60 | IC track
+              </text>
+
+              <!-- System Design Interview Vol 2 -->
+              <rect
+                x="730"
+                y="168"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="817"
+                y="190"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Sys Design Interview V2
+              </text>
+              <text
+                x="817"
+                y="208"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 45-60 | Adv. designs
+              </text>
+
+              <!-- Papers -->
+              <rect
+                x="730"
+                y="236"
+                width="260"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="860"
+                y="258"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Papers: Raft, Dynamo, MapReduce, GFS
+              </text>
+              <text
+                x="860"
+                y="276"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 45-60 | Foundational papers
+              </text>
+
+              <!-- Elegant Puzzle -->
+              <rect
+                x="815"
+                y="168"
+                width="175"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="902"
+                y="190"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                An Elegant Puzzle
+              </text>
+              <text
+                x="902"
+                y="208"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 55-65 | Eng. orgs
+              </text>
+
+              <!-- Thinking in Systems -->
+              <rect
+                x="900"
+                y="304"
+                width="160"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="980"
+                y="326"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Thinking in Systems
+              </text>
+              <text
+                x="980"
+                y="344"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 60-72 | Systems lens
+              </text>
+
+              <!-- Turn the Ship Around -->
+              <rect
+                x="730"
+                y="304"
+                width="165"
+                height="58"
+                rx="8"
+                fill="rgba(188,140,255,0.12)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="812"
+                y="326"
+                fill="#bc8cff"
+                font-size="11"
+                font-weight="600"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Turn the Ship Around
+              </text>
+              <text
+                x="812"
+                y="344"
+                fill="#8b949e"
+                font-size="9"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Days 60-72 | Leadership
+              </text>
+
+              <!-- ROW 4: Ongoing (gray) -->
+              <text
+                x="50"
+                y="410"
+                fill="#6e7681"
+                font-size="12"
+                font-weight="600"
+                font-family="Inter, sans-serif"
+              >
+                ONGOING REFERENCES
+              </text>
+              <line
+                x1="50"
+                y1="420"
+                x2="1060"
+                y2="420"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+
+              <!-- CLRS -->
+              <rect
+                x="50"
+                y="435"
+                width="1010"
+                height="42"
+                rx="8"
+                fill="rgba(110,118,129,0.08)"
+                stroke="#484f58"
+                stroke-width="1"
+              />
+              <text
+                x="555"
+                y="460"
+                fill="#8b949e"
+                font-size="11"
+                font-weight="500"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                CLRS &mdash; Reference throughout all 3 months. Look up chapters
+                as needed.
+              </text>
+
+              <!-- LeetCode -->
+              <rect
+                x="140"
+                y="487"
+                width="920"
+                height="42"
+                rx="8"
+                fill="rgba(110,118,129,0.08)"
+                stroke="#484f58"
+                stroke-width="1"
+              />
+              <text
+                x="600"
+                y="512"
+                fill="#8b949e"
+                font-size="11"
+                font-weight="500"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                LeetCode by pattern &mdash; 2-3 problems/day, starting Week 2.
+                Group by pattern, not random.
+              </text>
+
+              <!-- Fluent Python -->
+              <rect
+                x="225"
+                y="539"
+                width="835"
+                height="42"
+                rx="8"
+                fill="rgba(110,118,129,0.08)"
+                stroke="#484f58"
+                stroke-width="1"
+              />
+              <text
+                x="642"
+                y="564"
+                fill="#8b949e"
+                font-size="11"
+                font-weight="500"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                Fluent Python &mdash; One chapter/week starting Day 15.
+                Concurrency chapters align with Month 1.
+              </text>
+
+              <!-- Legend -->
+              <rect
+                x="50"
+                y="592"
+                width="12"
+                height="12"
+                rx="3"
+                fill="rgba(63,185,80,0.3)"
+                stroke="#3fb950"
+                stroke-width="1"
+              />
+              <text
+                x="68"
+                y="603"
+                fill="#8b949e"
+                font-size="10"
+                font-family="Inter, sans-serif"
+              >
+                Month 1
+              </text>
+
+              <rect
+                x="130"
+                y="592"
+                width="12"
+                height="12"
+                rx="3"
+                fill="rgba(88,166,255,0.3)"
+                stroke="#58a6ff"
+                stroke-width="1"
+              />
+              <text
+                x="148"
+                y="603"
+                fill="#8b949e"
+                font-size="10"
+                font-family="Inter, sans-serif"
+              >
+                Month 2
+              </text>
+
+              <rect
+                x="210"
+                y="592"
+                width="12"
+                height="12"
+                rx="3"
+                fill="rgba(188,140,255,0.3)"
+                stroke="#bc8cff"
+                stroke-width="1"
+              />
+              <text
+                x="228"
+                y="603"
+                fill="#8b949e"
+                font-size="10"
+                font-family="Inter, sans-serif"
+              >
+                Month 3
+              </text>
+
+              <rect
+                x="290"
+                y="592"
+                width="12"
+                height="12"
+                rx="3"
+                fill="rgba(110,118,129,0.08)"
+                stroke="#484f58"
+                stroke-width="1"
+              />
+              <text
+                x="308"
+                y="603"
+                fill="#8b949e"
+                font-size="10"
+                font-family="Inter, sans-serif"
+              >
+                Ongoing
+              </text>
+            </svg>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- PRIORITY STACK -->
+          <!-- ============================================================ -->
+          <h2 id="priority-stack">
+            The Priority Stack: If You Can Only Read 5 Books
+          </h2>
+
+          <p>
+            Time is finite. If you can commit to only five books across the
+            entire 72-day plan, these five deliver the highest return on
+            investment, in this order:
+          </p>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">The 80/20 Rule</div>
+            <p style="margin-bottom: 0">
+              These five books cover roughly 80% of the knowledge you need. The
+              remaining 20+ resources on this page refine, deepen, and fill gaps
+              &mdash; but these five are the load-bearing walls.
+            </p>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item active">
+              <h4 style="margin-top: 0">1. Grokking Algorithms</h4>
+              <p>
+                <span class="badge badge-green">Beginner</span> &nbsp;
+                <strong>Month 1, Week 1</strong>
+              </p>
+              <p>
+                Start here. It takes a weekend and gives you the visual
+                vocabulary for every algorithm concept that follows. Without
+                this foundation, heavier books will overwhelm rather than teach.
+                Think of it as powering on the oscilloscope before you start
+                debugging.
+              </p>
+            </div>
+
+            <div class="timeline-item">
+              <h4 style="margin-top: 0">
+                2. Designing Data-Intensive Applications
+              </h4>
+              <p>
+                <span class="badge badge-orange">Advanced</span> &nbsp;
+                <strong>Month 2, Weeks 5-7</strong>
+              </p>
+              <p>
+                The single most important book on this list. It rewires how you
+                think about data, distribution, consistency, and system
+                trade-offs. Every system design interview question becomes
+                approachable after absorbing chapters 1-9. This is the book that
+                turns "I can build a service" into "I can design a system."
+              </p>
+            </div>
+
+            <div class="timeline-item">
+              <h4 style="margin-top: 0">3. A Philosophy of Software Design</h4>
+              <p>
+                <span class="badge badge-blue">Intermediate</span> &nbsp;
+                <strong>Month 2, Week 6</strong>
+              </p>
+              <p>
+                Under 200 pages but permanently changes how you design
+                interfaces and modules. The "deep modules" concept alone is
+                worth the read. Apply its principles to every capstone project
+                component. Short enough to read in two sittings.
+              </p>
+            </div>
+
+            <div class="timeline-item">
+              <h4 style="margin-top: 0">
+                4. System Design Interview, Volume 1
+              </h4>
+              <p>
+                <span class="badge badge-blue">Intermediate</span> &nbsp;
+                <strong>Month 2-3, Weeks 6-9</strong>
+              </p>
+              <p>
+                Bridges theory (DDIA) and practice (interviews). Each chapter is
+                a complete design walkthrough you can study, then attempt
+                yourself. The consistent framework (requirements, estimation,
+                API, data model, architecture, deep dive) becomes your interview
+                template.
+              </p>
+            </div>
+
+            <div class="timeline-item">
+              <h4 style="margin-top: 0">5. The Staff Engineer's Path</h4>
+              <p>
+                <span class="badge badge-blue">Intermediate</span> &nbsp;
+                <strong>Month 3, Weeks 9-10</strong>
+              </p>
+              <p>
+                Technical skills get you to senior. This book teaches what gets
+                you to staff: technical direction, alignment across teams, and
+                growing other engineers. Read it in Month 3 when you have the
+                technical foundation to appreciate the organizational layer on
+                top.
+              </p>
+            </div>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Perspective on This Stack</div>
+            <p style="margin-bottom: 0">
+              This priority stack mirrors how you would learn a new hardware
+              domain: <strong>Grokking Algorithms</strong> is your eval board
+              (get something running fast), <strong>DDIA</strong> is the IC
+              datasheet (understand the component deeply),
+              <strong>A Philosophy of Software Design</strong> is the design
+              guide (best practices for integration),
+              <strong>System Design Interview</strong> is the reference design
+              collection (proven topologies you can adapt), and
+              <strong>The Staff Engineer's Path</strong> is the project
+              management handbook (shipping the product, not just designing the
+              circuit).
+            </p>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

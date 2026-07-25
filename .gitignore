@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+
+# Local progress / reports (keep folder structure if needed)
+results/*.json
+!results/.gitkeep
+
+# Editor / OS / agent
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/
+*.swp
+
+# Large vendored runtime — optional to commit; regenerate with scripts/vendor_pyodide.py
+# Uncomment the next line if you do NOT want Pyodide in git:
+# html/vendor/pyodide/

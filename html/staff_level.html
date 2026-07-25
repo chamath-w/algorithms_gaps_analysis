@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff-Level Skills — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>What Makes a Staff Engineer</h1>
+          <p>Beyond Writing Code</p>
+          <p>
+            The difference between senior and staff is not technical depth -- it
+            is <strong>technical breadth, judgment, and influence</strong>. A
+            senior engineer delivers features. A staff engineer shapes the
+            technical direction of a team or organization. This guide covers the
+            non-coding skills that define the role.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 1: The Staff Engineer's Job -->
+          <!-- ============================================================ -->
+          <h2 id="staff-role">Part 1: The Staff Engineer's Job</h2>
+
+          <h3 id="archetypes">1.1 The Four Archetypes (from Will Larson)</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">
+              Why "Tech Lead / Staff / Principal"?
+            </div>
+            <p>
+              The engineering ladder names reflect scope of influence.
+              <strong>Tech Lead</strong> comes from "technical leadership" --
+              you lead a team's technical direction (like a lead engineer on a
+              circuit board design). <strong>Staff</strong> is borrowed from
+              military rank ("staff officer") -- someone who works across an
+              organization advising on strategy rather than commanding a single
+              unit. <strong>Principal</strong> means "first" or "chief" (from
+              Latin <em>principalis</em>) -- the principal engineer is the
+              foremost technical authority, like a principal investigator in
+              research. The progression is deliberate: team scope, org scope,
+              company scope.
+            </p>
+          </div>
+
+          <!-- SVG: Staff Archetypes -->
+          <div class="diagram-container">
+            <div class="diagram-title">Staff Engineer Archetypes</div>
+            <svg viewBox="0 0 820 180" xmlns="http://www.w3.org/2000/svg">
+              <!-- Tech Lead -->
+              <rect
+                x="10"
+                y="15"
+                width="185"
+                height="150"
+                rx="12"
+                class="node-active"
+              />
+              <text
+                x="102"
+                y="45"
+                class="label-text"
+                font-size="22"
+                fill="#58a6ff"
+              >
+                &#9881;
+              </text>
+              <text
+                x="102"
+                y="70"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Tech Lead
+              </text>
+              <text x="102" y="92" class="label-small" font-size="10">
+                Partner with manager
+              </text>
+              <text x="102" y="106" class="label-small" font-size="10">
+                to guide a team's
+              </text>
+              <text x="102" y="120" class="label-small" font-size="10">
+                technical execution
+              </text>
+              <text
+                x="102"
+                y="148"
+                class="label-small"
+                font-size="9"
+                fill="#58a6ff"
+              >
+                Set standards, unblock people
+              </text>
+
+              <!-- Architect -->
+              <rect
+                x="213"
+                y="15"
+                width="185"
+                height="150"
+                rx="12"
+                class="node-visited"
+              />
+              <text
+                x="305"
+                y="45"
+                class="label-text"
+                font-size="22"
+                fill="#3fb950"
+              >
+                &#9978;
+              </text>
+              <text
+                x="305"
+                y="70"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                Architect
+              </text>
+              <text x="305" y="92" class="label-small" font-size="10">
+                Define technical vision
+              </text>
+              <text x="305" y="106" class="label-small" font-size="10">
+                across multiple teams
+              </text>
+              <text x="305" y="120" class="label-small" font-size="10">
+                and systems
+              </text>
+              <text
+                x="305"
+                y="148"
+                class="label-small"
+                font-size="9"
+                fill="#3fb950"
+              >
+                Design systems others build
+              </text>
+
+              <!-- Solver -->
+              <rect
+                x="416"
+                y="15"
+                width="185"
+                height="150"
+                rx="12"
+                class="node-current"
+              />
+              <text
+                x="508"
+                y="45"
+                class="label-text"
+                font-size="22"
+                fill="#d29922"
+              >
+                &#9889;
+              </text>
+              <text
+                x="508"
+                y="70"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Solver
+              </text>
+              <text x="508" y="92" class="label-small" font-size="10">
+                Dive into the hardest
+              </text>
+              <text x="508" y="106" class="label-small" font-size="10">
+                problems and resolve
+              </text>
+              <text x="508" y="120" class="label-small" font-size="10">
+                them at a fundamental level
+              </text>
+              <text
+                x="508"
+                y="148"
+                class="label-small"
+                font-size="9"
+                fill="#d29922"
+              >
+                Called in when stuck or broken
+              </text>
+
+              <!-- Right Hand -->
+              <rect
+                x="619"
+                y="15"
+                width="185"
+                height="150"
+                rx="12"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="711"
+                y="45"
+                class="label-text"
+                font-size="22"
+                fill="#bc8cff"
+              >
+                &#9733;
+              </text>
+              <text
+                x="711"
+                y="70"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#bc8cff"
+              >
+                Right Hand
+              </text>
+              <text x="711" y="92" class="label-small" font-size="10">
+                Extend a senior leader's
+              </text>
+              <text x="711" y="106" class="label-small" font-size="10">
+                bandwidth across
+              </text>
+              <text x="711" y="120" class="label-small" font-size="10">
+                the organization
+              </text>
+              <text
+                x="711"
+                y="148"
+                class="label-small"
+                font-size="9"
+                fill="#bc8cff"
+              >
+                Represent VP in tech decisions
+              </text>
+            </svg>
+          </div>
+
+          <p>
+            You do not need to fit one perfectly, but understanding which one
+            your role emphasizes helps you focus your energy.
+          </p>
+
+          <h3 id="core-outputs">1.2 The Staff Engineer's Core Outputs</h3>
+
+          <ol>
+            <li>
+              <strong>Technical strategy documents</strong> -- Where are we
+              going and why?
+            </li>
+            <li>
+              <strong>Design documents (RFCs)</strong> -- How are we building
+              this specific thing?
+            </li>
+            <li>
+              <strong>Unblocking others</strong> -- Review, mentorship,
+              cross-team coordination
+            </li>
+            <li>
+              <strong>Quality standards</strong> -- Code review norms, testing
+              expectations, architecture patterns
+            </li>
+            <li>
+              <strong>Risk identification</strong> -- "This will break at 10x
+              scale because..."
+            </li>
+          </ol>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Key Insight</div>
+            <p>
+              You are measured by <strong>organizational impact</strong>, not by
+              lines of code.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 2: Writing Design Documents (RFCs) -->
+          <!-- ============================================================ -->
+          <h2 id="rfcs">Part 2: Writing Design Documents (RFCs)</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "RFC"?</div>
+            <p>
+              RFC stands for <strong>Request for Comments</strong>. The name
+              originated at ARPANET in 1969 when Steve Crocker, a 26-year-old
+              grad student, needed to document early internet protocol ideas. He
+              titled his notes "Request for Comments" deliberately to sound
+              non-authoritative and invite discussion -- he was junior and did
+              not want to appear to be dictating standards. The humble name
+              stuck, and RFCs became the official way internet standards are
+              published to this day (TCP is RFC 793, HTTP/1.1 is RFC 2616). In
+              companies, the name carries the same intent: an RFC is a formal
+              proposal that <em>requests feedback</em> from peers before you
+              commit to building. The name itself is a reminder -- you are
+              asking for comments, not issuing orders.
+            </p>
+          </div>
+
+          <p>
+            This is the most important staff-level skill that most engineers
+            never practice. A design doc is the equivalent of a schematic review
+            in hardware -- it is how you get alignment before building.
+          </p>
+
+          <h3 id="rfc-workflow">2.1 RFC Workflow</h3>
+
+          <!-- SVG: RFC Workflow -->
+          <div class="diagram-container">
+            <div class="diagram-title">RFC Lifecycle</div>
+            <svg viewBox="0 0 800 110" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arr-rfc"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Draft -->
+              <rect
+                x="10"
+                y="20"
+                width="130"
+                height="60"
+                rx="10"
+                class="node-fill node-stroke"
+              />
+              <text
+                x="75"
+                y="45"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+              >
+                Draft
+              </text>
+              <text x="75" y="63" class="label-small" font-size="10">
+                Author writes
+              </text>
+              <line
+                x1="140"
+                y1="50"
+                x2="168"
+                y2="50"
+                class="edge"
+                marker-end="url(#arr-rfc)"
+              />
+
+              <!-- Review -->
+              <rect
+                x="173"
+                y="20"
+                width="130"
+                height="60"
+                rx="10"
+                class="node-active"
+              />
+              <text
+                x="238"
+                y="45"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Review
+              </text>
+              <text x="238" y="63" class="label-small" font-size="10">
+                Team feedback
+              </text>
+              <line
+                x1="303"
+                y1="50"
+                x2="331"
+                y2="50"
+                class="edge"
+                marker-end="url(#arr-rfc)"
+              />
+
+              <!-- Approved -->
+              <rect
+                x="336"
+                y="20"
+                width="130"
+                height="60"
+                rx="10"
+                class="node-visited"
+              />
+              <text
+                x="401"
+                y="45"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                Approved
+              </text>
+              <text x="401" y="63" class="label-small" font-size="10">
+                Stakeholder sign-off
+              </text>
+              <line
+                x1="466"
+                y1="50"
+                x2="494"
+                y2="50"
+                class="edge"
+                marker-end="url(#arr-rfc)"
+              />
+
+              <!-- Implementation -->
+              <rect
+                x="499"
+                y="20"
+                width="130"
+                height="60"
+                rx="10"
+                class="node-current"
+              />
+              <text
+                x="564"
+                y="45"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Implementation
+              </text>
+              <text x="564" y="63" class="label-small" font-size="10">
+                Build it
+              </text>
+              <line
+                x1="629"
+                y1="50"
+                x2="657"
+                y2="50"
+                class="edge"
+                marker-end="url(#arr-rfc)"
+              />
+
+              <!-- Retrospective -->
+              <rect
+                x="662"
+                y="20"
+                width="130"
+                height="60"
+                rx="10"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="727"
+                y="45"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+                fill="#bc8cff"
+              >
+                Retrospective
+              </text>
+              <text x="727" y="63" class="label-small" font-size="10">
+                What did we learn?
+              </text>
+
+              <!-- Timeline annotation -->
+              <text x="400" y="100" class="label-small" fill="#8b949e">
+                Get alignment before building -- the RFC process prevents wasted
+                work
+              </text>
+            </svg>
+          </div>
+
+          <h3 id="rfc-template">2.2 RFC Template</h3>
+
+          <pre><code># RFC: [Title]
+
+**Author**: [Your name]
+**Status**: Draft | In Review | Approved | Rejected
+**Date**: [Date]
+**Reviewers**: [Names]
+
+## Context
+
+What is the problem? Why does it need to be solved now?
+What happens if we do nothing?
+
+## Goals and Non-Goals
+
+**Goals**: What this design will accomplish.
+**Non-goals**: What this design explicitly will NOT address
+              (prevents scope creep).
+
+## Proposal
+
+The actual design. Include:
+
+- High-level architecture diagram
+- Key components and their responsibilities
+- Data model / schema
+- API contracts
+- Error handling strategy
+
+## Alternatives Considered
+
+What other approaches did you evaluate? Why did you
+reject them? This section proves you thought broadly
+before deciding.
+
+## Risks and Mitigations
+
+What could go wrong? How will you detect it?
+What is the rollback plan?
+
+## Milestones
+
+Phase 1: [scope] -- [timeline]
+Phase 2: [scope] -- [timeline]
+
+## Open Questions
+
+Things you need input on from reviewers.</code></pre>
+
+          <h3 id="great-design-doc">2.3 What Makes a Great Design Doc</h3>
+
+          <ul>
+            <li>
+              <strong>Concise:</strong> 3-6 pages. If it is longer, the design
+              is too complex or you are over-specifying implementation details.
+            </li>
+            <li>
+              <strong>Alternatives section is substantive:</strong> Not "we
+              could do nothing" -- real alternatives with honest tradeoff
+              analysis.
+            </li>
+            <li>
+              <strong>Addresses failure modes:</strong> What happens when the
+              database is down? When traffic spikes 10x? When a dependency
+              changes its API?
+            </li>
+            <li>
+              <strong>Clear on what is NOT included:</strong> Non-goals prevent
+              scope creep.
+            </li>
+          </ul>
+
+          <h3 id="rfc-practice">2.4 Practice</h3>
+
+          <p>Write a design doc for one of these (real or hypothetical):</p>
+          <ol>
+            <li>Migrating a service from monolith to microservices</li>
+            <li>Adding caching to a read-heavy API</li>
+            <li>Designing a feature flag system</li>
+            <li>Replacing a legacy data store with a new one</li>
+          </ol>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Tip</div>
+            <p>
+              Share it with a trusted colleague for review. The practice is in
+              receiving feedback on your design thinking, not just the writing.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 3: Making Technical Decisions -->
+          <!-- ============================================================ -->
+          <h2 id="decisions">Part 3: Making Technical Decisions</h2>
+
+          <h3 id="decision-framework">3.1 The Decision Framework</h3>
+
+          <p>For every significant technical decision, evaluate:</p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Questions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Correctness</strong></td>
+                <td>Does it solve the actual problem?</td>
+              </tr>
+              <tr>
+                <td><strong>Complexity</strong></td>
+                <td>
+                  How much complexity does it add? Can the team maintain it?
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Cost</strong></td>
+                <td>Build time, infrastructure cost, operational overhead?</td>
+              </tr>
+              <tr>
+                <td><strong>Reversibility</strong></td>
+                <td>Is this a one-way door or a two-way door?</td>
+              </tr>
+              <tr>
+                <td><strong>Timeline</strong></td>
+                <td>Does it fit the business timeline?</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>One-Way vs Two-Way Doors (Amazon concept)</h4>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon red">&#9888;</div>
+                <div class="card-title">One-Way Door</div>
+              </div>
+              <div class="card-desc">
+                Hard to reverse. Invest time in the decision.
+              </div>
+              <ul>
+                <li>Database choice</li>
+                <li>API published to external clients</li>
+                <li>Programming language</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">&#10004;</div>
+                <div class="card-title">Two-Way Door</div>
+              </div>
+              <div class="card-desc">
+                Easy to reverse. Decide quickly and iterate.
+              </div>
+              <ul>
+                <li>Internal library choice</li>
+                <li>Feature flag</li>
+                <li>Algorithm implementation</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 id="build-buy">3.2 Build vs Buy vs Adopt</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>When</th>
+                <th>Risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Build</strong></td>
+                <td>
+                  Core competitive advantage, unique requirements, nothing fits
+                </td>
+                <td>Maintenance burden, time to build</td>
+              </tr>
+              <tr>
+                <td><strong>Buy</strong> (SaaS/managed)</td>
+                <td>Non-core, well-solved problem, team is small</td>
+                <td>Vendor lock-in, cost at scale</td>
+              </tr>
+              <tr>
+                <td><strong>Adopt</strong> (open source)</td>
+                <td>Good fit exists, community is healthy</td>
+                <td>Maintenance if community dies, security</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Rule</div>
+            <p>
+              Build only what differentiates your product. Buy/adopt everything
+              else.
+            </p>
+          </div>
+
+          <h3 id="communicating-decisions">3.3 Communicating Decisions</h3>
+
+          <p>After making a decision, document:</p>
+          <ul>
+            <li><strong>What</strong> was decided</li>
+            <li>
+              <strong>Why</strong> (the reasoning, not just the conclusion)
+            </li>
+            <li>
+              <strong>What alternatives</strong> were considered and rejected
+            </li>
+            <li>
+              <strong>When to revisit</strong> (conditions under which the
+              decision should be reconsidered)
+            </li>
+          </ul>
+
+          <p>
+            This is an ADR (Architecture Decision Record). Keep them in a known
+            location (wiki, repo). Future engineers will thank you.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "ADR"?</div>
+            <p>
+              ADR stands for <strong>Architecture Decision Record</strong>. The
+              name is literal: it <em>records</em> a <em>decision</em> about
+              <em>architecture</em>. Think of it like a lab notebook entry for
+              engineering decisions -- it captures not just what you decided,
+              but the context at the time, what options you considered, and why
+              you chose one over the others. The format was popularized by
+              Michael Nygard in 2011. The key insight in the name is "Record" --
+              it exists so that future engineers (including future you) can
+              understand <em>why</em> a decision was made, not just
+              <em>what</em> was decided. Without ADRs, teams endlessly re-debate
+              settled decisions because nobody remembers the original reasoning.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 4: Cross-Team Influence -->
+          <!-- ============================================================ -->
+          <h2 id="influence">Part 4: Cross-Team Influence</h2>
+
+          <h3 id="without-authority">4.1 Working Without Authority</h3>
+
+          <p>
+            Staff engineers rarely have direct authority over people. You
+            influence through:
+          </p>
+          <ul>
+            <li>
+              <strong>Expertise:</strong> People follow your lead because your
+              technical judgment is sound
+            </li>
+            <li>
+              <strong>Relationships:</strong> You have earned trust across teams
+              through consistent, helpful interactions
+            </li>
+            <li>
+              <strong>Documentation:</strong> Your RFCs and ADRs create
+              institutional knowledge
+            </li>
+            <li>
+              <strong>Mentorship:</strong> You help others grow, and they
+              amplify your impact
+            </li>
+          </ul>
+
+          <h3 id="disagreements">4.2 Navigating Disagreements</h3>
+
+          <p>When you disagree with another senior/staff engineer:</p>
+          <ol>
+            <li>
+              <strong>Assume good intent:</strong> They have information or
+              constraints you do not see
+            </li>
+            <li>
+              <strong>Make it about the problem, not the person:</strong> "This
+              approach has risk X" not "Your approach is wrong"
+            </li>
+            <li>
+              <strong>Write it down:</strong> Verbal arguments go in circles.
+              Written pros/cons converge
+            </li>
+            <li>
+              <strong>Propose an experiment:</strong> "Can we prototype both and
+              measure?"
+            </li>
+            <li>
+              <strong>Disagree and commit:</strong> Once a decision is made,
+              support it fully even if you would have chosen differently
+            </li>
+          </ol>
+
+          <h3 id="mentoring">4.3 Mentoring Engineers</h3>
+
+          <p>
+            As a staff engineer, you are expected to grow other engineers.
+            Effective mentoring:
+          </p>
+          <ul>
+            <li>
+              <strong>Ask questions instead of giving answers:</strong> "What
+              happens if this fails?" teaches more than "Add error handling
+              here."
+            </li>
+            <li>
+              <strong>Review their designs, not just their code:</strong> Design
+              review is higher leverage than code review.
+            </li>
+            <li>
+              <strong>Share your reasoning, not just your conclusions:</strong>
+              "I chose X because of Y tradeoff" teaches decision-making.
+            </li>
+            <li>
+              <strong>Give them problems slightly above their level:</strong>
+              Growth happens at the edge of comfort.
+            </li>
+          </ul>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 5: Observability and Operations -->
+          <!-- ============================================================ -->
+          <h2 id="observability">Part 5: Observability and Operations</h2>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Observability"?</div>
+            <p>
+              The term comes from <strong>control theory</strong>, introduced by
+              Hungarian-American engineer Rudolf Kalman in 1960 (yes, the same
+              Kalman behind the Kalman filter used in everything from GPS to
+              spacecraft navigation). In control theory, a system is
+              <em>observable</em> if you can determine its complete internal
+              state solely from its external outputs. Software borrowed this
+              concept directly: a system has good observability if you can
+              understand what is happening inside it -- even in failure modes
+              you never anticipated -- just by examining its logs, metrics, and
+              traces. The distinction matters: monitoring tells you
+              <em>when</em> something is broken (predefined checks), but
+              observability lets you ask <em>why</em> it is broken (open-ended
+              exploration). For an EE, think of it this way: monitoring is like
+              having warning LEDs on a board, observability is like having full
+              test points on every signal path.
+            </p>
+          </div>
+
+          <p>
+            Staff engineers own the operational health of their systems. You
+            must understand:
+          </p>
+
+          <h3 id="three-pillars">5.1 The Three Pillars of Observability</h3>
+
+          <!-- SVG: Observability Stack -->
+          <div class="diagram-container">
+            <div class="diagram-title">Three Pillars of Observability</div>
+            <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+              <!-- Central dashboard -->
+              <rect
+                x="250"
+                y="180"
+                width="200"
+                height="60"
+                rx="12"
+                class="node-fill node-stroke"
+              />
+              <text
+                x="350"
+                y="207"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+              >
+                Dashboard
+              </text>
+              <text x="350" y="225" class="label-small" font-size="10">
+                Unified view
+              </text>
+
+              <!-- Logs -->
+              <rect
+                x="30"
+                y="30"
+                width="170"
+                height="110"
+                rx="12"
+                class="node-active"
+              />
+              <text
+                x="115"
+                y="58"
+                class="label-text"
+                font-size="22"
+                fill="#58a6ff"
+              >
+                &#128196;
+              </text>
+              <text
+                x="115"
+                y="82"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Logs
+              </text>
+              <text x="115" y="100" class="label-small" font-size="10">
+                What happened
+              </text>
+              <text x="115" y="115" class="label-small" font-size="10">
+                (discrete events)
+              </text>
+              <text
+                x="115"
+                y="132"
+                class="label-small"
+                font-size="9"
+                fill="#58a6ff"
+              >
+                EE: Logic analyzer trace
+              </text>
+
+              <!-- Metrics -->
+              <rect
+                x="265"
+                y="30"
+                width="170"
+                height="110"
+                rx="12"
+                class="node-visited"
+              />
+              <text
+                x="350"
+                y="58"
+                class="label-text"
+                font-size="22"
+                fill="#3fb950"
+              >
+                &#128200;
+              </text>
+              <text
+                x="350"
+                y="82"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                Metrics
+              </text>
+              <text x="350" y="100" class="label-small" font-size="10">
+                How is it performing
+              </text>
+              <text x="350" y="115" class="label-small" font-size="10">
+                (aggregates over time)
+              </text>
+              <text
+                x="350"
+                y="132"
+                class="label-small"
+                font-size="9"
+                fill="#3fb950"
+              >
+                EE: Oscilloscope readings
+              </text>
+
+              <!-- Traces -->
+              <rect
+                x="500"
+                y="30"
+                width="170"
+                height="110"
+                rx="12"
+                class="node-current"
+              />
+              <text
+                x="585"
+                y="58"
+                class="label-text"
+                font-size="22"
+                fill="#d29922"
+              >
+                &#128269;
+              </text>
+              <text
+                x="585"
+                y="82"
+                class="label-text"
+                font-size="14"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Traces
+              </text>
+              <text x="585" y="100" class="label-small" font-size="10">
+                How a request flows
+              </text>
+              <text x="585" y="115" class="label-small" font-size="10">
+                (end-to-end path)
+              </text>
+              <text
+                x="585"
+                y="132"
+                class="label-small"
+                font-size="9"
+                fill="#d29922"
+              >
+                EE: Signal path analysis
+              </text>
+
+              <!-- Connecting lines -->
+              <line
+                x1="115"
+                y1="140"
+                x2="300"
+                y2="180"
+                stroke="#58a6ff"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="350"
+                y1="140"
+                x2="350"
+                y2="180"
+                stroke="#3fb950"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="585"
+                y1="140"
+                x2="400"
+                y2="180"
+                stroke="#d29922"
+                stroke-width="2"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- Bottom annotation -->
+              <text x="350" y="268" class="label-small" fill="#8b949e">
+                All three are needed -- logs alone are insufficient at scale
+              </text>
+            </svg>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Pillar</th>
+                <th>What it tells you</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Logs</strong></td>
+                <td>What happened (discrete events)</td>
+                <td>Logic analyzer trace</td>
+              </tr>
+              <tr>
+                <td><strong>Metrics</strong></td>
+                <td>How is the system performing over time (aggregates)</td>
+                <td>Oscilloscope -- signal levels, frequency response</td>
+              </tr>
+              <tr>
+                <td><strong>Traces</strong></td>
+                <td>How did a single request flow through the system</td>
+                <td>Signal path analysis across multiple boards</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="golden-signals">5.2 Key Metrics to Monitor</h3>
+
+          <p>These are the "Four Golden Signals" from Google SRE:</p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">&#9201;</div>
+                <div class="card-title">Latency</div>
+              </div>
+              <div class="card-desc">
+                How fast are responses? Track p50, p95, p99.
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon red">&#10060;</div>
+                <div class="card-title">Error Rate</div>
+              </div>
+              <div class="card-desc">What percentage of requests fail?</div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">&#9650;</div>
+                <div class="card-title">Throughput</div>
+              </div>
+              <div class="card-desc">How many requests per second?</div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon orange">&#9632;</div>
+                <div class="card-title">Saturation</div>
+              </div>
+              <div class="card-desc">
+                How full are resources? (CPU, memory, disk, connections)
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "SLO / SLI / SLA"?</div>
+            <p>
+              These three terms are named in escalating order of commitment.
+              <strong>SLI</strong> (Service Level <em>Indicator</em>) is the raw
+              measurement -- a metric like "99.2% of requests completed in under
+              200ms." It indicates how the service is performing.
+              <strong>SLO</strong> (Service Level <em>Objective</em>) is the
+              target you set internally -- "We aim for 99.5% of requests under
+              200ms." It is your objective, your engineering goal.
+              <strong>SLA</strong> (Service Level <em>Agreement</em>) is a
+              contractual promise to customers with consequences -- "We
+              guarantee 99.9% uptime or we pay penalties." It is a legal
+              agreement. The naming progression is deliberate: indicator (what
+              you measure) -> objective (what you aim for) -> agreement (what
+              you promise). In EE terms: SLI is the oscilloscope reading, SLO is
+              the design spec, SLA is the datasheet guarantee.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "MTTR / MTTF / MTBF"?</div>
+            <p>
+              These reliability metrics are named after what they measure in the
+              failure lifecycle. <strong>MTTF</strong> (Mean Time To
+              <em>Failure</em>) -- average time a system runs before it fails.
+              <strong>MTTR</strong> (Mean Time To <em>Recovery</em>) -- average
+              time to restore service after a failure.
+              <strong>MTBF</strong> (Mean Time <em>Between</em> Failures) -- the
+              full cycle: MTBF = MTTF + MTTR. These originated in hardware
+              reliability engineering (MIL-HDBK-217, the military handbook for
+              predicting electronic equipment reliability), so they should feel
+              familiar from an EE background. The "Mean" in each name is
+              important -- these are statistical averages, not guarantees. A
+              system with 99.99% availability has about 52 minutes of downtime
+              per year; MTTR tells you whether that is one 52-minute outage or
+              fifty-two 1-minute blips.
+            </p>
+          </div>
+
+          <h3 id="incident-response">5.3 Incident Response</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Incident Response"?</div>
+            <p>
+              The term is borrowed directly from
+              <strong>emergency services</strong> -- fire departments,
+              paramedics, and law enforcement all use "incident response" to
+              describe their structured process for handling emergencies. The
+              software industry adopted both the term and the framework:
+              designated responders, severity levels, communication protocols,
+              command structure (Incident Commander), and post-incident reviews.
+              Even "postmortem" is borrowed from medicine (Latin: "after death"
+              -- examining what went wrong after the fact). The military and
+              emergency services influence is deliberate: when production is
+              down and users are affected, you need the same disciplined,
+              rehearsed response as a fire crew, not ad-hoc scrambling.
+            </p>
+          </div>
+
+          <!-- SVG: Incident Response Timeline -->
+          <div class="diagram-container">
+            <div class="diagram-title">Incident Response Timeline</div>
+            <svg viewBox="0 0 820 120" xmlns="http://www.w3.org/2000/svg">
+              <!-- Timeline bar -->
+              <line
+                x1="40"
+                y1="55"
+                x2="780"
+                y2="55"
+                stroke="#30363d"
+                stroke-width="3"
+              />
+
+              <!-- Detect -->
+              <circle
+                cx="100"
+                cy="55"
+                r="12"
+                fill="#f85149"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="100"
+                y="59"
+                class="label-text"
+                font-size="10"
+                font-weight="700"
+                fill="#161b22"
+              >
+                1
+              </text>
+              <text
+                x="100"
+                y="30"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#f85149"
+              >
+                Detect
+              </text>
+              <text x="100" y="85" class="label-small" font-size="10">
+                Alerts fire
+              </text>
+              <text x="100" y="98" class="label-small" font-size="9">
+                (automated)
+              </text>
+
+              <!-- Triage -->
+              <circle
+                cx="260"
+                cy="55"
+                r="12"
+                fill="#d29922"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="260"
+                y="59"
+                class="label-text"
+                font-size="10"
+                font-weight="700"
+                fill="#161b22"
+              >
+                2
+              </text>
+              <text
+                x="260"
+                y="30"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#d29922"
+              >
+                Triage
+              </text>
+              <text x="260" y="85" class="label-small" font-size="10">
+                Impact? Blast radius?
+              </text>
+              <text x="260" y="98" class="label-small" font-size="9">
+                How many users?
+              </text>
+
+              <!-- Mitigate -->
+              <circle
+                cx="420"
+                cy="55"
+                r="12"
+                fill="#58a6ff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="420"
+                y="59"
+                class="label-text"
+                font-size="10"
+                font-weight="700"
+                fill="#161b22"
+              >
+                3
+              </text>
+              <text
+                x="420"
+                y="30"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#58a6ff"
+              >
+                Mitigate
+              </text>
+              <text x="420" y="85" class="label-small" font-size="10">
+                Restore service ASAP
+              </text>
+              <text x="420" y="98" class="label-small" font-size="9">
+                Rollback / feature flag
+              </text>
+
+              <!-- Resolve -->
+              <circle
+                cx="580"
+                cy="55"
+                r="12"
+                fill="#3fb950"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="580"
+                y="59"
+                class="label-text"
+                font-size="10"
+                font-weight="700"
+                fill="#161b22"
+              >
+                4
+              </text>
+              <text
+                x="580"
+                y="30"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#3fb950"
+              >
+                Resolve
+              </text>
+              <text x="580" y="85" class="label-small" font-size="10">
+                Root cause analysis
+              </text>
+              <text x="580" y="98" class="label-small" font-size="9">
+                AFTER mitigation
+              </text>
+
+              <!-- Postmortem -->
+              <circle
+                cx="740"
+                cy="55"
+                r="12"
+                fill="#bc8cff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="740"
+                y="59"
+                class="label-text"
+                font-size="10"
+                font-weight="700"
+                fill="#161b22"
+              >
+                5
+              </text>
+              <text
+                x="740"
+                y="30"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#bc8cff"
+              >
+                Postmortem
+              </text>
+              <text x="740" y="85" class="label-small" font-size="10">
+                Blameless writeup
+              </text>
+              <text x="740" y="98" class="label-small" font-size="9">
+                Timeline + action items
+              </text>
+            </svg>
+          </div>
+
+          <div class="callout callout-danger">
+            <div class="callout-title">Critical Rule</div>
+            <p>
+              <strong>Mitigate first, investigate second.</strong> The hospital
+              analogy: stop the bleeding before diagnosing the disease.
+            </p>
+          </div>
+
+          <p>When production breaks:</p>
+          <ol>
+            <li><strong>Detect:</strong> Alerts fire (automated monitoring)</li>
+            <li>
+              <strong>Triage:</strong> Is this impacting users? How many? What
+              is the blast radius?
+            </li>
+            <li>
+              <strong>Mitigate:</strong> Restore service ASAP (rollback, feature
+              flag, scale up)
+            </li>
+            <li>
+              <strong>Root cause:</strong> AFTER mitigation, investigate why
+            </li>
+            <li>
+              <strong>Postmortem:</strong> Blameless writeup of what happened,
+              timeline, and action items
+            </li>
+          </ol>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- References -->
+          <!-- ============================================================ -->
+          <h2 id="references">References</h2>
+
+          <h3>Books</h3>
+          <ul>
+            <li>
+              <strong>"Staff Engineer" by Will Larson</strong> -- THE book on
+              this topic. Short, practical, with real stories from staff
+              engineers at top companies.
+            </li>
+            <li>
+              <strong>"An Elegant Puzzle" by Will Larson</strong> -- Engineering
+              management perspective, helpful for understanding how managers
+              think and how to work with them.
+            </li>
+            <li>
+              <strong>"The Staff Engineer's Path" by Tanya Reilly</strong> --
+              Complementary to Larson, focuses more on the day-to-day practices
+              and skills.
+            </li>
+          </ul>
+
+          <h3>Online</h3>
+          <ul>
+            <li>
+              <strong>StaffEng.com</strong> -- Interviews with staff+ engineers
+              about their roles:
+              <a href="https://staffeng.com/">https://staffeng.com/</a>
+            </li>
+            <li>
+              <strong>Google SRE book</strong> -- Free online, chapters on
+              monitoring and incident response:
+              <a href="https://sre.google/sre-book/table-of-contents/"
+                >https://sre.google/sre-book/table-of-contents/</a
+              >
+            </li>
+            <li>
+              <strong>Will Larson's blog</strong> -- Ongoing writing on staff
+              engineering:
+              <a href="https://lethain.com/">https://lethain.com/</a>
+            </li>
+          </ul>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Languages &amp; Compilers — Offline Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Programming Languages &amp; Compilers</h1>
+          <p>
+            How source becomes machine behavior. Pipeline thinking from EE maps
+            cleanly onto compiler stages.
+          </p>
+          <div class="callout callout-ee">
+            <div class="callout-title">EE bridge</div>
+            <p>
+              Compilation ≈ multi-stage signal conditioning with typed
+              interfaces between stages. IR is the clean intermediate protocol.
+            </p>
+          </div>
+
+          <div class="diagram-container" id="anim-compile">
+            <div class="diagram-title">Compiler pipeline</div>
+            <svg id="svg-compile" width="100%" height="140" viewBox="0 0 640 140"></svg>
+            <div class="anim-description">Follow a token through the pipe.</div>
+            <div class="anim-controls"></div>
+          </div>
+
+          <section id="lex">
+            <h2>Lex &amp; parse</h2>
+            <p>
+              Lexer: character stream → tokens. Parser: tokens → AST (recursive
+              descent is the practical skill). Ambiguity and precedence matter.
+            </p>
+            <pre><code>// recursive descent sketch
+function parseExpr() {
+  let left = parseTerm();
+  while (match('+') || match('-')) {
+    const op = previous();
+    const right = parseTerm();
+    left = new Binary(left, op, right);
+  }
+  return left;
+}</code></pre>
+            <button class="anim-btn" data-mark-lesson="pl_01">Mark lesson done</button>
+          </section>
+
+          <section id="types">
+            <h2>Types &amp; semantics</h2>
+            <p>
+              Static vs dynamic typing. Soundness: well-typed programs don’t get
+              stuck (ideal). Rust ownership = static aliasing discipline; Python
+              = dynamic with runtime checks.
+            </p>
+          </section>
+
+          <section id="ir">
+            <h2>IR &amp; codegen</h2>
+            <p>
+              Intermediate Representation enables optimization independent of
+              source/ISA. SSA (Static Single Assignment): each name assigned
+              once — simplifies dataflow. Codegen respects calling conventions
+              from <a href="architecture.html#isa">Architecture</a>.
+            </p>
+          </section>
+
+          <section id="runtime">
+            <h2>Runtimes</h2>
+            <p>
+              GC vs manual/RAII/ownership. Green threads vs OS threads. JIT vs
+              AOT. Knowing the runtime explains production perf and memory
+              profiles.
+            </p>
+            <button class="anim-btn" data-mark-lesson="pl_04">Mark lesson done</button>
+          </section>
+
+          <h2>Quick check</h2>
+          <div data-quiz data-track="compilers"></div>
+
+          <p><a href="security.html">Next: Security →</a></p>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const stages = ["Source", "Lex", "Parse", "IR", "Opt", "Codegen"];
+        const svg = document.getElementById("svg-compile");
+        function paint(active) {
+          let html = "";
+          stages.forEach((s, i) => {
+            const x = 15 + i * 105;
+            const fill = i === active ? "#1f3a5f" : "#21262d";
+            html += `<rect x="${x}" y="45" width="90" height="44" rx="6" fill="${fill}" stroke="#484f58"/>
+              <text x="${x + 45}" y="72" text-anchor="middle" fill="#e6edf3" font-size="13">${s}</text>`;
+            if (i < stages.length - 1) {
+              html += `<text x="${x + 92}" y="72" fill="#484f58">›</text>`;
+            }
+          });
+          svg.innerHTML = html;
+        }
+        paint(0);
+        const steps = stages.map((s, i) => ({
+          description: `Stage: ${s}`,
+          apply: () => paint(i),
+        }));
+        new AlgoAnimation("anim-compile", steps, { onReset: () => paint(0) });
+      });
+    </script>
+  </body>
+</html>

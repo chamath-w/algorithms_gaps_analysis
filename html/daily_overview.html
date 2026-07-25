@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Guide Overview — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Daily Study Guide: Overview</h1>
+          <p>
+            This guide tells you exactly what to do every day for 12 weeks. No
+            decisions required — just follow the plan.
+          </p>
+
+          <div class="card">
+            <p>
+              <strong>Structure:</strong> 6 days per week. Day 7 is rest or
+              catch-up.
+            </p>
+            <p>
+              <strong>Time:</strong> ~2 hours per day (12-14 hours per week).
+            </p>
+          </div>
+
+          <h3>Guide Files</h3>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">1</div>
+                <div class="card-title">Overview</div>
+              </div>
+              <div class="card-desc">You are here. Start here.</div>
+            </div>
+            <a
+              href="daily_month1.html"
+              class="card"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon blue">2</div>
+                <div class="card-title">Month 1: Foundations</div>
+              </div>
+              <div class="card-desc">Weeks 1-4, Days 1-24</div>
+            </a>
+            <a
+              href="daily_month2.html"
+              class="card"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon green">3</div>
+                <div class="card-title">Month 2: Architecture</div>
+              </div>
+              <div class="card-desc">Weeks 5-8, Days 25-44</div>
+            </a>
+            <a
+              href="daily_month3.html"
+              class="card"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon purple">4</div>
+                <div class="card-title">Month 3: Staff Impact</div>
+              </div>
+              <div class="card-desc">Weeks 9-12, Days 45-72</div>
+            </a>
+          </div>
+
+          <hr />
+
+          <!-- ===== RULES ===== -->
+          <h2>Rules</h2>
+
+          <div class="callout callout-danger">
+            <div class="callout-title">Rule 1: Do not skip days</div>
+            <p>If you miss a day, do it the next day. Do not jump ahead.</p>
+          </div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Rule 2: Time-box exercises</div>
+            <p>
+              If you are stuck on a problem for more than the allotted time,
+              read the hints, then read the solution, then re-implement from
+              memory. Understanding > stubbornness.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Rule 3: Write everything down</div>
+            <p>
+              Keep a journal (physical notebook or text file). Each day has a
+              "Journal" prompt — answer it in 1-3 sentences.
+            </p>
+          </div>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Rule 4: Read actively</div>
+            <p>
+              When a guide says "Read section X", take notes. Write down what
+              surprises you or what you disagree with.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">Rule 5: Run the code</div>
+            <p>
+              When the guide says to run a command, actually run it. Do not just
+              read the output.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ===== DAILY SESSION FLOW SVG ===== -->
+          <h2>Daily Session Template</h2>
+          <p>Every day follows this rhythm:</p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Daily Session Flow (~2 hours)</div>
+            <svg viewBox="0 0 800 140" xmlns="http://www.w3.org/2000/svg">
+              <!-- Review box -->
+              <rect
+                x="20"
+                y="30"
+                width="150"
+                height="80"
+                rx="10"
+                fill="rgba(188,140,255,0.15)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text x="95" y="58" class="label-text" fill="#bc8cff">
+                Review
+              </text>
+              <text x="95" y="78" class="label-small">
+                Glance at yesterday's
+              </text>
+              <text x="95" y="92" class="label-small">journal entry</text>
+              <rect
+                x="50"
+                y="112"
+                width="90"
+                height="20"
+                rx="4"
+                fill="rgba(188,140,255,0.25)"
+              />
+              <text
+                x="95"
+                y="126"
+                class="label-small"
+                fill="#bc8cff"
+                font-weight="600"
+              >
+                0:00 - 0:05
+              </text>
+
+              <!-- Arrow 1 -->
+              <line
+                x1="170"
+                y1="70"
+                x2="210"
+                y2="70"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#arrowGray)"
+              />
+
+              <!-- Study box -->
+              <rect
+                x="210"
+                y="30"
+                width="150"
+                height="80"
+                rx="10"
+                fill="rgba(88,166,255,0.15)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="285" y="58" class="label-text" fill="#58a6ff">
+                Study
+              </text>
+              <text x="285" y="78" class="label-small">Read assigned</text>
+              <text x="285" y="92" class="label-small">
+                material (take notes)
+              </text>
+              <rect
+                x="240"
+                y="112"
+                width="90"
+                height="20"
+                rx="4"
+                fill="rgba(88,166,255,0.25)"
+              />
+              <text
+                x="285"
+                y="126"
+                class="label-small"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                0:05 - 0:45
+              </text>
+
+              <!-- Arrow 2 -->
+              <line
+                x1="360"
+                y1="70"
+                x2="400"
+                y2="70"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#arrowGray)"
+              />
+
+              <!-- Practice box -->
+              <rect
+                x="400"
+                y="30"
+                width="150"
+                height="80"
+                rx="10"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text x="475" y="58" class="label-text" fill="#3fb950">
+                Practice
+              </text>
+              <text x="475" y="78" class="label-small">Complete assigned</text>
+              <text x="475" y="92" class="label-small">exercises</text>
+              <rect
+                x="430"
+                y="112"
+                width="90"
+                height="20"
+                rx="4"
+                fill="rgba(63,185,80,0.25)"
+              />
+              <text
+                x="475"
+                y="126"
+                class="label-small"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                0:45 - 1:45
+              </text>
+
+              <!-- Arrow 3 -->
+              <line
+                x1="550"
+                y1="70"
+                x2="590"
+                y2="70"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#arrowGray)"
+              />
+
+              <!-- Journal box -->
+              <rect
+                x="590"
+                y="30"
+                width="150"
+                height="80"
+                rx="10"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text x="665" y="58" class="label-text" fill="#d29922">
+                Journal
+              </text>
+              <text x="665" y="78" class="label-small">Answer the day's</text>
+              <text x="665" y="92" class="label-small">journal prompt</text>
+              <rect
+                x="620"
+                y="112"
+                width="90"
+                height="20"
+                rx="4"
+                fill="rgba(210,153,34,0.25)"
+              />
+              <text
+                x="665"
+                y="126"
+                class="label-small"
+                fill="#d29922"
+                font-weight="600"
+              >
+                1:45 - 2:00
+              </text>
+
+              <defs>
+                <marker
+                  id="arrowGray"
+                  markerWidth="8"
+                  markerHeight="6"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L8,3 L0,6" fill="#484f58" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <p>
+            Some days are heavier on reading, some on practice. The time
+            estimates are per-activity and noted next to each item.
+          </p>
+
+          <hr />
+
+          <!-- ===== PREREQUISITES ===== -->
+          <h2>Prerequisites</h2>
+          <p>Before starting Day 1:</p>
+
+          <ul class="checklist">
+            <li>
+              Verify Python 3.12+ is installed: <code>python --version</code>
+            </li>
+            <li>
+              Navigate to the project:
+              <code>cd C:/temp/algorithms_gaps_analysis</code>
+            </li>
+            <li>
+              Generate all solution templates:
+              <code>python main.py --generate</code>
+            </li>
+            <li>Open this folder in your code editor (VS Code recommended)</li>
+            <li>
+              Create a journal file: create <code>journal.md</code> in this
+              folder
+            </li>
+          </ul>
+
+          <hr />
+
+          <div class="callout callout-success">
+            <div class="callout-title">You are ready</div>
+            <p>
+              Open <a href="daily_month1.html">Month 1: Foundations</a> and
+              begin.
+            </p>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

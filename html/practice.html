@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Practice Arena — In-Browser Python</title>
+    <link rel="stylesheet" href="css/style.css?v=13" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper arena-page">
+          <h1>Practice Arena</h1>
+          <p>
+            Visual + do-first drills: micro-quiz → code → run → diff feedback +
+            model trace, with a text coach under the REPL. Full CPython in the
+            browser (Pyodide). No network after vendoring.
+          </p>
+
+          <div class="callout callout-success">
+            <div class="callout-title">How to use</div>
+            <p>
+              1) Answer the <strong>micro-drill</strong> (unlocks editor) →
+              2) Code (Skeleton + Tab for next model line) →
+              3) <strong>Run tests</strong> → read the coach + expected/got diff →
+              4) Replay model trace if you miss. Deliberate mode keeps a pattern
+              until 3 correct in a row.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">How to open (WASM needs a local server)</div>
+            <p>
+              Do not open this file via <code>file://</code>. From the repo root:
+            </p>
+            <pre><code>python scripts/serve_course.py
+# opens http://127.0.0.1:8765/practice.html</code></pre>
+            <p>
+              Offline: <code>python scripts/vendor_pyodide.py</code> once (if
+              <code>html/vendor/pyodide/</code> is missing).
+            </p>
+          </div>
+
+          <div data-coding-arena></div>
+
+          <h2>Pattern warm-up (multiple choice)</h2>
+          <div data-quiz data-track="dsa"></div>
+
+          <p>
+            <a href="algo_memory.html">Algorithm Memory Lab</a> ·
+            <a href="progress.html">Progress</a> ·
+            <a href="catalog.html">Catalog</a>
+          </p>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js"></script>
+    <script src="js/arena-coach.js?v=13"></script>
+    <script src="js/practice-arena.js?v=14"></script>
+  </body>
+</html>

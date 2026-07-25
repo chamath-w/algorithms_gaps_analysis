@@ -1,0 +1,51 @@
+{
+  "id": "gen_sw_42",
+  "title": "Longest Substring Without Repeating",
+  "pattern": "sliding_window",
+  "difficulty": "medium",
+  "seed": 42,
+  "function_name": "length_of_longest_substring",
+  "test_cases": [
+    {
+      "args": [
+        "baeddcbibjgaabd"
+      ],
+      "expected": 5
+    },
+    {
+      "args": [
+        "ijaidigd"
+      ],
+      "expected": 4
+    },
+    {
+      "args": [
+        "jeacgfecdfbb"
+      ],
+      "expected": 6
+    },
+    {
+      "args": [
+        "bffjeahibgb"
+      ],
+      "expected": 8
+    },
+    {
+      "args": [
+        "ejfjdbadebdbg"
+      ],
+      "expected": 5
+    },
+    {
+      "args": [
+        "hfcffdebj"
+      ],
+      "expected": 5
+    }
+  ],
+  "hints": [
+    "Sliding window + last-seen index map.",
+    "When duplicate inside window, move left past it."
+  ],
+  "mental_model": "Window expands/contracts to maintain the invariant 'all unique'."
+}

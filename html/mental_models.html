@@ -1,0 +1,4450 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mental Models - EE to Staff SDE</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .model-section {
+        margin-bottom: 3rem;
+      }
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin: 1rem 0 1.5rem;
+      }
+      @media (max-width: 700px) {
+        .compare-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .compare-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.5rem;
+      }
+      .compare-card h4 {
+        margin-top: 0;
+      }
+      .compare-card.ee {
+        border-top: 3px solid var(--accent-orange);
+      }
+      .compare-card.sw {
+        border-top: 3px solid var(--accent-blue);
+      }
+      .install-list li {
+        margin-bottom: 0.6rem;
+      }
+      .vocab-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 0.3rem 1rem;
+        margin: 0.75rem 0;
+        font-size: 0.9rem;
+      }
+      .vocab-term {
+        font-weight: 600;
+        color: var(--accent-cyan);
+        font-family: var(--font-mono);
+      }
+      .vocab-def {
+        color: var(--text-secondary);
+      }
+      .summary-table {
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Mental Model Bridge</h1>
+          <p>
+            Electrical Engineer to Staff Software Engineer &mdash; 6 critical
+            mental model shifts. Your EE foundation (signal flow, feedback
+            loops, impedance matching, noise margins, timing analysis) is
+            extraordinarily powerful. The goal is not to replace it but to
+            <strong>augment</strong> it with software equivalents.
+          </p>
+
+          <hr />
+
+          <!-- ===== MODEL 1 ===== -->
+          <section class="model-section" id="model-1">
+            <h3>Model 1: Deterministic vs. Eventually Consistent</h3>
+
+            <div class="callout callout-info">
+              <div class="callout-title">
+                Why "Deterministic" and "Eventual Consistency"?
+              </div>
+              <p>
+                <strong>Deterministic</strong> comes from Latin
+                <em>determinare</em> = to limit, to fix boundaries. A
+                deterministic system always produces the same output for the
+                same input &mdash; the result is "determined" in advance,
+                bounded and predictable. Picture a light switch: flip it, and
+                the outcome is fixed. <strong>Eventual consistency</strong> is
+                named because consistency is guaranteed to arrive...
+                <em>eventually</em>. Given enough time with no new updates, all
+                nodes will converge to the same value. The "eventual" part is
+                honest: it does not promise <em>when</em>, only that it
+                <em>will</em> happen.
+              </p>
+            </div>
+
+            <!-- Iconic SVG Illustration -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                The Mental Image: Light Switch vs. Sunrise
+              </div>
+              <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="sunriseGrad" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stop-color="#1a1a2e" />
+                    <stop offset="30%" stop-color="#16213e" />
+                    <stop offset="50%" stop-color="#0f3460" />
+                    <stop offset="70%" stop-color="#e94560" />
+                    <stop offset="85%" stop-color="#f5a623" />
+                    <stop offset="100%" stop-color="#ffd93d" />
+                  </linearGradient>
+                  <radialGradient id="bulbGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffd93d" stop-opacity="0.8" />
+                    <stop
+                      offset="60%"
+                      stop-color="#ffd93d"
+                      stop-opacity="0.2"
+                    />
+                    <stop offset="100%" stop-color="#ffd93d" stop-opacity="0" />
+                  </radialGradient>
+                </defs>
+                <!-- Left side: Light Switch -->
+                <text
+                  x="170"
+                  y="22"
+                  class="label-text"
+                  font-size="14"
+                  font-weight="700"
+                  fill="#d29922"
+                >
+                  Deterministic (EE)
+                </text>
+                <!-- Switch plate -->
+                <rect
+                  x="140"
+                  y="60"
+                  width="60"
+                  height="90"
+                  rx="6"
+                  fill="rgba(210,153,34,0.1)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <!-- Switch toggle (ON position) -->
+                <rect
+                  x="158"
+                  y="68"
+                  width="24"
+                  height="40"
+                  rx="4"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <rect
+                  x="162"
+                  y="70"
+                  width="16"
+                  height="18"
+                  rx="3"
+                  fill="#d29922"
+                />
+                <text
+                  x="170"
+                  y="125"
+                  font-size="9"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  ON
+                </text>
+                <!-- Bulb with instant glow -->
+                <circle cx="170" cy="170" r="30" fill="url(#bulbGlow)" />
+                <circle
+                  cx="170"
+                  cy="170"
+                  r="16"
+                  fill="rgba(255,217,61,0.6)"
+                  stroke="#ffd93d"
+                  stroke-width="2"
+                />
+                <text
+                  x="170"
+                  y="175"
+                  font-size="10"
+                  fill="#1a1a2e"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  INSTANT
+                </text>
+                <!-- Arrow from switch to bulb -->
+                <line
+                  x1="170"
+                  y1="150"
+                  x2="170"
+                  y2="155"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="80"
+                  y="170"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  Flip = Light
+                </text>
+                <text
+                  x="80"
+                  y="185"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  0 delay
+                </text>
+
+                <!-- Divider -->
+                <line
+                  x1="350"
+                  y1="15"
+                  x2="350"
+                  y2="210"
+                  stroke="#30363d"
+                  stroke-width="1"
+                  stroke-dasharray="4,4"
+                />
+                <text
+                  x="350"
+                  y="115"
+                  font-size="18"
+                  fill="#484f58"
+                  text-anchor="middle"
+                >
+                  vs
+                </text>
+
+                <!-- Right side: Sunrise -->
+                <text
+                  x="530"
+                  y="22"
+                  class="label-text"
+                  font-size="14"
+                  font-weight="700"
+                  fill="#58a6ff"
+                >
+                  Eventually Consistent (SW)
+                </text>
+                <!-- Horizon scene -->
+                <rect
+                  x="410"
+                  y="80"
+                  width="240"
+                  height="120"
+                  rx="8"
+                  fill="url(#sunriseGrad)"
+                  opacity="0.85"
+                />
+                <!-- Horizon line -->
+                <line
+                  x1="410"
+                  y1="155"
+                  x2="650"
+                  y2="155"
+                  stroke="#f5a623"
+                  stroke-width="1.5"
+                  opacity="0.6"
+                />
+                <!-- Sun (partially risen) -->
+                <circle
+                  cx="530"
+                  cy="155"
+                  r="25"
+                  fill="rgba(255,217,61,0.5)"
+                  stroke="#ffd93d"
+                  stroke-width="2"
+                />
+                <!-- Rays -->
+                <line
+                  x1="530"
+                  y1="125"
+                  x2="530"
+                  y2="115"
+                  stroke="#ffd93d"
+                  stroke-width="1.5"
+                  opacity="0.6"
+                />
+                <line
+                  x1="505"
+                  y1="133"
+                  x2="498"
+                  y2="125"
+                  stroke="#ffd93d"
+                  stroke-width="1.5"
+                  opacity="0.5"
+                />
+                <line
+                  x1="555"
+                  y1="133"
+                  x2="562"
+                  y2="125"
+                  stroke="#ffd93d"
+                  stroke-width="1.5"
+                  opacity="0.5"
+                />
+                <line
+                  x1="490"
+                  y1="148"
+                  x2="480"
+                  y2="145"
+                  stroke="#ffd93d"
+                  stroke-width="1.5"
+                  opacity="0.3"
+                />
+                <line
+                  x1="570"
+                  y1="148"
+                  x2="580"
+                  y2="145"
+                  stroke="#ffd93d"
+                  stroke-width="1.5"
+                  opacity="0.3"
+                />
+                <!-- Time labels -->
+                <text
+                  x="440"
+                  y="185"
+                  font-size="9"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  t=0
+                </text>
+                <text
+                  x="490"
+                  y="185"
+                  font-size="9"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  t+2ms
+                </text>
+                <text
+                  x="540"
+                  y="185"
+                  font-size="9"
+                  fill="#f5a623"
+                  text-anchor="middle"
+                >
+                  t+15ms
+                </text>
+                <text
+                  x="600"
+                  y="185"
+                  font-size="9"
+                  fill="#ffd93d"
+                  text-anchor="middle"
+                >
+                  t+200ms
+                </text>
+                <text
+                  x="530"
+                  y="210"
+                  font-size="11"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Gradual convergence to full brightness
+                </text>
+              </svg>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-card ee">
+                <h4 style="color: var(--accent-orange)">EE Model</h4>
+                <p>
+                  In hardware, when you assert a signal on a bus, after the
+                  propagation delay and setup/hold time, every receiver sees the
+                  same value at the same time. The clock edge is the global
+                  synchronization point. You think in synchronous circuits:
+                  clock &rarr; combinational logic &rarr; register &rarr; clock.
+                </p>
+              </div>
+              <div class="compare-card sw">
+                <h4 style="color: var(--accent-blue)">Software Model</h4>
+                <p>
+                  In distributed systems,
+                  <strong>there is no global clock</strong>. When you write a
+                  value to a database, different services may see the old value
+                  for an unpredictable duration. This is a fundamental physical
+                  constraint (speed of light, network partitions). The CAP
+                  theorem formalizes this.
+                </p>
+              </div>
+            </div>
+
+            <!-- SVG: Signal propagation -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                Signal Propagation: Synchronous vs. Eventually Consistent
+              </div>
+              <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+                <!-- EE side label -->
+                <text
+                  x="175"
+                  y="28"
+                  class="label-text"
+                  font-weight="700"
+                  fill="#d29922"
+                >
+                  Synchronous (EE)
+                </text>
+                <!-- 5 nodes in a line, all receive signal at once -->
+                <line
+                  x1="80"
+                  y1="70"
+                  x2="140"
+                  y2="70"
+                  class="edge-active"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <line
+                  x1="170"
+                  y1="70"
+                  x2="220"
+                  y2="70"
+                  class="edge-active"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <line
+                  x1="250"
+                  y1="70"
+                  x2="300"
+                  y2="70"
+                  class="edge-active"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <line
+                  x1="330"
+                  y1="70"
+                  x2="380"
+                  y2="70"
+                  class="edge-active"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <!-- Clock edge symbol -->
+                <text
+                  x="35"
+                  y="74"
+                  font-size="11"
+                  fill="#d29922"
+                  font-family="var(--font-mono)"
+                >
+                  CLK
+                </text>
+                <circle
+                  cx="155"
+                  cy="70"
+                  r="15"
+                  fill="rgba(210,153,34,0.25)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="155"
+                  y="70"
+                  class="label-text"
+                  font-size="12"
+                  fill="#d29922"
+                >
+                  1
+                </text>
+                <circle
+                  cx="235"
+                  cy="70"
+                  r="15"
+                  fill="rgba(210,153,34,0.25)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="235"
+                  y="70"
+                  class="label-text"
+                  font-size="12"
+                  fill="#d29922"
+                >
+                  1
+                </text>
+                <circle
+                  cx="315"
+                  cy="70"
+                  r="15"
+                  fill="rgba(210,153,34,0.25)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="315"
+                  y="70"
+                  class="label-text"
+                  font-size="12"
+                  fill="#d29922"
+                >
+                  1
+                </text>
+                <circle
+                  cx="395"
+                  cy="70"
+                  r="15"
+                  fill="rgba(210,153,34,0.25)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="395"
+                  y="70"
+                  class="label-text"
+                  font-size="12"
+                  fill="#d29922"
+                >
+                  1
+                </text>
+                <text x="175" y="110" class="label-small" font-size="11">
+                  All nodes see value "1" at the same clock edge
+                </text>
+
+                <!-- Divider -->
+                <line
+                  x1="0"
+                  y1="135"
+                  x2="700"
+                  y2="135"
+                  stroke="#30363d"
+                  stroke-width="1"
+                  stroke-dasharray="4,4"
+                />
+
+                <!-- Software side label -->
+                <text
+                  x="175"
+                  y="162"
+                  class="label-text"
+                  font-weight="700"
+                  fill="#58a6ff"
+                >
+                  Eventually Consistent (Software)
+                </text>
+                <!-- Source node -->
+                <circle
+                  cx="80"
+                  cy="210"
+                  r="18"
+                  fill="rgba(88,166,255,0.25)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <text
+                  x="80"
+                  y="210"
+                  class="label-text"
+                  font-size="11"
+                  fill="#58a6ff"
+                >
+                  SRC
+                </text>
+                <!-- Node 1: updated -->
+                <line
+                  x1="98"
+                  y1="210"
+                  x2="145"
+                  y2="190"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="165"
+                  cy="185"
+                  r="15"
+                  fill="rgba(63,185,80,0.25)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="165"
+                  y="185"
+                  class="label-text"
+                  font-size="12"
+                  fill="#3fb950"
+                >
+                  1
+                </text>
+                <text
+                  x="165"
+                  y="168"
+                  font-size="9"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  t+2ms
+                </text>
+                <!-- Node 2: still old -->
+                <line
+                  x1="98"
+                  y1="210"
+                  x2="145"
+                  y2="230"
+                  stroke="#f85149"
+                  stroke-width="2"
+                  stroke-dasharray="4,3"
+                />
+                <circle
+                  cx="165"
+                  cy="235"
+                  r="15"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <text
+                  x="165"
+                  y="235"
+                  class="label-text"
+                  font-size="12"
+                  fill="#f85149"
+                >
+                  0
+                </text>
+                <text
+                  x="165"
+                  y="258"
+                  font-size="9"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  stale
+                </text>
+                <!-- Node 3: updated -->
+                <line
+                  x1="180"
+                  y1="185"
+                  x2="245"
+                  y2="195"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="265"
+                  cy="198"
+                  r="15"
+                  fill="rgba(63,185,80,0.25)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="265"
+                  y="198"
+                  class="label-text"
+                  font-size="12"
+                  fill="#3fb950"
+                >
+                  1
+                </text>
+                <text
+                  x="265"
+                  y="180"
+                  font-size="9"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  t+15ms
+                </text>
+                <!-- Node 4: still propagating -->
+                <line
+                  x1="180"
+                  y1="235"
+                  x2="245"
+                  y2="225"
+                  stroke="#d29922"
+                  stroke-width="2"
+                  stroke-dasharray="4,3"
+                />
+                <circle
+                  cx="265"
+                  cy="222"
+                  r="15"
+                  fill="rgba(210,153,34,0.2)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="265"
+                  y="222"
+                  class="label-text"
+                  font-size="12"
+                  fill="#d29922"
+                >
+                  ?
+                </text>
+                <text
+                  x="265"
+                  y="245"
+                  font-size="9"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  converging
+                </text>
+                <!-- Node 5: updated late -->
+                <line
+                  x1="280"
+                  y1="210"
+                  x2="345"
+                  y2="210"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                  stroke-dasharray="4,3"
+                />
+                <circle
+                  cx="365"
+                  cy="210"
+                  r="15"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="365"
+                  y="210"
+                  class="label-text"
+                  font-size="12"
+                  fill="#3fb950"
+                >
+                  1
+                </text>
+                <text
+                  x="365"
+                  y="195"
+                  font-size="9"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  t+200ms
+                </text>
+                <text x="350" y="268" class="label-small" font-size="11">
+                  Nodes converge at different times -- no global clock
+                </text>
+              </svg>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Bridge Analogy</div>
+              <p>
+                Think of it like an asynchronous circuit with no global clock,
+                or a multi-board system where each board has its own oscillator
+                and you communicate over a serial bus with ACK/NACK protocols.
+                The entire internet is an asynchronous system with unbounded
+                propagation delay.
+              </p>
+            </div>
+
+            <div class="callout callout-info">
+              <div class="callout-title">
+                Why "Memory Palace" (Method of Loci)?
+              </div>
+              <p>
+                <em>Loci</em> is the Latin plural of <em>locus</em> = place,
+                location. The "Method of Loci" was invented by Greek and Roman
+                rhetoricians who would mentally walk through a familiar building
+                &mdash; a palace, a home, a temple &mdash; and place items to
+                remember at each specific location (<em>locus</em>). To recall
+                the items, you simply retrace the walk. It works because spatial
+                memory is far stronger than abstract memory. Each "Memory Palace
+                Connection" in this guide assigns a mental model to a physical
+                station in your imagined house.
+              </p>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">Memory Palace Connection</div>
+              <p>
+                This model lives at
+                <strong>Station 1 of the Front Door</strong>: the light switch
+                next to the door. Flip it -- instant light (deterministic). Next
+                to it, a tiny window shows a sunrise gradually brightening
+                (eventually consistent). Both reach "light" but via
+                fundamentally different paths.
+              </p>
+            </div>
+
+            <h4>Installing This Model</h4>
+            <p>
+              Every time you design a system that writes data in one place and
+              reads it in another, ask:
+            </p>
+            <ol class="install-list">
+              <li>
+                What happens if the reader sees stale data? (Is this actually a
+                problem?)
+              </li>
+              <li>
+                What is my consistency requirement? (Strong? Eventual? Causal?)
+              </li>
+              <li>
+                What is my conflict resolution strategy? (Last-write-wins?
+                CRDTs? Locks?)
+              </li>
+            </ol>
+            <div class="vocab-grid">
+              <span class="vocab-term">Strong consistency</span
+              ><span class="vocab-def"
+                >Every read returns the most recent write (like a synchronous
+                bus)</span
+              >
+              <span class="vocab-term">Eventual consistency</span
+              ><span class="vocab-def"
+                >Given enough time with no new writes, all readers converge
+                (like PLL lock acquisition)</span
+              >
+              <span class="vocab-term">Partition tolerance</span
+              ><span class="vocab-def"
+                >System continues when segments cannot communicate (like a
+                fault-tolerant redundant bus)</span
+              >
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ===== MODEL 2 ===== -->
+          <section class="model-section" id="model-2">
+            <h3>Model 2: Composition over Construction</h3>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "Composition"?</div>
+              <p>
+                From Latin <em>componere</em> = to put together (<em>com-</em>
+                "together" + <em>ponere</em> "to place"). You "compose" a system
+                by placing smaller, independent pieces together &mdash; the way
+                a composer arranges individual instruments into an orchestra, or
+                the way you compose functions in math: <code>f(g(x))</code>. The
+                opposite is monolithic construction (Greek
+                <em>monos</em> "single" + <em>lithos</em> "stone"), building
+                everything from one solid block.
+              </p>
+            </div>
+
+            <!-- Iconic SVG Illustration -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                The Mental Image: ASIC Chip vs. Lego Blocks
+              </div>
+              <svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: Complex monolithic ASIC -->
+                <text
+                  x="150"
+                  y="22"
+                  class="label-text"
+                  font-size="14"
+                  font-weight="700"
+                  fill="#d29922"
+                >
+                  Monolithic ASIC
+                </text>
+                <!-- Chip body -->
+                <rect
+                  x="80"
+                  y="40"
+                  width="140"
+                  height="120"
+                  rx="4"
+                  fill="rgba(210,153,34,0.12)"
+                  stroke="#d29922"
+                  stroke-width="2.5"
+                />
+                <!-- Pins (top) -->
+                <line
+                  x1="100"
+                  y1="40"
+                  x2="100"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="115"
+                  y1="40"
+                  x2="115"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="130"
+                  y1="40"
+                  x2="130"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="145"
+                  y1="40"
+                  x2="145"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="160"
+                  y1="40"
+                  x2="160"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="175"
+                  y1="40"
+                  x2="175"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="190"
+                  y1="40"
+                  x2="190"
+                  y2="28"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <!-- Pins (bottom) -->
+                <line
+                  x1="100"
+                  y1="160"
+                  x2="100"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="115"
+                  y1="160"
+                  x2="115"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="130"
+                  y1="160"
+                  x2="130"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="145"
+                  y1="160"
+                  x2="145"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="160"
+                  y1="160"
+                  x2="160"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="175"
+                  y1="160"
+                  x2="175"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="190"
+                  y1="160"
+                  x2="190"
+                  y2="172"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <!-- Pins (left) -->
+                <line
+                  x1="80"
+                  y1="60"
+                  x2="68"
+                  y2="60"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="80"
+                  y1="80"
+                  x2="68"
+                  y2="80"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="80"
+                  y1="100"
+                  x2="68"
+                  y2="100"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="80"
+                  y1="120"
+                  x2="68"
+                  y2="120"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="80"
+                  y1="140"
+                  x2="68"
+                  y2="140"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <!-- Pins (right) -->
+                <line
+                  x1="220"
+                  y1="60"
+                  x2="232"
+                  y2="60"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="220"
+                  y1="80"
+                  x2="232"
+                  y2="80"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="220"
+                  y1="100"
+                  x2="232"
+                  y2="100"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="220"
+                  y1="120"
+                  x2="232"
+                  y2="120"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="220"
+                  y1="140"
+                  x2="232"
+                  y2="140"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <!-- Internal complexity (tangled lines) -->
+                <path
+                  d="M100,60 C120,70 140,50 160,80 C180,110 120,100 190,90"
+                  stroke="#d29922"
+                  stroke-width="0.8"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <path
+                  d="M100,100 C130,85 150,120 180,80 C200,60 110,130 190,120"
+                  stroke="#d29922"
+                  stroke-width="0.8"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <text
+                  x="150"
+                  y="105"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Custom
+                </text>
+                <text
+                  x="150"
+                  y="190"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  Powerful but fixed
+                </text>
+
+                <!-- Divider -->
+                <line
+                  x1="310"
+                  y1="15"
+                  x2="310"
+                  y2="200"
+                  stroke="#30363d"
+                  stroke-width="1"
+                  stroke-dasharray="4,4"
+                />
+                <text
+                  x="310"
+                  y="110"
+                  font-size="18"
+                  fill="#484f58"
+                  text-anchor="middle"
+                >
+                  vs
+                </text>
+
+                <!-- Right: Colorful Lego blocks -->
+                <text
+                  x="510"
+                  y="22"
+                  class="label-text"
+                  font-size="14"
+                  font-weight="700"
+                  fill="#58a6ff"
+                >
+                  Composable Legos
+                </text>
+                <!-- DB block -->
+                <rect
+                  x="380"
+                  y="45"
+                  width="85"
+                  height="45"
+                  rx="8"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <text
+                  x="422"
+                  y="65"
+                  font-size="12"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  DB
+                </text>
+                <text
+                  x="422"
+                  y="80"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  PostgreSQL
+                </text>
+                <!-- Lego bumps on top -->
+                <rect
+                  x="395"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(88,166,255,0.3)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <rect
+                  x="418"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(88,166,255,0.3)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <rect
+                  x="441"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(88,166,255,0.3)"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                />
+                <!-- Cache block -->
+                <rect
+                  x="475"
+                  y="45"
+                  width="85"
+                  height="45"
+                  rx="8"
+                  fill="rgba(63,185,80,0.2)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="517"
+                  y="65"
+                  font-size="12"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  Cache
+                </text>
+                <text
+                  x="517"
+                  y="80"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Redis
+                </text>
+                <rect
+                  x="490"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(63,185,80,0.3)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <rect
+                  x="513"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(63,185,80,0.3)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <rect
+                  x="536"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(63,185,80,0.3)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <!-- Auth block -->
+                <rect
+                  x="570"
+                  y="45"
+                  width="85"
+                  height="45"
+                  rx="8"
+                  fill="rgba(247,120,186,0.2)"
+                  stroke="#f778ba"
+                  stroke-width="2"
+                />
+                <text
+                  x="612"
+                  y="65"
+                  font-size="12"
+                  fill="#f778ba"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  Auth
+                </text>
+                <text
+                  x="612"
+                  y="80"
+                  font-size="8"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  OAuth2
+                </text>
+                <rect
+                  x="585"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(247,120,186,0.3)"
+                  stroke="#f778ba"
+                  stroke-width="1"
+                />
+                <rect
+                  x="608"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(247,120,186,0.3)"
+                  stroke="#f778ba"
+                  stroke-width="1"
+                />
+                <rect
+                  x="631"
+                  y="38"
+                  width="12"
+                  height="8"
+                  rx="3"
+                  fill="rgba(247,120,186,0.3)"
+                  stroke="#f778ba"
+                  stroke-width="1"
+                />
+                <!-- API block (large, spans across) -->
+                <rect
+                  x="380"
+                  y="100"
+                  width="275"
+                  height="45"
+                  rx="8"
+                  fill="rgba(57,210,192,0.15)"
+                  stroke="#39d2c0"
+                  stroke-width="2"
+                />
+                <text
+                  x="517"
+                  y="122"
+                  font-size="12"
+                  fill="#39d2c0"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  API Layer (Your Code)
+                </text>
+                <text
+                  x="517"
+                  y="137"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Select, compose, integrate
+                </text>
+                <!-- Connectors -->
+                <line
+                  x1="422"
+                  y1="90"
+                  x2="422"
+                  y2="100"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="517"
+                  y1="90"
+                  x2="517"
+                  y2="100"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="612"
+                  y1="90"
+                  x2="612"
+                  y2="100"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="517"
+                  y="170"
+                  font-size="10"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                >
+                  Modular and reconfigurable
+                </text>
+              </svg>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-card ee">
+                <h4 style="color: var(--accent-orange)">EE Model</h4>
+                <p>
+                  You build from transistors up. You understand every layer:
+                  physics &rarr; devices &rarr; gates &rarr; RTL &rarr;
+                  architecture. Even when using an IC, you read the datasheet
+                  because you need to understand timing, power, thermal, and EMI
+                  implications. You design <strong>bottom-up</strong> and trust
+                  nothing you haven't characterized.
+                </p>
+              </div>
+              <div class="compare-card sw">
+                <h4 style="color: var(--accent-blue)">Software Model</h4>
+                <p>
+                  You <strong>compose from existing components</strong>. A
+                  staff-level SDE does not write their own HTTP server, database
+                  driver, or serialization library. You select proven
+                  components, compose them, and write the
+                  <strong>glue logic</strong> that is unique to your problem.
+                  The skill is selecting, composing, and integrating.
+                </p>
+              </div>
+            </div>
+
+            <!-- SVG: Modular blocks vs monolithic chip -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                Monolithic Construction vs. Modular Composition
+              </div>
+              <svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: Monolithic -->
+                <text
+                  x="140"
+                  y="25"
+                  class="label-text"
+                  font-weight="700"
+                  fill="#d29922"
+                >
+                  Build From Scratch (EE)
+                </text>
+                <rect
+                  x="40"
+                  y="40"
+                  width="200"
+                  height="160"
+                  rx="4"
+                  fill="rgba(210,153,34,0.1)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text x="140" y="65" class="label-small" fill="#d29922">
+                  Custom ASIC
+                </text>
+                <rect
+                  x="55"
+                  y="80"
+                  width="170"
+                  height="20"
+                  rx="3"
+                  fill="rgba(210,153,34,0.15)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <text
+                  x="140"
+                  y="94"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  Transistors / Physics
+                </text>
+                <rect
+                  x="55"
+                  y="105"
+                  width="170"
+                  height="20"
+                  rx="3"
+                  fill="rgba(210,153,34,0.2)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <text
+                  x="140"
+                  y="119"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  Gates / RTL
+                </text>
+                <rect
+                  x="55"
+                  y="130"
+                  width="170"
+                  height="20"
+                  rx="3"
+                  fill="rgba(210,153,34,0.25)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <text
+                  x="140"
+                  y="144"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  Architecture
+                </text>
+                <rect
+                  x="55"
+                  y="155"
+                  width="170"
+                  height="20"
+                  rx="3"
+                  fill="rgba(210,153,34,0.3)"
+                  stroke="#d29922"
+                  stroke-width="1"
+                />
+                <text
+                  x="140"
+                  y="169"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  Application Logic
+                </text>
+                <text x="140" y="215" class="label-small">
+                  Everything custom-built
+                </text>
+
+                <!-- Arrow -->
+                <text x="310" y="125" font-size="28" fill="#484f58">
+                  &#8680;
+                </text>
+
+                <!-- Right: Composable blocks -->
+                <text
+                  x="520"
+                  y="25"
+                  class="label-text"
+                  font-weight="700"
+                  fill="#58a6ff"
+                >
+                  Compose (Software)
+                </text>
+                <!-- Block 1: DB -->
+                <rect
+                  x="370"
+                  y="50"
+                  width="80"
+                  height="50"
+                  rx="8"
+                  fill="rgba(88,166,255,0.15)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <text
+                  x="410"
+                  y="72"
+                  font-size="11"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Database
+                </text>
+                <text
+                  x="410"
+                  y="88"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  PostgreSQL
+                </text>
+                <!-- Block 2: Cache -->
+                <rect
+                  x="460"
+                  y="50"
+                  width="80"
+                  height="50"
+                  rx="8"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="500"
+                  y="72"
+                  font-size="11"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Cache
+                </text>
+                <text
+                  x="500"
+                  y="88"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Redis
+                </text>
+                <!-- Block 3: HTTP -->
+                <rect
+                  x="550"
+                  y="50"
+                  width="80"
+                  height="50"
+                  rx="8"
+                  fill="rgba(188,140,255,0.15)"
+                  stroke="#bc8cff"
+                  stroke-width="2"
+                />
+                <text
+                  x="590"
+                  y="72"
+                  font-size="11"
+                  fill="#bc8cff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  HTTP
+                </text>
+                <text
+                  x="590"
+                  y="88"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  FastAPI
+                </text>
+                <!-- Connector lines -->
+                <line
+                  x1="410"
+                  y1="100"
+                  x2="410"
+                  y2="120"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="500"
+                  y1="100"
+                  x2="500"
+                  y2="120"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="590"
+                  y1="100"
+                  x2="590"
+                  y2="120"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <!-- Glue logic -->
+                <rect
+                  x="370"
+                  y="120"
+                  width="260"
+                  height="45"
+                  rx="8"
+                  fill="rgba(57,210,192,0.12)"
+                  stroke="#39d2c0"
+                  stroke-width="2"
+                />
+                <text
+                  x="500"
+                  y="140"
+                  font-size="12"
+                  fill="#39d2c0"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Your Glue Logic
+                </text>
+                <text
+                  x="500"
+                  y="156"
+                  font-size="10"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Business rules, orchestration, transformations
+                </text>
+                <!-- Block 4: Auth -->
+                <rect
+                  x="410"
+                  y="175"
+                  width="80"
+                  height="40"
+                  rx="8"
+                  fill="rgba(247,120,186,0.15)"
+                  stroke="#f778ba"
+                  stroke-width="2"
+                />
+                <text
+                  x="450"
+                  y="200"
+                  font-size="11"
+                  fill="#f778ba"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Auth
+                </text>
+                <!-- Block 5: Queue -->
+                <rect
+                  x="510"
+                  y="175"
+                  width="80"
+                  height="40"
+                  rx="8"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <text
+                  x="550"
+                  y="200"
+                  font-size="11"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Queue
+                </text>
+                <line
+                  x1="450"
+                  y1="165"
+                  x2="450"
+                  y2="175"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="550"
+                  y1="165"
+                  x2="550"
+                  y2="175"
+                  stroke="#484f58"
+                  stroke-width="1.5"
+                />
+                <text x="500" y="233" class="label-small">
+                  Select, compose, integrate
+                </text>
+              </svg>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Bridge Analogy</div>
+              <p>
+                Think of it like PCB design with COTS (commercial off-the-shelf)
+                components. You don't design the FPGA -- you select it, read its
+                datasheet (API documentation), design the interfaces
+                (integration layer), and write the application logic. The
+                "datasheet" is the library's API docs and issue tracker.
+              </p>
+            </div>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "Polymorphism"?</div>
+              <p>
+                From Greek <em>poly</em> (many) + <em>morph&#275;</em> (form,
+                shape). An object can take "many forms." The same interface or
+                method name behaves differently depending on the underlying type
+                &mdash; many forms of the same thing. This is what makes
+                composition powerful: you can swap out one component for another
+                with a different internal shape, as long as they share the same
+                interface. In EE terms, think of a standard pin header: many
+                different daughter boards (forms) can plug into the same
+                connector (interface).
+              </p>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">Memory Palace Connection</div>
+              <p>
+                This model lives at
+                <strong>Station 2 of the Front Door</strong>: colorful Lego
+                blocks on the doorstep labeled "DB", "Cache", "Auth" that snap
+                together easily. Next to them sits a single complex chip with
+                200 pins -- impressive but immovable. Software should be Legos,
+                not ASICs.
+              </p>
+            </div>
+
+            <h4>Installing This Model</h4>
+            <p>Before writing any code, ask:</p>
+            <ol class="install-list">
+              <li>
+                Has someone already solved this? (Search GitHub, package
+                registries, internal repos)
+              </li>
+              <li>
+                Is the existing solution good enough? (Don't write your own when
+                80% fit suffices)
+              </li>
+              <li>
+                What are the risks of depending on this? (Maintenance, license,
+                security, performance)
+              </li>
+            </ol>
+            <p>
+              <strong
+                >The senior engineer builds things. The staff engineer builds
+                the right things and avoids building the wrong things.</strong
+              >
+            </p>
+          </section>
+
+          <hr />
+
+          <!-- ===== MODEL 3 ===== -->
+          <section class="model-section" id="model-3">
+            <h3>Model 3: Optimization-First vs. Clarity-First</h3>
+
+            <!-- Iconic SVG Illustration -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                The Mental Image: Tangled Wire vs. Breadboard
+              </div>
+              <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: Tangled ball of wire -->
+                <text
+                  x="150"
+                  y="22"
+                  class="label-text"
+                  font-size="14"
+                  font-weight="700"
+                  fill="#f85149"
+                >
+                  Optimized but Tangled
+                </text>
+                <circle
+                  cx="150"
+                  cy="110"
+                  r="55"
+                  fill="rgba(248,81,73,0.06)"
+                  stroke="none"
+                />
+                <path
+                  d="M105,85 C130,60 180,90 160,70 C140,50 110,100 170,80 C200,70 120,120 190,100"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M110,100 C150,130 120,70 180,110 C210,130 100,140 170,120"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  opacity="0.7"
+                />
+                <path
+                  d="M120,130 C140,100 190,140 150,150 C110,155 180,95 130,110"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  opacity="0.5"
+                />
+                <path
+                  d="M135,70 C160,110 100,90 175,130 C195,145 125,60 160,140"
+                  stroke="#f85149"
+                  stroke-width="1.3"
+                  fill="none"
+                  opacity="0.6"
+                />
+                <!-- Confused face -->
+                <circle
+                  cx="65"
+                  cy="185"
+                  r="18"
+                  fill="rgba(248,81,73,0.1)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <circle cx="59" cy="181" r="2" fill="#f85149" />
+                <circle cx="71" cy="181" r="2" fill="#f85149" />
+                <path
+                  d="M58,192 C62,188 68,188 72,192"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <text
+                  x="150"
+                  y="185"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  "It works but..."
+                </text>
+                <text
+                  x="150"
+                  y="200"
+                  font-size="10"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  nobody can trace a signal
+                </text>
+                <!-- Divider -->
+                <line
+                  x1="310"
+                  y1="15"
+                  x2="310"
+                  y2="210"
+                  stroke="#30363d"
+                  stroke-width="1"
+                  stroke-dasharray="4,4"
+                />
+                <text
+                  x="310"
+                  y="115"
+                  font-size="18"
+                  fill="#484f58"
+                  text-anchor="middle"
+                >
+                  vs
+                </text>
+                <!-- Right: Neat breadboard -->
+                <text
+                  x="510"
+                  y="22"
+                  class="label-text"
+                  font-size="14"
+                  font-weight="700"
+                  fill="#3fb950"
+                >
+                  Clear and Structured
+                </text>
+                <rect
+                  x="400"
+                  y="50"
+                  width="220"
+                  height="120"
+                  rx="6"
+                  fill="rgba(63,185,80,0.06)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <g opacity="0.3">
+                  <line
+                    x1="415"
+                    y1="70"
+                    x2="605"
+                    y2="70"
+                    stroke="#3fb950"
+                    stroke-width="0.8"
+                  />
+                  <line
+                    x1="415"
+                    y1="85"
+                    x2="605"
+                    y2="85"
+                    stroke="#3fb950"
+                    stroke-width="0.8"
+                  />
+                  <line
+                    x1="415"
+                    y1="100"
+                    x2="605"
+                    y2="100"
+                    stroke="#3fb950"
+                    stroke-width="0.8"
+                  />
+                  <line
+                    x1="415"
+                    y1="115"
+                    x2="605"
+                    y2="115"
+                    stroke="#3fb950"
+                    stroke-width="0.8"
+                  />
+                  <line
+                    x1="415"
+                    y1="130"
+                    x2="605"
+                    y2="130"
+                    stroke="#3fb950"
+                    stroke-width="0.8"
+                  />
+                  <line
+                    x1="415"
+                    y1="145"
+                    x2="605"
+                    y2="145"
+                    stroke="#3fb950"
+                    stroke-width="0.8"
+                  />
+                </g>
+                <line
+                  x1="430"
+                  y1="70"
+                  x2="430"
+                  y2="100"
+                  stroke="#58a6ff"
+                  stroke-width="2.5"
+                />
+                <text
+                  x="430"
+                  y="62"
+                  font-size="7"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                >
+                  VCC
+                </text>
+                <line
+                  x1="470"
+                  y1="85"
+                  x2="550"
+                  y2="85"
+                  stroke="#d29922"
+                  stroke-width="2.5"
+                />
+                <text
+                  x="510"
+                  y="80"
+                  font-size="7"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  DATA
+                </text>
+                <line
+                  x1="550"
+                  y1="85"
+                  x2="550"
+                  y2="130"
+                  stroke="#d29922"
+                  stroke-width="2.5"
+                />
+                <line
+                  x1="470"
+                  y1="115"
+                  x2="590"
+                  y2="115"
+                  stroke="#bc8cff"
+                  stroke-width="2.5"
+                />
+                <text
+                  x="530"
+                  y="110"
+                  font-size="7"
+                  fill="#bc8cff"
+                  text-anchor="middle"
+                >
+                  CTRL
+                </text>
+                <line
+                  x1="590"
+                  y1="100"
+                  x2="590"
+                  y2="145"
+                  stroke="#3fb950"
+                  stroke-width="2.5"
+                />
+                <text
+                  x="590"
+                  y="155"
+                  font-size="7"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  GND
+                </text>
+                <!-- Happy face -->
+                <circle
+                  cx="640"
+                  cy="185"
+                  r="18"
+                  fill="rgba(63,185,80,0.1)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <circle cx="634" cy="181" r="2" fill="#3fb950" />
+                <circle cx="646" cy="181" r="2" fill="#3fb950" />
+                <path
+                  d="M633,190 C637,195 643,195 647,190"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <text
+                  x="510"
+                  y="185"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Every trace labeled
+                </text>
+                <text
+                  x="510"
+                  y="200"
+                  font-size="10"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  anyone can debug this
+                </text>
+              </svg>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-card ee">
+                <h4 style="color: var(--accent-orange)">EE Model</h4>
+                <p>
+                  Optimization is survival. Every gate has a propagation delay.
+                  Every wire has capacitance. You think in critical paths,
+                  pipeline stages, and timing margins. Clever tricks (clock
+                  gating, look-ahead carry, booth multiplication) are
+                  celebrated.
+                </p>
+              </div>
+              <div class="compare-card sw">
+                <h4 style="color: var(--accent-blue)">Software Model</h4>
+                <p>
+                  The bottleneck is
+                  <strong>human comprehension, not machine execution</strong>.
+                  Code is read 10x more than written. A clever O(n) algorithm
+                  nobody can debug is <strong>worse</strong> than a clear O(n
+                  log n) algorithm everyone can maintain. Optimize only after
+                  profiling identifies the actual bottleneck.
+                </p>
+              </div>
+            </div>
+
+            <!-- SVG: Tangled vs structured code paths -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                Optimized (Tangled) vs. Clear (Structured) Code Paths
+              </div>
+              <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left: Tangled/Optimized -->
+                <text
+                  x="150"
+                  y="22"
+                  class="label-text"
+                  font-weight="700"
+                  fill="#f85149"
+                >
+                  Optimized but Tangled
+                </text>
+                <rect
+                  x="30"
+                  y="40"
+                  width="80"
+                  height="30"
+                  rx="4"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="70"
+                  y="60"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  Input
+                </text>
+                <!-- Tangled paths -->
+                <path
+                  d="M110,55 C140,30 160,90 200,45"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M110,55 C130,80 180,20 200,65"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-dasharray="3,2"
+                />
+                <path
+                  d="M110,55 C150,100 170,40 200,85"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <rect
+                  x="200"
+                  y="35"
+                  width="50"
+                  height="22"
+                  rx="4"
+                  fill="rgba(248,81,73,0.1)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <text
+                  x="225"
+                  y="50"
+                  font-size="8"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  hack1
+                </text>
+                <rect
+                  x="200"
+                  y="60"
+                  width="50"
+                  height="22"
+                  rx="4"
+                  fill="rgba(248,81,73,0.1)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <text
+                  x="225"
+                  y="75"
+                  font-size="8"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  trick2
+                </text>
+                <rect
+                  x="200"
+                  y="85"
+                  width="50"
+                  height="22"
+                  rx="4"
+                  fill="rgba(248,81,73,0.1)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                />
+                <text
+                  x="225"
+                  y="100"
+                  font-size="8"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  opt3
+                </text>
+                <!-- More tangled connections -->
+                <path
+                  d="M250,46 C270,70 260,90 280,60"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M250,71 C260,50 280,100 280,60"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-dasharray="3,2"
+                />
+                <path
+                  d="M250,96 C270,80 265,40 280,60"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <rect
+                  x="280"
+                  y="45"
+                  width="60"
+                  height="30"
+                  rx="4"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="310"
+                  y="65"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  Output
+                </text>
+                <text x="70" y="130" font-size="10" fill="#f85149">
+                  O(n) but nobody can maintain it
+                </text>
+                <text x="70" y="145" font-size="10" fill="#6e7681">
+                  "What does this even do?"
+                </text>
+
+                <!-- Divider -->
+                <line
+                  x1="350"
+                  y1="15"
+                  x2="350"
+                  y2="200"
+                  stroke="#30363d"
+                  stroke-width="1"
+                  stroke-dasharray="4,4"
+                />
+
+                <!-- Right: Clear/Structured -->
+                <text
+                  x="530"
+                  y="22"
+                  class="label-text"
+                  font-weight="700"
+                  fill="#3fb950"
+                >
+                  Clear and Structured
+                </text>
+                <rect
+                  x="400"
+                  y="40"
+                  width="80"
+                  height="30"
+                  rx="4"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="440"
+                  y="60"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Input
+                </text>
+                <line
+                  x1="480"
+                  y1="55"
+                  x2="510"
+                  y2="55"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                  marker-end="url(#arrowGreen)"
+                />
+                <rect
+                  x="510"
+                  y="40"
+                  width="80"
+                  height="30"
+                  rx="4"
+                  fill="rgba(63,185,80,0.1)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="550"
+                  y="60"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Validate
+                </text>
+                <line
+                  x1="550"
+                  y1="70"
+                  x2="550"
+                  y2="90"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <rect
+                  x="510"
+                  y="90"
+                  width="80"
+                  height="30"
+                  rx="4"
+                  fill="rgba(63,185,80,0.1)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="550"
+                  y="110"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Transform
+                </text>
+                <line
+                  x1="550"
+                  y1="120"
+                  x2="550"
+                  y2="140"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <rect
+                  x="510"
+                  y="140"
+                  width="80"
+                  height="30"
+                  rx="4"
+                  fill="rgba(63,185,80,0.1)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="550"
+                  y="160"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Compute
+                </text>
+                <line
+                  x1="590"
+                  y1="155"
+                  x2="620"
+                  y2="155"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <rect
+                  x="620"
+                  y="140"
+                  width="60"
+                  height="30"
+                  rx="4"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="650"
+                  y="160"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Output
+                </text>
+                <text x="440" y="200" font-size="10" fill="#3fb950">
+                  O(n log n) but everyone can maintain it
+                </text>
+                <defs>
+                  <marker
+                    id="arrowGreen"
+                    viewBox="0 0 10 10"
+                    refX="10"
+                    refY="5"
+                    markerWidth="5"
+                    markerHeight="5"
+                    orient="auto"
+                  >
+                    <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                  </marker>
+                </defs>
+              </svg>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Bridge Analogy</div>
+              <p>
+                Think of the difference between an ASIC and an FPGA. The ASIC is
+                faster and more power-efficient, but the FPGA is reconfigurable.
+                In software, code is always an FPGA -- you will reconfigure it
+                constantly. Optimize for reconfigurability (clarity, modularity)
+                by default. Only go ASIC on the critical path after measurement.
+              </p>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">Memory Palace Connection</div>
+              <p>
+                This model lives at
+                <strong>Station 3 of the Front Door</strong>: a tangled ball of
+                wire hanging on a nail (optimized but incomprehensible), and
+                below it a neat breadboard with color-coded, labeled traces
+                (clear and maintainable). A happy face next to the breadboard, a
+                confused face next to the tangle.
+              </p>
+            </div>
+
+            <h4>Installing This Model</h4>
+            <p>
+              When you write code, imagine a new team member will need to modify
+              it in 6 months with zero context from you:
+            </p>
+            <ol class="install-list">
+              <li>
+                Can they understand the intent from the code alone? (Variable
+                names, function names, structure)
+              </li>
+              <li>
+                Can they change one behavior without breaking others?
+                (Separation of concerns)
+              </li>
+              <li>Can they verify their change is correct? (Tests)</li>
+            </ol>
+            <p>
+              <strong>Rule of thumb:</strong> If your code needs a comment
+              explaining <em>what</em> it does, the code is too clever. Comments
+              should explain <em>why</em>, not <em>what</em>.
+            </p>
+          </section>
+
+          <hr />
+
+          <!-- ===== MODEL 4 ===== -->
+          <section class="model-section" id="model-4">
+            <h3>Model 4: State Machines are Everywhere</h3>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "State Machine"?</div>
+              <p>
+                Named because it is a <em>machine</em> (abstract system) whose
+                behavior is entirely defined by its current <em>state</em>. The
+                full term "Finite State Machine" (FSM) adds
+                <em>finite</em> (Latin <em>finitus</em> = bounded, having an
+                end) &mdash; meaning the number of possible states is countable.
+                Like a traffic light: it has a finite set of states (red,
+                yellow, green) and defined transitions between them. The machine
+                does not remember <em>how</em> it got to a state, only
+                <em>which</em> state it is in.
+              </p>
+            </div>
+
+            <!-- Iconic SVG Illustration -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                The Mental Image: Traffic Light State Machine
+              </div>
+              <svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <marker
+                    id="smArrow"
+                    viewBox="0 0 10 10"
+                    refX="10"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto"
+                  >
+                    <path d="M0,0 L10,5 L0,10 z" fill="#8b949e" />
+                  </marker>
+                </defs>
+                <!-- Traffic light housing -->
+                <rect
+                  x="200"
+                  y="20"
+                  width="100"
+                  height="240"
+                  rx="12"
+                  fill="rgba(72,79,88,0.3)"
+                  stroke="#484f58"
+                  stroke-width="2.5"
+                />
+                <!-- Red light -->
+                <circle
+                  cx="250"
+                  cy="75"
+                  r="30"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="250"
+                  cy="75"
+                  r="22"
+                  fill="rgba(248,81,73,0.6)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="250"
+                  y="80"
+                  font-size="12"
+                  fill="#1a1a2e"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  STOP
+                </text>
+                <!-- Yellow light -->
+                <circle
+                  cx="250"
+                  cy="145"
+                  r="30"
+                  fill="rgba(210,153,34,0.15)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="250"
+                  cy="145"
+                  r="22"
+                  fill="rgba(210,153,34,0.5)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="250"
+                  y="150"
+                  font-size="11"
+                  fill="#1a1a2e"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  CAUTION
+                </text>
+                <!-- Green light -->
+                <circle
+                  cx="250"
+                  cy="215"
+                  r="30"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <circle
+                  cx="250"
+                  cy="215"
+                  r="22"
+                  fill="rgba(63,185,80,0.5)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="250"
+                  y="220"
+                  font-size="12"
+                  fill="#1a1a2e"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  GO
+                </text>
+                <!-- Transition arrows -->
+                <!-- Red -> Green (left side) -->
+                <path
+                  d="M218,85 C120,85 120,205 218,210"
+                  stroke="#8b949e"
+                  stroke-width="2"
+                  fill="none"
+                  marker-end="url(#smArrow)"
+                />
+                <text
+                  x="110"
+                  y="150"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  timer
+                </text>
+                <!-- Green -> Yellow (right side) -->
+                <path
+                  d="M282,205 C340,195 340,155 282,150"
+                  stroke="#8b949e"
+                  stroke-width="2"
+                  fill="none"
+                  marker-end="url(#smArrow)"
+                />
+                <text
+                  x="355"
+                  y="178"
+                  font-size="10"
+                  fill="#d29922"
+                  text-anchor="middle"
+                >
+                  timer
+                </text>
+                <!-- Yellow -> Red (right side) -->
+                <path
+                  d="M282,140 C370,130 370,80 282,78"
+                  stroke="#8b949e"
+                  stroke-width="2"
+                  fill="none"
+                  marker-end="url(#smArrow)"
+                />
+                <text
+                  x="390"
+                  y="110"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  timer
+                </text>
+                <!-- Label -->
+                <text
+                  x="250"
+                  y="275"
+                  font-size="11"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  Defined states + defined transitions = no illegal states
+                </text>
+              </svg>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-card ee">
+                <h4 style="color: var(--accent-orange)">EE Model</h4>
+                <p>
+                  You already think in state machines -- FSMs are how you design
+                  controllers, protocol handlers, and sequential logic. You draw
+                  state diagrams, think about transitions, and worry about
+                  illegal states and reset conditions. This is one of your
+                  superpowers.
+                </p>
+              </div>
+              <div class="compare-card sw">
+                <h4 style="color: var(--accent-blue)">Software Model</h4>
+                <p>
+                  The same model applies, and most software engineers are bad at
+                  it. Apply FSM thinking to object lifecycle, request lifecycle,
+                  data lifecycle, and deployment lifecycle. When you see boolean
+                  flags like <code>is_started</code>, <code>is_paused</code>,
+                  <code>is_error</code> -- that's a poorly encoded state machine
+                  with 2^n mostly-illegal states.
+                </p>
+              </div>
+            </div>
+
+            <!-- SVG: HTTP request lifecycle state diagram -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                State Machine: HTTP Request Lifecycle
+              </div>
+              <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <marker
+                    id="arrowSM"
+                    viewBox="0 0 10 10"
+                    refX="10"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto"
+                  >
+                    <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                  </marker>
+                  <marker
+                    id="arrowSMErr"
+                    viewBox="0 0 10 10"
+                    refX="10"
+                    refY="5"
+                    markerWidth="6"
+                    markerHeight="6"
+                    orient="auto"
+                  >
+                    <path d="M0,0 L10,5 L0,10 z" fill="#f85149" />
+                  </marker>
+                </defs>
+                <!-- Idle -->
+                <rect
+                  x="30"
+                  y="130"
+                  width="90"
+                  height="40"
+                  rx="20"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <text
+                  x="75"
+                  y="155"
+                  class="label-text"
+                  font-size="13"
+                  fill="#58a6ff"
+                >
+                  Idle
+                </text>
+                <!-- Connecting -->
+                <line
+                  x1="120"
+                  y1="150"
+                  x2="170"
+                  y2="150"
+                  stroke="#484f58"
+                  stroke-width="2"
+                  marker-end="url(#arrowSM)"
+                />
+                <text
+                  x="145"
+                  y="140"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  connect()
+                </text>
+                <rect
+                  x="175"
+                  y="130"
+                  width="105"
+                  height="40"
+                  rx="20"
+                  fill="rgba(210,153,34,0.2)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="227"
+                  y="155"
+                  class="label-text"
+                  font-size="13"
+                  fill="#d29922"
+                >
+                  Connecting
+                </text>
+                <!-- Sending -->
+                <line
+                  x1="280"
+                  y1="150"
+                  x2="330"
+                  y2="150"
+                  stroke="#484f58"
+                  stroke-width="2"
+                  marker-end="url(#arrowSM)"
+                />
+                <text
+                  x="305"
+                  y="140"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  send()
+                </text>
+                <rect
+                  x="335"
+                  y="130"
+                  width="90"
+                  height="40"
+                  rx="20"
+                  fill="rgba(188,140,255,0.2)"
+                  stroke="#bc8cff"
+                  stroke-width="2"
+                />
+                <text
+                  x="380"
+                  y="155"
+                  class="label-text"
+                  font-size="13"
+                  fill="#bc8cff"
+                >
+                  Sending
+                </text>
+                <!-- Receiving -->
+                <line
+                  x1="425"
+                  y1="150"
+                  x2="475"
+                  y2="150"
+                  stroke="#484f58"
+                  stroke-width="2"
+                  marker-end="url(#arrowSM)"
+                />
+                <text
+                  x="450"
+                  y="140"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  recv()
+                </text>
+                <rect
+                  x="480"
+                  y="130"
+                  width="100"
+                  height="40"
+                  rx="20"
+                  fill="rgba(57,210,192,0.2)"
+                  stroke="#39d2c0"
+                  stroke-width="2"
+                />
+                <text
+                  x="530"
+                  y="155"
+                  class="label-text"
+                  font-size="13"
+                  fill="#39d2c0"
+                >
+                  Receiving
+                </text>
+                <!-- Done -->
+                <line
+                  x1="580"
+                  y1="150"
+                  x2="615"
+                  y2="150"
+                  stroke="#484f58"
+                  stroke-width="2"
+                  marker-end="url(#arrowSM)"
+                />
+                <text
+                  x="597"
+                  y="140"
+                  font-size="9"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  done
+                </text>
+                <rect
+                  x="620"
+                  y="130"
+                  width="70"
+                  height="40"
+                  rx="20"
+                  fill="rgba(63,185,80,0.2)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="655"
+                  y="155"
+                  class="label-text"
+                  font-size="13"
+                  fill="#3fb950"
+                >
+                  Done
+                </text>
+                <!-- Error state -->
+                <rect
+                  x="300"
+                  y="250"
+                  width="100"
+                  height="40"
+                  rx="20"
+                  fill="rgba(248,81,73,0.2)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="275"
+                  class="label-text"
+                  font-size="13"
+                  fill="#f85149"
+                >
+                  Error
+                </text>
+                <!-- Error transitions -->
+                <path
+                  d="M227,170 Q227,230 300,265"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-dasharray="4,3"
+                  marker-end="url(#arrowSMErr)"
+                />
+                <text x="240" y="220" font-size="9" fill="#f85149">
+                  timeout
+                </text>
+                <path
+                  d="M380,170 Q380,220 300,262"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-dasharray="4,3"
+                  marker-end="url(#arrowSMErr)"
+                />
+                <text x="360" y="220" font-size="9" fill="#f85149">fail</text>
+                <path
+                  d="M530,170 Q530,230 400,265"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-dasharray="4,3"
+                  marker-end="url(#arrowSMErr)"
+                />
+                <text x="490" y="225" font-size="9" fill="#f85149">error</text>
+                <!-- Retry from error -->
+                <path
+                  d="M300,265 Q150,290 75,170"
+                  stroke="#58a6ff"
+                  stroke-width="1.5"
+                  fill="none"
+                  stroke-dasharray="4,3"
+                  marker-end="url(#arrowSM)"
+                />
+                <text x="150" y="290" font-size="9" fill="#58a6ff">retry</text>
+                <!-- Key insight -->
+                <text
+                  x="350"
+                  y="40"
+                  class="label-small"
+                  font-size="12"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  Explicit states + defined transitions = no illegal states
+                </text>
+                <text
+                  x="350"
+                  y="60"
+                  class="label-small"
+                  font-size="11"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Enum + transition function beats boolean flags every time
+                </text>
+              </svg>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Bridge Analogy</div>
+              <p>
+                This one is direct -- no translation needed. Your EE state
+                machine discipline is a competitive advantage. When you see
+                <code>is_started, is_paused, is_error, is_done</code> --
+                recognize that as a poorly encoded state machine with 2^4 = 16
+                states, most of which are illegal. Refactor into an explicit
+                enum with defined transitions.
+              </p>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">Memory Palace Connection</div>
+              <p>
+                This model lives at
+                <strong>Station 4 of the Front Door</strong>: a miniature
+                traffic light mounted next to the door. Red, yellow, green --
+                with arrows showing the transition order. It never jumps from
+                red to green without passing through its defined transitions.
+                Every software object has a lifecycle just like this traffic
+                light.
+              </p>
+            </div>
+
+            <h4>Installing This Model</h4>
+            <p>
+              For every entity in your system, draw the state diagram. Enumerate
+              the states, transitions, and guards. Then implement as an explicit
+              state machine (enum + transition function), not a bag of booleans.
+            </p>
+            <pre><code><span class="kw">from</span> <span class="ty">enum</span> <span class="kw">import</span> Enum, auto
+
+<span class="kw">class</span> <span class="ty">OrderState</span>(Enum):
+    CREATED = auto()
+    PAID = auto()
+    SHIPPED = auto()
+    DELIVERED = auto()
+    CANCELLED = auto()
+
+VALID_TRANSITIONS = {
+    OrderState.CREATED:   {OrderState.PAID, OrderState.CANCELLED},
+    OrderState.PAID:      {OrderState.SHIPPED, OrderState.CANCELLED},
+    OrderState.SHIPPED:   {OrderState.DELIVERED},
+    OrderState.DELIVERED: set(),
+    OrderState.CANCELLED: set(),
+}</code></pre>
+          </section>
+
+          <hr />
+
+          <!-- ===== MODEL 5 ===== -->
+          <section class="model-section" id="model-5">
+            <h3>Model 5: Layers of Abstraction</h3>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "Abstraction"?</div>
+              <p>
+                From Latin <em>abstractus</em> = drawn away from (<em>abs-</em>
+                "away" + <em>trahere</em> "to draw/pull"). An abstraction "draws
+                away" the details, leaving only the essential interface. You
+                abstract <em>away</em> complexity, leaving a simpler view. The
+                "layers" metaphor comes from geology: each layer sits on top of
+                another, and you only interact with the surface. Dig deeper only
+                when something goes wrong &mdash; just as you trace a signal
+                through the OSI model only when debugging a network fault.
+              </p>
+            </div>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "Encapsulation"?</div>
+              <p>
+                From <em>capsule</em> (Latin <em>capsula</em> = small
+                box/container). You put data and methods inside a "capsule"
+                (class, module, service), sealing the internals and exposing
+                only the interface. The implementation is
+                <em>encapsulated</em> &mdash; sealed inside &mdash; so the
+                outside world cannot depend on or break what it cannot see.
+                Think of an IC package: pins are the interface, the die inside
+                is encapsulated.
+              </p>
+            </div>
+
+            <!-- Iconic SVG Illustration -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                The Mental Image: Geological Cross-Section
+              </div>
+              <svg viewBox="0 0 600 310" xmlns="http://www.w3.org/2000/svg">
+                <!-- Layer stack (bottom to top, like geological strata) -->
+                <!-- Hardware (bedrock) -->
+                <rect
+                  x="60"
+                  y="250"
+                  width="400"
+                  height="40"
+                  rx="0"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="260"
+                  y="275"
+                  font-size="13"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Hardware
+                </text>
+                <!-- Jagged top edge for rock effect -->
+                <path
+                  d="M60,250 L80,246 L110,252 L140,248 L170,251 L200,247 L230,250 L260,246 L290,252 L320,248 L350,251 L380,247 L410,250 L440,248 L460,250"
+                  stroke="#f85149"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <!-- OS -->
+                <rect
+                  x="80"
+                  y="205"
+                  width="360"
+                  height="40"
+                  rx="0"
+                  fill="rgba(210,153,34,0.15)"
+                  stroke="#d29922"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="260"
+                  y="230"
+                  font-size="13"
+                  fill="#d29922"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Operating System
+                </text>
+                <path
+                  d="M80,205 L100,201 L130,207 L160,203 L190,206 L220,202 L250,205 L280,201 L310,207 L340,203 L370,206 L400,202 L420,205 L440,203"
+                  stroke="#d29922"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <!-- Runtime -->
+                <rect
+                  x="100"
+                  y="160"
+                  width="320"
+                  height="40"
+                  rx="0"
+                  fill="rgba(188,140,255,0.15)"
+                  stroke="#bc8cff"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="260"
+                  y="185"
+                  font-size="13"
+                  fill="#bc8cff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Runtime
+                </text>
+                <path
+                  d="M100,160 L120,156 L150,162 L180,158 L210,161 L240,157 L270,160 L300,156 L330,162 L360,158 L390,161 L400,160 L420,158"
+                  stroke="#bc8cff"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <!-- Framework -->
+                <rect
+                  x="120"
+                  y="115"
+                  width="280"
+                  height="40"
+                  rx="0"
+                  fill="rgba(57,210,192,0.15)"
+                  stroke="#39d2c0"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="260"
+                  y="140"
+                  font-size="13"
+                  fill="#39d2c0"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Framework
+                </text>
+                <path
+                  d="M120,115 L140,111 L170,117 L200,113 L230,116 L260,112 L290,115 L320,111 L350,117 L380,113 L400,115"
+                  stroke="#39d2c0"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <!-- Application -->
+                <rect
+                  x="140"
+                  y="70"
+                  width="240"
+                  height="40"
+                  rx="0"
+                  fill="rgba(88,166,255,0.15)"
+                  stroke="#58a6ff"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="260"
+                  y="95"
+                  font-size="13"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Application
+                </text>
+                <path
+                  d="M140,70 L160,66 L190,72 L220,68 L250,71 L280,67 L310,70 L340,66 L360,70 L380,68"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.4"
+                />
+                <!-- User (top soil) -->
+                <rect
+                  x="160"
+                  y="30"
+                  width="200"
+                  height="35"
+                  rx="0"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="260"
+                  y="52"
+                  font-size="13"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  User
+                </text>
+                <!-- Grass on top -->
+                <line
+                  x1="170"
+                  y1="30"
+                  x2="170"
+                  y2="22"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="190"
+                  y1="30"
+                  x2="188"
+                  y2="20"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="210"
+                  y1="30"
+                  x2="212"
+                  y2="22"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="230"
+                  y1="30"
+                  x2="230"
+                  y2="18"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="250"
+                  y1="30"
+                  x2="248"
+                  y2="22"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="270"
+                  y1="30"
+                  x2="272"
+                  y2="20"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="290"
+                  y1="30"
+                  x2="290"
+                  y2="22"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="310"
+                  y1="30"
+                  x2="308"
+                  y2="20"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="330"
+                  y1="30"
+                  x2="332"
+                  y2="22"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="350"
+                  y1="30"
+                  x2="350"
+                  y2="18"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <!-- Drill (bypass attempt) -->
+                <line
+                  x1="500"
+                  y1="35"
+                  x2="500"
+                  y2="275"
+                  stroke="#f85149"
+                  stroke-width="3"
+                  stroke-dasharray="6,4"
+                />
+                <polygon points="500,280 494,265 506,265" fill="#f85149" />
+                <!-- Drill head at top -->
+                <rect
+                  x="492"
+                  y="20"
+                  width="16"
+                  height="20"
+                  rx="2"
+                  fill="rgba(248,81,73,0.3)"
+                  stroke="#f85149"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="500"
+                  y="15"
+                  font-size="9"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  DRILL
+                </text>
+                <!-- Warning -->
+                <text
+                  x="540"
+                  y="120"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="start"
+                  font-weight="600"
+                >
+                  You CAN bypass
+                </text>
+                <text
+                  x="540"
+                  y="135"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="start"
+                  font-weight="600"
+                >
+                  layers but you
+                </text>
+                <text
+                  x="540"
+                  y="150"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="start"
+                  font-weight="600"
+                >
+                  SHOULD NOT
+                </text>
+                <!-- Good arrow (left side) -->
+                <text
+                  x="30"
+                  y="55"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Each layer
+                </text>
+                <text
+                  x="30"
+                  y="68"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  talks only
+                </text>
+                <text
+                  x="30"
+                  y="81"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  to the one
+                </text>
+                <text
+                  x="30"
+                  y="94"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  below it
+                </text>
+                <line
+                  x1="30"
+                  y1="100"
+                  x2="30"
+                  y2="270"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <polygon points="30,275 24,260 36,260" fill="#3fb950" />
+              </svg>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-card ee">
+                <h4 style="color: var(--accent-orange)">EE Model</h4>
+                <p>
+                  You understand layers -- physical, data link, network,
+                  transport, application. You understand that each layer hides
+                  complexity below. But in EE, you are often comfortable
+                  reaching down through layers (scoping a signal, reading
+                  register dumps, probing the bus).
+                </p>
+              </div>
+              <div class="compare-card sw">
+                <h4 style="color: var(--accent-blue)">Software Model</h4>
+                <p>
+                  <strong
+                    >Respecting abstraction boundaries is not optional.</strong
+                  >
+                  When you bypass a layer (calling the database directly instead
+                  of going through the service API, accessing a private field
+                  instead of using the interface), you create coupling that
+                  makes the system impossible to change.
+                </p>
+              </div>
+            </div>
+
+            <!-- SVG: Layer cake -->
+            <div class="diagram-container">
+              <div class="diagram-title">Software Abstraction Layers</div>
+              <svg viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg">
+                <!-- Layer bars, bottom to top -->
+                <!-- Hardware -->
+                <rect
+                  x="120"
+                  y="265"
+                  width="460"
+                  height="40"
+                  rx="6"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="290"
+                  class="label-text"
+                  font-size="14"
+                  fill="#f85149"
+                >
+                  Hardware / Infrastructure
+                </text>
+                <!-- OS -->
+                <rect
+                  x="140"
+                  y="215"
+                  width="420"
+                  height="40"
+                  rx="6"
+                  fill="rgba(210,153,34,0.15)"
+                  stroke="#d29922"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="240"
+                  class="label-text"
+                  font-size="14"
+                  fill="#d29922"
+                >
+                  Database / Cache / Queue
+                </text>
+                <!-- Runtime -->
+                <rect
+                  x="160"
+                  y="165"
+                  width="380"
+                  height="40"
+                  rx="6"
+                  fill="rgba(188,140,255,0.15)"
+                  stroke="#bc8cff"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="190"
+                  class="label-text"
+                  font-size="14"
+                  fill="#bc8cff"
+                >
+                  Repository / Data Access
+                </text>
+                <!-- Framework -->
+                <rect
+                  x="180"
+                  y="115"
+                  width="340"
+                  height="40"
+                  rx="6"
+                  fill="rgba(57,210,192,0.15)"
+                  stroke="#39d2c0"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="140"
+                  class="label-text"
+                  font-size="14"
+                  fill="#39d2c0"
+                >
+                  Service / Business Logic
+                </text>
+                <!-- Application -->
+                <rect
+                  x="200"
+                  y="65"
+                  width="300"
+                  height="40"
+                  rx="6"
+                  fill="rgba(88,166,255,0.15)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="90"
+                  class="label-text"
+                  font-size="14"
+                  fill="#58a6ff"
+                >
+                  API / Controller
+                </text>
+                <!-- User -->
+                <rect
+                  x="220"
+                  y="15"
+                  width="260"
+                  height="40"
+                  rx="6"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="350"
+                  y="40"
+                  class="label-text"
+                  font-size="14"
+                  fill="#3fb950"
+                >
+                  User Interface
+                </text>
+
+                <!-- Vertical arrows between layers -->
+                <text
+                  x="70"
+                  y="55"
+                  font-size="11"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Talks
+                </text>
+                <text
+                  x="70"
+                  y="68"
+                  font-size="11"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  only to
+                </text>
+                <text
+                  x="70"
+                  y="81"
+                  font-size="11"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  layer
+                </text>
+                <text
+                  x="70"
+                  y="94"
+                  font-size="11"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  below
+                </text>
+                <line
+                  x1="70"
+                  y1="100"
+                  x2="70"
+                  y2="280"
+                  stroke="#484f58"
+                  stroke-width="2"
+                  marker-end="url(#arrowSM)"
+                />
+
+                <!-- Bad: skipping layers -->
+                <path
+                  d="M640,35 C680,35 690,265 650,285"
+                  stroke="#f85149"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-dasharray="5,4"
+                />
+                <text
+                  x="660"
+                  y="160"
+                  font-size="11"
+                  fill="#f85149"
+                  transform="rotate(90,660,160)"
+                  text-anchor="middle"
+                >
+                  NEVER skip layers
+                </text>
+              </svg>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Bridge Analogy</div>
+              <p>
+                Think of it as your PCB stackup. The signal layer does not
+                bypass the ground plane to reach the power plane. Each layer has
+                a defined interface (impedance, via connections). Violating
+                layer boundaries in software is like routing a high-speed signal
+                through an incorrect stackup -- it works in the lab but fails in
+                production.
+              </p>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">Memory Palace Connection</div>
+              <p>
+                This model lives at
+                <strong>Station 5 of the Front Door</strong>: a framed
+                geological cross-section on the wall showing colored rock layers
+                (Hardware, OS, Runtime, Framework, App, User from bottom to
+                top). A drill tries to bypass layers and cracks everything. Each
+                layer only touches the layer directly beneath it.
+              </p>
+            </div>
+
+            <h4>Installing This Model</h4>
+            <p>When you write code, ask: "Which layer does this belong to?"</p>
+            <ol class="install-list">
+              <li>
+                If your controller function is writing SQL queries, it is
+                crossing layers.
+              </li>
+              <li>
+                If your business logic is formatting HTML, it is crossing
+                layers.
+              </li>
+              <li>Refactor until each function lives in exactly one layer.</li>
+            </ol>
+          </section>
+
+          <hr />
+
+          <!-- ===== MODEL 6 ===== -->
+          <section class="model-section" id="model-6">
+            <h3>Model 6: Failure is Normal, Not Exceptional</h3>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "Fault Tolerance"?</div>
+              <p>
+                <em>Tolerance</em> = the ability to endure or accept (Latin
+                <em>tolerare</em> = to bear, to endure). A fault-tolerant system
+                can "tolerate" (continue working despite) faults. It is not
+                named because it <em>prevents</em> failures, but because it
+                <em>endures</em> them &mdash; the system bears faults the way a
+                bridge bears load. In EE terms: noise margin is a form of fault
+                tolerance &mdash; the circuit tolerates a certain amount of
+                noise without flipping state.
+              </p>
+            </div>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Why "Idempotent"?</div>
+              <p>
+                From Latin <em>idem</em> (same) +
+                <em>potens</em> (power/potency). An idempotent operation has the
+                "same power" whether applied once or many times:
+                <code>f(f(x)) = f(x)</code>. Repeating it produces no additional
+                effect &mdash; same potency regardless. This matters deeply in
+                fault-tolerant systems: if a network call times out, you retry
+                it. If the operation is idempotent, retrying is safe. If not,
+                you might charge a customer twice. Think of it like an
+                <code>abs()</code> function:
+                <code>abs(abs(-5)) = abs(-5) = 5</code>.
+              </p>
+            </div>
+
+            <!-- Iconic SVG Illustration -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                The Mental Image: Three Bridges -- Redundancy
+              </div>
+              <svg viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- River -->
+                <rect
+                  x="0"
+                  y="110"
+                  width="600"
+                  height="45"
+                  rx="0"
+                  fill="rgba(88,166,255,0.08)"
+                />
+                <path
+                  d="M0,120 C30,115 60,125 90,118 C120,111 150,128 180,120 C210,112 240,125 270,118 C300,111 330,128 360,120 C390,112 420,125 450,118 C480,111 510,128 540,120 C570,112 600,125 600,120"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <path
+                  d="M0,135 C30,130 60,140 90,133 C120,126 150,143 180,135 C210,127 240,140 270,133 C300,126 330,143 360,135 C390,127 420,140 450,133 C480,126 510,143 540,135 C570,127 600,140 600,135"
+                  stroke="#58a6ff"
+                  stroke-width="1"
+                  fill="none"
+                  opacity="0.3"
+                />
+                <text
+                  x="300"
+                  y="138"
+                  font-size="10"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  opacity="0.5"
+                >
+                  ~ river ~
+                </text>
+
+                <!-- Left bank -->
+                <rect
+                  x="0"
+                  y="85"
+                  width="130"
+                  height="25"
+                  rx="0"
+                  fill="rgba(63,185,80,0.1)"
+                />
+                <text
+                  x="65"
+                  y="100"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Requests
+                </text>
+                <!-- Right bank -->
+                <rect
+                  x="470"
+                  y="85"
+                  width="130"
+                  height="25"
+                  rx="0"
+                  fill="rgba(63,185,80,0.1)"
+                />
+                <text
+                  x="535"
+                  y="100"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  Service
+                </text>
+
+                <!-- Bridge 1: Healthy (top) -->
+                <rect
+                  x="130"
+                  y="55"
+                  width="340"
+                  height="14"
+                  rx="3"
+                  fill="rgba(63,185,80,0.2)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="300"
+                  y="50"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Bridge 1 -- healthy
+                </text>
+                <!-- Support pillars -->
+                <rect
+                  x="200"
+                  y="69"
+                  width="8"
+                  height="41"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <rect
+                  x="350"
+                  y="69"
+                  width="8"
+                  height="41"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <!-- Traffic arrows -->
+                <line
+                  x1="160"
+                  y1="62"
+                  x2="440"
+                  y2="62"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                  stroke-dasharray="4,3"
+                />
+
+                <!-- Bridge 2: BROKEN (middle) -->
+                <rect
+                  x="130"
+                  y="95"
+                  width="150"
+                  height="14"
+                  rx="3"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <rect
+                  x="320"
+                  y="95"
+                  width="150"
+                  height="14"
+                  rx="3"
+                  fill="rgba(248,81,73,0.15)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <!-- Gap in the middle -->
+                <text
+                  x="300"
+                  y="107"
+                  font-size="14"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="700"
+                >
+                  X
+                </text>
+                <text
+                  x="300"
+                  y="88"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Bridge 2 -- FAILED
+                </text>
+                <!-- Broken support -->
+                <rect
+                  x="200"
+                  y="109"
+                  width="8"
+                  height="20"
+                  fill="rgba(248,81,73,0.1)"
+                  stroke="#f85149"
+                  stroke-width="1"
+                  stroke-dasharray="3,2"
+                />
+
+                <!-- Bridge 3: Healthy (bottom) -->
+                <rect
+                  x="130"
+                  y="155"
+                  width="340"
+                  height="14"
+                  rx="3"
+                  fill="rgba(63,185,80,0.2)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="300"
+                  y="185"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Bridge 3 -- healthy
+                </text>
+                <!-- Support pillars -->
+                <rect
+                  x="200"
+                  y="155"
+                  width="8"
+                  height="20"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <rect
+                  x="350"
+                  y="155"
+                  width="8"
+                  height="20"
+                  fill="rgba(63,185,80,0.15)"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                />
+                <!-- Traffic arrows -->
+                <line
+                  x1="160"
+                  y1="162"
+                  x2="440"
+                  y2="162"
+                  stroke="#3fb950"
+                  stroke-width="1"
+                  stroke-dasharray="4,3"
+                />
+
+                <!-- Label -->
+                <text
+                  x="300"
+                  y="210"
+                  font-size="12"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  One fails, traffic flows over the others: REDUNDANCY
+                </text>
+              </svg>
+            </div>
+
+            <div class="compare-grid">
+              <div class="compare-card ee">
+                <h4 style="color: var(--accent-orange)">EE Model</h4>
+                <p>
+                  In hardware, failures are catastrophic and permanent (chip
+                  burns, solder joint cracks, ESD damage). You design to prevent
+                  failures: derating, margins, ESD protection, thermal analysis.
+                  You assume that if hardware works in testing, it will work in
+                  the field.
+                </p>
+              </div>
+              <div class="compare-card sw">
+                <h4 style="color: var(--accent-blue)">Software Model</h4>
+                <p>
+                  In distributed software,
+                  <strong>failure is constant and transient</strong>. Network
+                  calls fail. Servers restart. Databases have brief outages.
+                  Disks fill up. DNS resolution fails. None of these are
+                  catastrophic -- they are routine. The system must handle them
+                  automatically.
+                </p>
+              </div>
+            </div>
+
+            <!-- SVG: Redundant servers, one fails -->
+            <div class="diagram-container">
+              <div class="diagram-title">
+                Redundancy: System Survives Component Failure
+              </div>
+              <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+                <!-- Load balancer -->
+                <rect
+                  x="60"
+                  y="100"
+                  width="100"
+                  height="50"
+                  rx="8"
+                  fill="rgba(88,166,255,0.2)"
+                  stroke="#58a6ff"
+                  stroke-width="2"
+                />
+                <text
+                  x="110"
+                  y="120"
+                  font-size="11"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Load
+                </text>
+                <text
+                  x="110"
+                  y="136"
+                  font-size="11"
+                  fill="#58a6ff"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Balancer
+                </text>
+
+                <!-- User arrow -->
+                <text
+                  x="30"
+                  y="120"
+                  font-size="11"
+                  fill="#8b949e"
+                  text-anchor="middle"
+                >
+                  Users
+                </text>
+                <line
+                  x1="45"
+                  y1="125"
+                  x2="58"
+                  y2="125"
+                  stroke="#484f58"
+                  stroke-width="2"
+                  marker-end="url(#arrowSM)"
+                />
+
+                <!-- Server 1: healthy -->
+                <line
+                  x1="160"
+                  y1="110"
+                  x2="250"
+                  y2="60"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <rect
+                  x="250"
+                  y="35"
+                  width="110"
+                  height="50"
+                  rx="8"
+                  fill="rgba(63,185,80,0.2)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="305"
+                  y="57"
+                  font-size="11"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Server 1
+                </text>
+                <text
+                  x="305"
+                  y="73"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  healthy
+                </text>
+
+                <!-- Server 2: FAILED -->
+                <line
+                  x1="160"
+                  y1="125"
+                  x2="250"
+                  y2="125"
+                  stroke="#f85149"
+                  stroke-width="2"
+                  stroke-dasharray="5,4"
+                />
+                <rect
+                  x="250"
+                  y="100"
+                  width="110"
+                  height="50"
+                  rx="8"
+                  fill="rgba(248,81,73,0.2)"
+                  stroke="#f85149"
+                  stroke-width="2"
+                />
+                <text
+                  x="305"
+                  y="122"
+                  font-size="11"
+                  fill="#f85149"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Server 2
+                </text>
+                <text
+                  x="305"
+                  y="138"
+                  font-size="10"
+                  fill="#f85149"
+                  text-anchor="middle"
+                >
+                  FAILED
+                </text>
+                <!-- Red X -->
+                <line
+                  x1="340"
+                  y1="108"
+                  x2="365"
+                  y2="133"
+                  stroke="#f85149"
+                  stroke-width="4"
+                />
+                <line
+                  x1="365"
+                  y1="108"
+                  x2="340"
+                  y2="133"
+                  stroke="#f85149"
+                  stroke-width="4"
+                />
+
+                <!-- Server 3: healthy -->
+                <line
+                  x1="160"
+                  y1="140"
+                  x2="250"
+                  y2="195"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <rect
+                  x="250"
+                  y="170"
+                  width="110"
+                  height="50"
+                  rx="8"
+                  fill="rgba(63,185,80,0.2)"
+                  stroke="#3fb950"
+                  stroke-width="2"
+                />
+                <text
+                  x="305"
+                  y="192"
+                  font-size="11"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  Server 3
+                </text>
+                <text
+                  x="305"
+                  y="208"
+                  font-size="10"
+                  fill="#3fb950"
+                  text-anchor="middle"
+                >
+                  healthy
+                </text>
+
+                <!-- Database -->
+                <line
+                  x1="360"
+                  y1="60"
+                  x2="430"
+                  y2="120"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <line
+                  x1="360"
+                  y1="195"
+                  x2="430"
+                  y2="130"
+                  stroke="#3fb950"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="430"
+                  y="100"
+                  width="80"
+                  height="50"
+                  rx="8"
+                  fill="rgba(57,210,192,0.2)"
+                  stroke="#39d2c0"
+                  stroke-width="2"
+                />
+                <text
+                  x="470"
+                  y="130"
+                  font-size="11"
+                  fill="#39d2c0"
+                  text-anchor="middle"
+                  font-weight="600"
+                >
+                  DB
+                </text>
+
+                <!-- Annotation -->
+                <text
+                  x="560"
+                  y="80"
+                  font-size="12"
+                  fill="#3fb950"
+                  font-weight="600"
+                >
+                  System continues!
+                </text>
+                <text x="560" y="100" font-size="11" fill="#8b949e">
+                  Traffic rerouted to
+                </text>
+                <text x="560" y="116" font-size="11" fill="#8b949e">
+                  healthy servers
+                </text>
+
+                <!-- EE analogy callout -->
+                <text
+                  x="350"
+                  y="250"
+                  class="label-small"
+                  font-size="11"
+                  fill="#6e7681"
+                  text-anchor="middle"
+                >
+                  Like redundant power supplies: one fails, system runs on the
+                  others
+                </text>
+              </svg>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">EE Bridge Analogy</div>
+              <p>
+                Think of it like a communication channel with noise. You do not
+                design for a noise-free channel -- you add error detection,
+                error correction, retransmission, and graceful degradation.
+              </p>
+            </div>
+
+            <div class="callout callout-ee">
+              <div class="callout-title">Memory Palace Connection</div>
+              <p>
+                This model lives at
+                <strong>Station 6 of the Front Door</strong>: three parallel
+                bridges over a small stream by the doorstep. One bridge has
+                collapsed (red X), but traffic flows smoothly over the other
+                two. A sign reads: "Redundancy saves lives." Like redundant
+                power supplies -- you expect one to fail, so you have three.
+              </p>
+            </div>
+
+            <h4>EE to Software Mapping</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>EE Concept</th>
+                  <th>Software Equivalent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Error detection</td>
+                  <td>Health checks, monitoring</td>
+                </tr>
+                <tr>
+                  <td>Error correction</td>
+                  <td>Retries with backoff</td>
+                </tr>
+                <tr>
+                  <td>Retransmission</td>
+                  <td>Message queues, at-least-once delivery</td>
+                </tr>
+                <tr>
+                  <td>Graceful degradation</td>
+                  <td>Circuit breaker, fallbacks</td>
+                </tr>
+                <tr>
+                  <td>Redundancy</td>
+                  <td>Replication, failover</td>
+                </tr>
+                <tr>
+                  <td>Watchdog timer</td>
+                  <td>Timeouts, deadlines</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h4>Installing This Model</h4>
+            <p>
+              For every external call (network, database, file system, API),
+              answer:
+            </p>
+            <ol class="install-list">
+              <li>
+                What happens if it takes 10x longer than expected? (Timeout)
+              </li>
+              <li>
+                What happens if it fails? (Retry? Fallback? Propagate error?)
+              </li>
+              <li>
+                What happens if it fails repeatedly? (Circuit breaker: stop
+                calling and fail fast)
+              </li>
+              <li>
+                What does the user see during failure? (Degraded experience, not
+                a crash)
+              </li>
+            </ol>
+            <p>
+              <strong
+                >The staff engineer does not prevent all failures -- they design
+                systems that handle failure gracefully.</strong
+              >
+            </p>
+          </section>
+
+          <hr />
+
+          <!-- ===== SUMMARY TABLE ===== -->
+          <h2>Summary: Your EE Advantage</h2>
+          <p>
+            You are not starting from zero. You are
+            <strong>translating</strong> a decade of systems thinking into a new
+            domain.
+          </p>
+
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>EE Skill</th>
+                <th>Software Application</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>State machine design</td>
+                <td>Object/request lifecycle modeling</td>
+              </tr>
+              <tr>
+                <td>Timing analysis</td>
+                <td>Latency budgeting, SLA design</td>
+              </tr>
+              <tr>
+                <td>Signal integrity</td>
+                <td>Data integrity, validation, checksums</td>
+              </tr>
+              <tr>
+                <td>Protocol design</td>
+                <td>API design, contract-first development</td>
+              </tr>
+              <tr>
+                <td>Feedback control</td>
+                <td>Auto-scaling, rate limiting, PID controllers</td>
+              </tr>
+              <tr>
+                <td>Testing &amp; characterization</td>
+                <td>Load testing, chaos engineering, profiling</td>
+              </tr>
+              <tr>
+                <td>Datasheet reading</td>
+                <td>API documentation, source code reading</td>
+              </tr>
+              <tr>
+                <td>Schematic review</td>
+                <td>Code review, architecture review</td>
+              </tr>
+              <tr>
+                <td>Worst-case analysis</td>
+                <td>Capacity planning, failure mode analysis</td>
+              </tr>
+              <tr>
+                <td>Debug with scope/analyzer</td>
+                <td>Debug with logs, traces, profiler</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

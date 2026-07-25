@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Catalog — Offline CS/SWE Textbook</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <div class="hero">
+            <h1>Offline CS / SWE Course Catalog</h1>
+            <p class="tagline">
+              Undergrad-shaped tracks plus staff mastery — fully navigable HTML,
+              animations, quizzes, SRS algorithm memory, and a local tutor. No
+              network required after you open these files.
+            </p>
+            <div class="hero-stats">
+              <div class="stat animate-in">
+                <div class="stat-number">13</div>
+                <div class="stat-label">Tracks</div>
+              </div>
+              <div class="stat animate-in">
+                <div class="stat-number">21</div>
+                <div class="stat-label">Algo Patterns</div>
+              </div>
+              <div class="stat animate-in">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Generated Drills</div>
+              </div>
+              <div class="stat animate-in">
+                <div class="stat-number">0</div>
+                <div class="stat-label">Cloud Deps</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Flight mode workflow</div>
+            <p>
+              1) Browse this catalog → 2) Study a track page (SVG +
+              animations) → 3) Drill in
+              <a href="algo_memory.html">Algorithm Memory Lab</a> /
+              <a href="practice.html">Practice Arena</a> → 4) On a miss, read the
+              inline tutor → 5) Optional CLI:
+              <code>python main.py --drill</code> /
+              <code>--quiz</code> /
+              <code>--tutor</code>
+            </p>
+          </div>
+
+          <h2>Foundation</h2>
+          <div class="track-grid">
+            <a class="track-card" href="mental_models.html">
+              <div class="level">Foundation</div>
+              <h3>Orientation &amp; Mental Models</h3>
+              <p>EE→SDE shifts. How to think before you memorize.</p>
+            </a>
+            <a class="track-card" href="memory_palace.html">
+              <div class="level">Foundation</div>
+              <h3>Memory Palace</h3>
+              <p>Loci journey for patterns you refuse to forget.</p>
+            </a>
+            <a class="track-card" href="discrete_math.html">
+              <div class="level">Foundation</div>
+              <h3>Discrete Mathematics</h3>
+              <p>Logic, proofs, counting, graphs, recurrences.</p>
+            </a>
+          </div>
+
+          <h2>Core — Algorithms</h2>
+          <div class="track-grid">
+            <a class="track-card" href="patterns.html">
+              <div class="level">Core</div>
+              <h3>21 Algorithm Patterns</h3>
+              <p>Templates + trigger signals (+ 5 staff-gap patterns).</p>
+            </a>
+            <a class="track-card" href="algo_memory.html">
+              <div class="level">Core · Interactive</div>
+              <h3>Algorithm Memory Lab</h3>
+              <p>SRS flashcards, skeletons, reconstruct drills.</p>
+            </a>
+            <a class="track-card" href="practice.html">
+              <div class="level">Core · Interactive</div>
+              <h3>Practice Arena</h3>
+              <p>Dynamic problems + tutor on wrong answers.</p>
+            </a>
+            <a class="track-card" href="decision_tree.html">
+              <div class="level">Core</div>
+              <h3>Pattern Decision Tree</h3>
+              <p>Which pattern? Follow the signals.</p>
+            </a>
+            <a class="track-card" href="sorting.html">
+              <div class="level">Core</div>
+              <h3>Sorting Family</h3>
+              <p>8 sorts with step-through animations.</p>
+            </a>
+            <a class="track-card" href="provability.html">
+              <div class="level">Core</div>
+              <h3>Provability</h3>
+              <p>Invariants, termination, correctness.</p>
+            </a>
+          </div>
+
+          <h2>Theory</h2>
+          <div class="track-grid">
+            <a class="track-card" href="theory.html">
+              <div class="level">Theory</div>
+              <h3>Theory of Computation</h3>
+              <p>Automata, grammars, decidability, P vs NP.</p>
+            </a>
+            <a class="track-card" href="compilers.html">
+              <div class="level">Theory</div>
+              <h3>Languages &amp; Compilers</h3>
+              <p>Lex, parse, types, IR, runtimes.</p>
+            </a>
+          </div>
+
+          <h2>Systems</h2>
+          <div class="track-grid">
+            <a class="track-card" href="architecture.html">
+              <div class="level">Systems</div>
+              <h3>Computer Architecture</h3>
+              <p>ISA, pipelines, caches, virtual memory.</p>
+            </a>
+            <a class="track-card" href="cs_fundamentals.html">
+              <div class="level">Systems</div>
+              <h3>OS · Networking · Databases</h3>
+              <p>Processes, TCP/HTTP, SQL/ACID, concurrency.</p>
+            </a>
+            <a class="track-card" href="systems_design.html">
+              <div class="level">Professional</div>
+              <h3>Systems Design</h3>
+              <p>CAP, building blocks, nine practice designs.</p>
+            </a>
+            <a class="track-card" href="security.html">
+              <div class="level">Professional</div>
+              <h3>Security &amp; Cryptography</h3>
+              <p>Threat models, AEAD, authn/z, web risks.</p>
+            </a>
+          </div>
+
+          <h2>Professional Practice</h2>
+          <div class="track-grid">
+            <a class="track-card" href="software_engineering.html">
+              <div class="level">Professional</div>
+              <h3>Software Engineering</h3>
+              <p>SOLID, patterns, testing, git, CI/CD.</p>
+            </a>
+            <a class="track-card" href="engineering_patterns.html">
+              <div class="level">Professional</div>
+              <h3>Engineering Patterns</h3>
+              <p>Cache-aside, outbox, saga, breakers, backpressure.</p>
+            </a>
+            <a class="track-card" href="staff_level.html">
+              <div class="level">Professional</div>
+              <h3>Staff-Level Skills</h3>
+              <p>RFCs, influence, observability, incidents.</p>
+            </a>
+            <a class="track-card" href="three_month_plan.html">
+              <div class="level">Plan</div>
+              <h3>72-Day / 3-Month Plan</h3>
+              <p>Day-by-day path with two capstones.</p>
+            </a>
+            <a class="track-card" href="progress.html">
+              <div class="level">Interactive</div>
+              <h3>Progress Dashboard</h3>
+              <p>Browser-local SRS + quiz history.</p>
+            </a>
+          </div>
+
+          <h2>Suggested order (EE background)</h2>
+          <ol>
+            <li>Mental Models → Discrete Math (fill proof/counting gaps)</li>
+            <li>Patterns + Algorithm Memory Lab (daily SRS)</li>
+            <li>Architecture (map EE intuition to ISA/cache) → OS/Net/DB</li>
+            <li>Theory + Compilers (lighter, gap-fill)</li>
+            <li>Systems Design + Security + SWE + Staff</li>
+            <li>Keep Practice Arena / <code>--drill</code> forever</li>
+          </ol>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE bridge for the whole catalog</div>
+            <p>
+              Circuits → state machines → automata. Buses → ISA/memory hierarchy.
+              Protocols → networking + APIs. Signal integrity under adversaries →
+              security. Capacity/redundancy planning → distributed systems.
+            </p>
+          </div>
+
+          <h2>CLI companion (stdlib, offline)</h2>
+          <pre><code>python main.py --catalog --verbose
+python main.py --seed-cards
+python main.py --quiz --topic dsa
+python main.py --drill --pattern sliding_window
+python main.py --drill-check &lt;id&gt;
+python main.py --tutor --topic dp --wrong "greedy" --right "DP"
+python main.py --progress</code></pre>
+
+          <section>
+            <h2>Quick mixed quiz</h2>
+            <div data-quiz data-track=""></div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js"></script>
+  </body>
+</html>

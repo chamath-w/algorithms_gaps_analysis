@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Computer Architecture — Offline Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Computer Architecture</h1>
+          <p>
+            How software meets silicon. This should feel like homecoming for an
+            EE — we connect it to the abstractions compilers and OSes assume.
+          </p>
+
+          <section id="isa">
+            <h2>ISA &amp; assembly view</h2>
+            <p>
+              Instruction Set Architecture: registers, ops, addressing, calling
+              convention (who saves what), endianness. High-level variables live
+              in registers or stack slots.
+            </p>
+            <div class="callout callout-ee">
+              <div class="callout-title">EE bridge</div>
+              <p>
+                ISA is the “pinout + protocol” between software and the
+                microarchitecture. Microarch can change (pipeline depth, cache)
+                without changing the contract.
+              </p>
+            </div>
+            <button class="anim-btn" data-mark-lesson="arch_01">Mark lesson done</button>
+          </section>
+
+          <section id="pipeline">
+            <h2>Pipelines &amp; hazards</h2>
+            <ul>
+              <li><strong>Structural:</strong> two stages need same hardware.</li>
+              <li><strong>Data:</strong> instruction needs result not written back yet → forwarding / stall.</li>
+              <li><strong>Control:</strong> branch outcome unknown → predict / flush.</li>
+            </ul>
+            <div class="diagram-container" id="anim-pipe">
+              <div class="diagram-title">5-stage pipeline bubble on data hazard</div>
+              <svg id="svg-pipe" width="100%" height="160" viewBox="0 0 520 160"></svg>
+              <div class="anim-description">Watch a stall insert.</div>
+              <div class="anim-controls"></div>
+            </div>
+          </section>
+
+          <section id="cache">
+            <h2>Caches &amp; locality</h2>
+            <p>
+              Cache lines (typically 64B), associativity, hit/miss. Temporal vs
+              spatial locality. <strong>False sharing:</strong> two cores write
+              different variables on the same line → coherence ping-pong.
+            </p>
+            <div class="callout callout-warning">
+              <div class="callout-title">Staff performance tip</div>
+              <p>
+                Big-O ignores the memory hierarchy. Row-major traversal, struct
+                packing, and avoiding false sharing often beat micro-optimizations.
+              </p>
+            </div>
+            <div class="diagram-container">
+              <div class="diagram-title">Memory hierarchy (latency intuition)</div>
+              <svg width="100%" height="180" viewBox="0 0 480 180">
+                <rect x="20" y="20" width="80" height="40" rx="6" fill="#1f3a5f" stroke="#58a6ff"/>
+                <text x="60" y="45" text-anchor="middle" fill="#e6edf3" font-size="12">L1</text>
+                <rect x="120" y="20" width="90" height="50" rx="6" fill="#21262d" stroke="#484f58"/>
+                <text x="165" y="50" text-anchor="middle" fill="#e6edf3" font-size="12">L2</text>
+                <rect x="230" y="20" width="100" height="60" rx="6" fill="#21262d" stroke="#484f58"/>
+                <text x="280" y="55" text-anchor="middle" fill="#e6edf3" font-size="12">L3</text>
+                <rect x="350" y="20" width="110" height="80" rx="6" fill="#21262d" stroke="#484f58"/>
+                <text x="405" y="65" text-anchor="middle" fill="#e6edf3" font-size="12">DRAM</text>
+                <text x="20" y="140" fill="#8b949e" font-size="13">~1ns → increasing latency / capacity → ~100ns</text>
+              </svg>
+            </div>
+            <button class="anim-btn" data-mark-lesson="arch_03">Mark lesson done</button>
+          </section>
+
+          <section id="vm">
+            <h2>Virtual memory</h2>
+            <p>
+              Pages, page tables, TLB. Page fault = OS loads page. Isolation:
+              each process believes it owns a contiguous address space.
+            </p>
+          </section>
+
+          <h2>Track quiz</h2>
+          <div data-quiz data-track="architecture"></div>
+
+          <p><a href="cs_fundamentals.html">Next: OS / Networking / DB →</a></p>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const stages = ["IF", "ID", "EX", "MEM", "WB"];
+        const svg = document.getElementById("svg-pipe");
+        function paint(bubbleAt) {
+          let html = "";
+          stages.forEach((s, i) => {
+            const x = 30 + i * 95;
+            const fill = bubbleAt === i ? "#3d2f00" : "#21262d";
+            const label = bubbleAt === i ? "STALL" : s;
+            html += `<rect x="${x}" y="50" width="80" height="50" rx="6" fill="${fill}" stroke="#484f58"/>
+              <text x="${x + 40}" y="80" text-anchor="middle" fill="#e6edf3" font-size="14">${label}</text>`;
+            if (i < stages.length - 1) {
+              html += `<text x="${x + 85}" y="80" fill="#484f58">→</text>`;
+            }
+          });
+          html += `<text x="30" y="130" fill="#8b949e" font-size="13">${bubbleAt >= 0 ? "Data hazard: insert bubble / forward" : "Ideal pipeline flow"}</text>`;
+          svg.innerHTML = html;
+        }
+        paint(-1);
+        new AlgoAnimation("anim-pipe", [
+          { description: "Instructions flow IF→ID→EX→MEM→WB", apply: () => paint(-1) },
+          { description: "EX needs prior result still in pipeline → stall bubble", apply: () => paint(2) },
+          { description: "Forwarding can often remove the bubble", apply: () => paint(-1) },
+        ], { onReset: () => paint(-1) });
+      });
+    </script>
+  </body>
+</html>

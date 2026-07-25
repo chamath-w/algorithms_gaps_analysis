@@ -1,0 +1,1477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Month 1: Foundations (Days 1-24) — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Month 1: Foundations</h1>
+          <p>
+            By the end of this month you will: have internalized the 16
+            algorithm patterns, be able to recognize patterns with >85%
+            accuracy, solve medium-difficulty algorithm problems consistently,
+            write idiomatic Python, understand concurrency, and write basic SQL.
+          </p>
+
+          <!-- ===== PROGRESS BAR SVG ===== -->
+          <div class="diagram-container">
+            <div class="diagram-title">Month 1 Progress: Days 1-24</div>
+            <svg viewBox="0 0 800 60" xmlns="http://www.w3.org/2000/svg">
+              <!-- Track -->
+              <rect
+                x="20"
+                y="20"
+                width="760"
+                height="12"
+                rx="6"
+                fill="#21262d"
+              />
+              <!-- Fill (full month = 100%) -->
+              <rect
+                x="20"
+                y="20"
+                width="760"
+                height="12"
+                rx="6"
+                fill="url(#progressGrad)"
+                opacity="0.3"
+              />
+              <!-- Day markers -->
+              <line
+                x1="20"
+                y1="16"
+                x2="20"
+                y2="36"
+                stroke="#484f58"
+                stroke-width="1"
+              />
+              <text x="20" y="50" class="label-small" fill="#58a6ff">1</text>
+              <line
+                x1="147"
+                y1="16"
+                x2="147"
+                y2="36"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="147" y="50" class="label-small" fill="#58a6ff">Wk1</text>
+              <line
+                x1="274"
+                y1="16"
+                x2="274"
+                y2="36"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="274" y="50" class="label-small" fill="#58a6ff">Wk2</text>
+              <line
+                x1="401"
+                y1="16"
+                x2="401"
+                y2="36"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="401" y="50" class="label-small" fill="#58a6ff">Wk3</text>
+              <line
+                x1="528"
+                y1="16"
+                x2="528"
+                y2="36"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="528" y="50" class="label-small" fill="#58a6ff">Wk4</text>
+              <line
+                x1="780"
+                y1="16"
+                x2="780"
+                y2="36"
+                stroke="#484f58"
+                stroke-width="1"
+              />
+              <text x="770" y="50" class="label-small" fill="#58a6ff">24</text>
+              <defs>
+                <linearGradient
+                  id="progressGrad"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stop-color="#58a6ff" />
+                  <stop offset="100%" stop-color="#bc8cff" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 1 ========== -->
+          <h2>WEEK 1: Mental Models + First Patterns</h2>
+
+          <!-- Day 1 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 1</span>
+              <div class="card-title">Mental Model Installation</div>
+            </div>
+
+            <h4>Read (45 min)</h4>
+            <ul>
+              <li>
+                <a href="mental_models.html">Mental Models guide</a> — Read the
+                entire document, front to back.
+              </li>
+              <li>
+                For each of the 6 mental models, mark it as:
+                <ul>
+                  <li>"Already have this" (your EE training covers it)</li>
+                  <li>"Need to install" (this is genuinely new)</li>
+                  <li>"Have the EE version, need the software translation"</li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>Practice (45 min)</h4>
+            <ul>
+              <li>
+                Open <code>journal.md</code>. Write down:
+                <ul>
+                  <li>Which 2 mental models felt most new to you?</li>
+                  <li>
+                    For each, write a 2-sentence explanation in your own words
+                    (not copied from the guide).
+                  </li>
+                  <li>
+                    Think of one real situation at work where each model
+                    applies.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>Run</h4>
+            <pre><code>python main.py --list</code></pre>
+            <p>
+              Scan the full list of problems. Note which categories feel
+              familiar vs alien.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "The mental model I most need to install is
+                <strong>___</strong> because <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 2 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 2</span>
+              <div class="card-title">The Pattern Catalog (Part 1: Core 8)</div>
+            </div>
+
+            <h4>Read (45 min)</h4>
+            <p>Run these commands and read the output carefully:</p>
+            <pre><code>python main.py --pattern sliding_window
+python main.py --pattern two_pointers
+python main.py --pattern binary_search
+python main.py --pattern dp</code></pre>
+            <p>For each pattern, focus on:</p>
+            <ul>
+              <li>The "WHEN TO USE" triggers (memorize these)</li>
+              <li>The code template (trace through it line by line)</li>
+              <li>The "PITFALLS" (these are the mistakes you will make)</li>
+            </ul>
+
+            <h4>Practice (45 min)</h4>
+            <p>Run the remaining 4 core patterns:</p>
+            <pre><code>python main.py --pattern bfs
+python main.py --pattern dfs
+python main.py --pattern greedy
+python main.py --pattern backtracking</code></pre>
+            <p>
+              On paper or in <code>journal.md</code>, create a 2-column table:
+              Pattern name | Your ONE trigger signal.
+            </p>
+            <p>Example:</p>
+            <pre><code>Sliding Window    -> <span class="str">"contiguous subarray/substring"</span>
+Two Pointers      -> <span class="str">"sorted array + find pair"</span>
+Binary Search     -> <span class="str">"find min/max that satisfies condition"</span>
+DP                -> <span class="str">"min/max/count + overlapping subproblems"</span>
+BFS               -> <span class="str">"shortest path, unweighted"</span>
+DFS               -> <span class="str">"tree traversal, connected components"</span>
+Greedy            -> <span class="str">"intervals + sorting"</span>
+Backtracking      -> <span class="str">"generate ALL valid combinations"</span></code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "The pattern I'm least familiar with is
+                <strong>___</strong> because <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 3 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 3</span>
+              <div class="card-title">
+                The Pattern Catalog (Part 2: Remaining 8) + Decision Tree
+              </div>
+            </div>
+
+            <h4>Read (40 min)</h4>
+            <pre><code>python main.py --pattern heap
+python main.py --pattern monotonic_stack
+python main.py --pattern union_find
+python main.py --pattern trie
+python main.py --pattern prefix_sum
+python main.py --pattern hash_map
+python main.py --pattern topological_sort
+python main.py --pattern dijkstra</code></pre>
+            <p>Add each to your trigger table from Day 2.</p>
+
+            <h4>Practice (40 min)</h4>
+            <pre><code>python main.py --decision-tree</code></pre>
+            <p>
+              Print or copy the decision tree. Read it top to bottom. Test
+              yourself: for each of these problems, trace the decision tree to
+              find the pattern:
+            </p>
+            <ol>
+              <li>"Find the shortest path in an unweighted grid" &rarr; ?</li>
+              <li>"Find all subsets of a set" &rarr; ?</li>
+              <li>"Find the K-th largest element" &rarr; ?</li>
+              <li>"Given a sorted rotated array, find the minimum" &rarr; ?</li>
+              <li>"Count subarrays with sum equal to K" &rarr; ?</li>
+            </ol>
+            <p>
+              Answers: 1=BFS, 2=Backtracking, 3=Heap, 4=Binary Search, 5=Prefix
+              Sum
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "My complete trigger table has 16 entries. The 3 I'm weakest on
+                are <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 4 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 4</span>
+              <div class="card-title">First Pattern Recognition Training</div>
+            </div>
+
+            <h4>Read (10 min)</h4>
+            <p>
+              Re-read your trigger table from Day 2-3. Quiz yourself: cover
+              column 2, try to recall from column 1. Then reverse.
+            </p>
+
+            <h4>Practice (90 min)</h4>
+            <pre><code>python main.py --train --train-limit 12</code></pre>
+            <p>For each scenario:</p>
+            <ul>
+              <li>Read the problem description</li>
+              <li>
+                Before looking at the menu, say your answer out loud (or write
+                it down)
+              </li>
+              <li>Then select your answer</li>
+              <li>
+                When you get feedback,
+                <strong>read every key signal line carefully</strong>
+              </li>
+              <li>
+                If you got it wrong, write down: "I said X, correct was Y,
+                because Z"
+              </li>
+            </ul>
+            <p>After the session, note your accuracy score.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Pattern recognition score: <strong>___/12</strong>. Patterns I
+                misidentified: <strong>___</strong>. The signal I missed was
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 5 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 5</span>
+              <div class="card-title">First Algorithm Problems (Easy Wins)</div>
+            </div>
+
+            <h4>Read (15 min)</h4>
+            <pre><code>python main.py --pattern sliding_window</code></pre>
+            <p>Re-read just the template code. Understand every line.</p>
+
+            <h4>Practice (90 min)</h4>
+            <p>
+              Open <code>solutions/arr_01.py</code> in your editor. Read the
+              problem description at the top. Solve it. Time yourself. Target:
+              20 minutes.
+            </p>
+            <p>
+              <em
+                >Hint: This is a sliding window problem. Use a hash map to track
+                last-seen index.</em
+              >
+            </p>
+            <pre><code>python main.py --run arr_01</code></pre>
+            <p>If any tests fail, fix your solution until all pass.</p>
+
+            <p>
+              Next, open <code>solutions/sw_02.py</code>. Solve it. Target: 15
+              minutes.
+            </p>
+            <p>
+              <em
+                >Hint: Two pointers from opposite ends. Move the shorter side
+                inward.</em
+              >
+            </p>
+            <pre><code>python main.py --run sw_02</code></pre>
+
+            <p>
+              Next, open <code>solutions/graph_02.py</code>. Solve it. Target:
+              15 minutes.
+            </p>
+            <p>
+              <em
+                >Hint: DFS or BFS from each unvisited '1'. Mark cells as
+                visited.</em
+              >
+            </p>
+            <pre><code>python main.py --run graph_02</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Solved <strong>___/3</strong>. Time per problem:
+                <strong>___</strong>. The one I struggled with was
+                <strong>___</strong> because <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 6 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 6</span>
+              <div class="card-title">More Problems + First Gap Report</div>
+            </div>
+
+            <h4>Read (10 min)</h4>
+            <pre><code>python main.py --pattern dp</code></pre>
+            <p>
+              Re-read the DP template. Trace through the 1D example with nums =
+              [1, 2, 3, 1].
+            </p>
+
+            <h4>Practice (80 min)</h4>
+            <p>
+              Solve these 3 problems (25 min each, use hints after 15 min if
+              stuck):
+            </p>
+            <ul>
+              <li>
+                <code>solutions/dp_01.py</code> — Longest Increasing Subsequence
+              </li>
+              <li>
+                <code>solutions/stk_02.py</code> — Valid Parentheses with
+                Wildcards
+              </li>
+              <li><code>solutions/bit_01.py</code> — Counting Bits</li>
+            </ul>
+            <pre><code>python main.py --run dp_01
+python main.py --run stk_02
+python main.py --run bit_01</code></pre>
+            <p>After solving (or attempting) all 3, run:</p>
+            <pre><code>python main.py --report</code></pre>
+            <p>Read your gap report. Note which categories are "WEAK".</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "First gap report: <strong>___/6</strong> problems solved.
+                Weakest categories: <strong>___</strong>. My plan for next week:
+                focus on <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 2 ========== -->
+          <h2>WEEK 2: Attack Weak Patterns + Testing</h2>
+
+          <!-- Day 7 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 7</span>
+              <div class="card-title">Deep Study of Your Weakest Patterns</div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <p>
+              Look at your Day 6 gap report. Identify your 3 weakest categories.
+              For each weak category, run:
+            </p>
+            <pre><code>python main.py --pattern &lt;pattern_id&gt;</code></pre>
+            <p>
+              Read the FULL detail for each: description, when to use, approach
+              (all steps), template code, variations, pitfalls. For each
+              template, <strong>trace through it by hand</strong> with a small
+              example. Write the variable states at each step on paper.
+            </p>
+
+            <h4>Practice (50 min)</h4>
+            <p>
+              For each of your 3 weak patterns, find one problem in
+              <code>python main.py --list</code> that matches. Open the solution
+              file and attempt it (20 min each, then use hints).
+            </p>
+            <pre><code>python main.py --run &lt;id&gt;</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Deep-studied patterns: <strong>___</strong>. After tracing the
+                templates, the thing that clicked was <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 8 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 8</span>
+              <div class="card-title">
+                Solve All Remaining Medium Problems (Part 1)
+              </div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Work through these problems in order. 20 min each. If stuck after
+              15 min, read all hints. If still stuck after 20 min, look up the
+              approach (not the code) and implement from understanding.
+            </p>
+
+            <p>
+              <strong>1.</strong> <code>solutions/arr_03.py</code> — Product of
+              Array Except Self
+            </p>
+            <p>
+              <em
+                >Pattern: Prefix products. Two passes: left-to-right, then
+                right-to-left.</em
+              >
+            </p>
+            <pre><code>python main.py --run arr_03</code></pre>
+
+            <p>
+              <strong>2.</strong> <code>solutions/gr_01.py</code> — Jump Game II
+            </p>
+            <p>
+              <em
+                >Pattern: Greedy (BFS levels). Track farthest reachable in
+                current jump.</em
+              >
+            </p>
+            <pre><code>python main.py --run gr_01</code></pre>
+
+            <p>
+              <strong>3.</strong> <code>solutions/gr_02.py</code> — Task
+              Scheduler
+            </p>
+            <p>
+              <em
+                >Pattern: Greedy + Math. Most frequent task determines idle
+                slots.</em
+              >
+            </p>
+            <pre><code>python main.py --run gr_02</code></pre>
+
+            <p>
+              <strong>4.</strong> <code>solutions/dp_03.py</code> — Word Break
+            </p>
+            <p><em>Pattern: 1D DP. dp[i] = can s[:i] be segmented?</em></p>
+            <pre><code>python main.py --run dp_03</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Solved <strong>___/4</strong>. The pattern I keep failing to
+                recognize is <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 9 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 9</span>
+              <div class="card-title">
+                Solve All Remaining Medium Problems (Part 2) + Testing Intro
+              </div>
+            </div>
+
+            <h4>Practice (70 min)</h4>
+
+            <p>
+              <strong>1.</strong> <code>solutions/tree_01.py</code> — Lowest
+              Common Ancestor
+            </p>
+            <p>
+              <em
+                >Pattern: DFS with return value. If both subtrees return
+                non-null, current node is LCA.</em
+              >
+            </p>
+            <pre><code>python main.py --run tree_01</code></pre>
+
+            <p>
+              <strong>2.</strong> <code>solutions/bt_01.py</code> — Word Search
+            </p>
+            <p>
+              <em>Pattern: Backtracking on grid. DFS + mark/unmark visited.</em>
+            </p>
+            <pre><code>python main.py --run bt_01</code></pre>
+
+            <p>
+              <strong>3.</strong> <code>solutions/uf_01.py</code> — Accounts
+              Merge
+            </p>
+            <p>
+              <em>Pattern: Union Find. Union emails that share an account.</em>
+            </p>
+            <pre><code>python main.py --run uf_01</code></pre>
+
+            <h4>Read (40 min)</h4>
+            <ul>
+              <li>
+                <a href="software_engineering.html"
+                  >Software Engineering guide</a
+                >
+                — Read <strong>Part 2: Testing</strong> only (sections 2.1
+                through 2.4).
+              </li>
+              <li>
+                Key takeaways to write down:
+                <ul>
+                  <li>What is the testing pyramid?</li>
+                  <li>What does "test behavior, not implementation" mean?</li>
+                  <li>
+                    Write down the pytest example from section 2.4 in your own
+                    code editor and run it.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Solved <strong>___/3</strong>. Understood testing pyramid: unit
+                (many/fast) > integration (some/medium) > E2E (few/slow)."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 10 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 10</span>
+              <div class="card-title">Write Tests for Your Own Solutions</div>
+            </div>
+
+            <h4>Read (15 min)</h4>
+            <p>
+              Re-read
+              <a href="software_engineering.html">Software Engineering guide</a>
+              section 2.4 (pytest examples).
+            </p>
+
+            <h4>Practice (100 min)</h4>
+            <p>
+              Create a file <code>tests/test_solutions.py</code> (create the
+              <code>tests/</code> directory first). Write pytest tests for 3 of
+              your solved problems. Example structure:
+            </p>
+            <pre><code><span class="cm"># tests/test_solutions.py</span>
+<span class="kw">import</span> sys
+sys.path.insert(<span class="num">0</span>, <span class="str">"solutions"</span>)
+
+<span class="kw">def</span> <span class="fn">test_arr_01_basic</span>():
+    <span class="kw">from</span> arr_01 <span class="kw">import</span> length_of_longest_substring
+    <span class="kw">assert</span> <span class="fn">length_of_longest_substring</span>(<span class="str">"abcabcbb"</span>) == <span class="num">3</span>
+
+<span class="kw">def</span> <span class="fn">test_arr_01_empty</span>():
+    <span class="kw">from</span> arr_01 <span class="kw">import</span> length_of_longest_substring
+    <span class="kw">assert</span> <span class="fn">length_of_longest_substring</span>(<span class="str">""</span>) == <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">test_arr_01_single_char</span>():
+    <span class="kw">from</span> arr_01 <span class="kw">import</span> length_of_longest_substring
+    <span class="kw">assert</span> <span class="fn">length_of_longest_substring</span>(<span class="str">"bbbbb"</span>) == <span class="num">1</span></code></pre>
+            <p>
+              Write at least 3 test functions per problem (happy path, edge
+              case, tricky case). Run your tests:
+            </p>
+            <pre><code>pip install pytest  <span class="cm"># if not already installed</span>
+pytest tests/test_solutions.py -v</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Wrote <strong>___</strong> tests for
+                <strong>___</strong> solutions. Testing forced me to think about
+                edge case: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 11 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 11</span>
+              <div class="card-title">Full Pattern Recognition Training</div>
+            </div>
+
+            <h4>Read (10 min)</h4>
+            <p>
+              Review your trigger table. Update any entries based on what you
+              have learned.
+            </p>
+
+            <h4>Practice (100 min)</h4>
+            <pre><code>python main.py --train</code></pre>
+            <p>
+              Full 25-scenario session. Take your time. For EVERY miss, write in
+              your journal:
+            </p>
+            <ul>
+              <li>The scenario description (first 10 words)</li>
+              <li>What you said</li>
+              <li>What was correct</li>
+              <li>The key signal you missed</li>
+            </ul>
+            <p>Target: >70% accuracy (18/25).</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Score: <strong>___/25</strong>. Patterns I keep missing:
+                <strong>___</strong>. I need to memorize these triggers:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 12 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 12</span>
+              <div class="card-title">Python Idioms + Run Full Report</div>
+            </div>
+
+            <h4>Read (30 min)</h4>
+            <p>
+              <a href="cs_fundamentals.html">CS Fundamentals guide</a> — Read
+              <strong>Part 5: Data Structures Beyond Arrays</strong> only. Focus
+              on: <code>collections.Counter</code>,
+              <code>collections.defaultdict</code>,
+              <code>collections.deque</code>, <code>heapq</code>.
+            </p>
+
+            <h4>Practice (80 min)</h4>
+            <p>
+              Go back to 3 of your solved algorithm problems and refactor them
+              to use Python idioms:
+            </p>
+            <ul>
+              <li>Replace manual counting with <code>Counter</code></li>
+              <li>
+                Replace <code>if key not in dict: dict[key] = []</code> with
+                <code>defaultdict(list)</code>
+              </li>
+              <li>
+                Replace <code>list</code> used as queue with <code>deque</code>
+              </li>
+              <li>Use list comprehensions where they improve clarity</li>
+              <li>
+                Use <code>enumerate()</code> instead of manual index tracking
+              </li>
+            </ul>
+            <p>After refactoring, re-run to confirm they still pass:</p>
+            <pre><code>python main.py --report</code></pre>
+            <p>Record your updated gap report scores.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Refactored <strong>___</strong> solutions. Most useful Python
+                idiom I learned: <strong>___</strong>. Gap report now shows:
+                <strong>___/</strong> solved."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 3 ========== -->
+          <h2>WEEK 3: Hard Problems + Concurrency</h2>
+
+          <!-- Day 13 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 13</span>
+              <div class="card-title">
+                Monotonic Stack Deep Dive + Hard Problem 1
+              </div>
+            </div>
+
+            <h4>Read (30 min)</h4>
+            <pre><code>python main.py --pattern monotonic_stack</code></pre>
+            <p>
+              Read the full pattern detail. Trace the "largest rectangle in
+              histogram" template by hand with heights = [2, 1, 5, 6, 2, 3]. On
+              paper, track the stack contents and max_area at each step.
+            </p>
+
+            <h4>Practice (80 min)</h4>
+            <p>
+              Solve <code>solutions/stk_01.py</code> — Largest Rectangle in
+              Histogram. Time limit: 30 min. Use hints after 20 min.
+            </p>
+            <pre><code>python main.py --run stk_01</code></pre>
+            <p>
+              Solve <code>solutions/arr_02.py</code> — Trapping Rain Water. Time
+              limit: 30 min. Try the two-pointer approach.
+            </p>
+            <pre><code>python main.py --run arr_02</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Monotonic stack clicked when I realized <strong>___</strong>.
+                Trapping rain water: solved / needed hints / still stuck."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 14 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 14</span>
+              <div class="card-title">Sliding Window Hard + Heap Hard</div>
+            </div>
+
+            <h4>Read (15 min)</h4>
+            <pre><code>python main.py --pattern sliding_window</code></pre>
+            <p>
+              Re-read the variable-size window template. Focus on the
+              expand/contract rhythm.
+            </p>
+
+            <h4>Practice (100 min)</h4>
+            <p>
+              Solve <code>solutions/sw_01.py</code> — Minimum Window Substring.
+              Time limit: 30 min. This is the hardest sliding window problem.
+            </p>
+            <p>
+              <em
+                >Key: track "characters satisfied" count to avoid scanning the
+                whole map each step.</em
+              >
+            </p>
+            <pre><code>python main.py --run sw_01</code></pre>
+
+            <p>
+              Solve <code>solutions/heap_01.py</code> — Merge K Sorted Lists.
+              Time limit: 25 min.
+            </p>
+            <p>
+              <em
+                >Key: push (value, list_index, element_index) tuples to avoid
+                comparison issues.</em
+              >
+            </p>
+            <pre><code>python main.py --run heap_01</code></pre>
+
+            <p>
+              Solve <code>solutions/heap_02.py</code> — Find Median from Data
+              Stream. Time limit: 25 min.
+            </p>
+            <p>
+              <em
+                >Key: two heaps. Max-heap (negated) for lower half, min-heap for
+                upper half.</em
+              >
+            </p>
+            <pre><code>python main.py --run heap_02</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Hardest problem today: <strong>___</strong>. Time taken:
+                <strong>___</strong>. Key insight I'll remember:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 15 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 15</span>
+              <div class="card-title">Concurrency Fundamentals</div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <ul>
+              <li>
+                <a href="cs_fundamentals.html">CS Fundamentals guide</a> — Read
+                <strong>Part 1: Operating Systems</strong> (sections 1.1 through
+                1.5).
+              </li>
+              <li>
+                <a href="cs_fundamentals.html">CS Fundamentals guide</a> — Read
+                <strong>Part 4: Concurrency Patterns in Practice</strong>
+                (sections 4.1 through 4.3).
+              </li>
+              <li>
+                Take notes on:
+                <ul>
+                  <li>When to use threading vs multiprocessing vs asyncio</li>
+                  <li>
+                    The 4 concurrency bugs (race condition, deadlock,
+                    starvation, data race)
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>Practice (50 min)</h4>
+            <p>
+              Create a file
+              <code>exercises/concurrency_producer_consumer.py</code>:
+            </p>
+            <pre><code><span class="str">"""
+Exercise: Implement a producer-consumer system.
+- Producer generates numbers 1-20 and puts them in a queue
+- Consumer takes numbers and prints their square
+- Use threading and queue.Queue
+"""</span>
+<span class="kw">import</span> threading
+<span class="kw">import</span> queue
+<span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">producer</span>(q):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">21</span>):
+        q.put(i)
+        time.sleep(<span class="num">0.05</span>)
+    q.put(<span class="kw">None</span>)  <span class="cm"># sentinel to signal done</span>
+
+<span class="kw">def</span> <span class="fn">consumer</span>(q):
+    <span class="kw">while</span> <span class="kw">True</span>:
+        item = q.get()
+        <span class="kw">if</span> item <span class="kw">is</span> <span class="kw">None</span>:
+            <span class="kw">break</span>
+        <span class="fn">print</span>(<span class="str">f"</span>{item} -> {item**<span class="num">2</span>}<span class="str">"</span>)
+
+q = queue.Queue(maxsize=<span class="num">5</span>)
+t1 = threading.Thread(target=producer, args=(q,))
+t2 = threading.Thread(target=consumer, args=(q,))
+t1.start()
+t2.start()
+t1.join()
+t2.join()
+<span class="fn">print</span>(<span class="str">"Done"</span>)</code></pre>
+            <p>
+              Run it. Observe the behavior. Modify it to have 3 consumers
+              instead of 1. Send 3 sentinel values. Run again. Observe how work
+              is distributed.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Concurrency model that maps best to my EE understanding:
+                <strong>___</strong>. New thing I learned:
+                <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 16 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 16</span>
+              <div class="card-title">Async Python + Graph Hard Problem</div>
+            </div>
+
+            <h4>Read (30 min)</h4>
+            <p>
+              <a href="cs_fundamentals.html">CS Fundamentals guide</a> section
+              4.3 (Async/Await) — re-read carefully.
+            </p>
+            <p>
+              Key mental model: <code>await</code> = "I'm yielding the CPU while
+              waiting for I/O"
+            </p>
+
+            <h4>Practice — Async (30 min)</h4>
+            <p>Create <code>exercises/concurrency_async.py</code>:</p>
+            <pre><code><span class="str">"""
+Exercise: Fetch multiple URLs concurrently using asyncio.
+(We'll simulate network calls with asyncio.sleep)
+"""</span>
+<span class="kw">import</span> asyncio
+<span class="kw">import</span> random
+
+<span class="kw">async def</span> <span class="fn">fetch_data</span>(name, delay):
+    <span class="fn">print</span>(<span class="str">f"Starting </span>{name}<span class="str">..."</span>)
+    <span class="kw">await</span> asyncio.sleep(delay)  <span class="cm"># simulates network I/O</span>
+    result = random.randint(<span class="num">1</span>, <span class="num">100</span>)
+    <span class="fn">print</span>(<span class="str">f"Finished </span>{name}<span class="str">: got </span>{result}<span class="str">"</span>)
+    <span class="kw">return</span> result
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># Run 5 "network calls" concurrently</span>
+    tasks = [
+        <span class="fn">fetch_data</span>(<span class="str">"API-1"</span>, <span class="num">1.0</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"API-2"</span>, <span class="num">0.5</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"API-3"</span>, <span class="num">1.5</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"API-4"</span>, <span class="num">0.3</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"API-5"</span>, <span class="num">0.8</span>),
+    ]
+    results = <span class="kw">await</span> asyncio.gather(*tasks)
+    <span class="fn">print</span>(<span class="str">f"All results: </span>{results}<span class="str">"</span>)
+    <span class="fn">print</span>(<span class="str">f"Total would be </span>{<span class="fn">sum</span>(results)}<span class="str">"</span>)
+
+asyncio.run(<span class="fn">main</span>())</code></pre>
+            <p>
+              Run it. Notice how all 5 "requests" start immediately but finish
+              in different orders. Observe: total time is ~1.5s (max delay), not
+              ~4.1s (sum of delays).
+            </p>
+
+            <h4>Practice — Hard problem (50 min)</h4>
+            <p>
+              Solve <code>solutions/graph_03.py</code> — Alien Dictionary. Time
+              limit: 30 min.
+            </p>
+            <p>
+              <em
+                >Pattern: build a graph from adjacent word comparisons, then
+                topological sort. Edge case: if a word is a prefix of the
+                previous word but longer, return "".</em
+              >
+            </p>
+            <pre><code>python main.py --run graph_03</code></pre>
+
+            <p>
+              Solve <code>solutions/graph_01.py</code> — Course Schedule II
+              (Topological Sort). Time limit: 25 min.
+            </p>
+            <p>
+              <em>Pattern: Kahn's algorithm (BFS with in-degree tracking).</em>
+            </p>
+            <pre><code>python main.py --run graph_01</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "async/await feels like <strong>___</strong> from my EE
+                background. Graph problems solved: <strong>___/2</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 17 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 17</span>
+              <div class="card-title">DP Hard + Tree Hard</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Solve <code>solutions/dp_02.py</code> — Edit Distance. Time limit:
+              25 min. Classic 2D DP. Draw the dp table on paper first for
+              "horse" &rarr; "ros".
+            </p>
+            <pre><code>python main.py --run dp_02</code></pre>
+
+            <p>
+              Solve <code>solutions/ll_01.py</code> — LRU Cache. Time limit: 35
+              min. Hash map + doubly linked list. Or use
+              <code>collections.OrderedDict</code>. This is a design problem
+              disguised as an algorithm problem. Think about the API first.
+            </p>
+            <pre><code>python main.py --run ll_01</code></pre>
+
+            <p>
+              Solve <code>solutions/tree_02.py</code> — Serialize and
+              Deserialize Binary Tree. Time limit: 30 min. Use BFS (level-order)
+              for both serialize and deserialize.
+            </p>
+            <pre><code>python main.py --run tree_02</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Hardest problem today: <strong>___</strong>. 2D DP table
+                insight: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 18 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 18</span>
+              <div class="card-title">
+                Backtracking Hard + Trie + Binary Search Hard
+              </div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Solve <code>solutions/bt_02.py</code> — N-Queens. Time limit: 30
+              min. Place queens row by row. Track attacked columns, diagonals
+              (row-col), and anti-diagonals (row+col).
+            </p>
+            <pre><code>python main.py --run bt_02</code></pre>
+
+            <p>
+              Solve <code>solutions/trie_01.py</code> — Word Search II. Time
+              limit: 35 min. Build a Trie from the word list, then DFS from each
+              cell following Trie paths.
+            </p>
+            <pre><code>python main.py --run trie_01</code></pre>
+
+            <p>
+              Solve <code>solutions/bs_01.py</code> — Median of Two Sorted
+              Arrays. Time limit: 35 min. Binary search on the shorter array.
+              Partition both arrays so left halves form the lower half.
+            </p>
+            <pre><code>python main.py --run bs_01</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "All 26 problems attempted. Solved: <strong>___/26</strong>.
+                Remaining unsolved: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 4 ========== -->
+          <h2>WEEK 4: SQL + System Design Intro + Assessment</h2>
+
+          <!-- Day 19 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 19</span>
+              <div class="card-title">SQL Fundamentals</div>
+            </div>
+
+            <h4>Read (40 min)</h4>
+            <ul>
+              <li>
+                <a href="cs_fundamentals.html">CS Fundamentals guide</a> — Read
+                <strong>Part 3: Databases Deep Dive</strong> (sections 3.1
+                through 3.4).
+              </li>
+              <li>
+                Focus on the SQL examples. Read each query and understand what
+                it returns.
+              </li>
+              <li>
+                Read about ACID properties — map each to the EE analogy in the
+                table.
+              </li>
+              <li>
+                Read about indexing — understand why B-tree index is O(log n).
+              </li>
+            </ul>
+
+            <h4>Practice (70 min)</h4>
+            <p>
+              Go to
+              <a href="https://sqlzoo.net/" target="_blank"
+                >https://sqlzoo.net/</a
+              >
+              (browser-based, no install needed). Complete these tutorials:
+            </p>
+            <ol>
+              <li>SELECT basics (10 exercises)</li>
+              <li>SELECT from WORLD (13 exercises)</li>
+              <li>SELECT from Nobel (14 exercises)</li>
+            </ol>
+            <p>Target: complete all 37 exercises.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "SQL concept that was new: <strong>___</strong>. SQL concept
+                that maps to an EE thing I know: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 20 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 20</span>
+              <div class="card-title">SQL Joins + Schema Design</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Continue on
+              <a href="https://sqlzoo.net/" target="_blank">sqlzoo.net</a>:
+            </p>
+            <ol start="4">
+              <li>SELECT within SELECT (8 exercises)</li>
+              <li>SUM and COUNT (8 exercises)</li>
+              <li>JOIN (13 exercises)</li>
+            </ol>
+            <p>Target: complete all 29 exercises.</p>
+
+            <p>
+              Then, on paper or in a text file, design a database schema for an
+              e-commerce system:
+            </p>
+            <ul>
+              <li>
+                Tables: users, products, categories, orders, order_items,
+                reviews
+              </li>
+              <li>
+                For each table: column names, data types, primary key, foreign
+                keys
+              </li>
+              <li>
+                Write these queries:
+                <ol>
+                  <li>Find the top 5 products by total revenue</li>
+                  <li>Find users who have never placed an order</li>
+                  <li>
+                    Find the average review rating per product, only for
+                    products with >5 reviews
+                  </li>
+                  <li>Find the most popular category by number of orders</li>
+                </ol>
+              </li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "JOINs feel like <strong>___</strong> in EE terms. Schema design
+                exercise: I defined <strong>___</strong> tables with
+                <strong>___</strong> foreign keys."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 21 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 21</span>
+              <div class="card-title">Networking + HTTP</div>
+            </div>
+
+            <h4>Read (60 min)</h4>
+            <ul>
+              <li>
+                <a href="cs_fundamentals.html">CS Fundamentals guide</a> — Read
+                <strong>Part 2: Networking</strong> (sections 2.1 through 2.5).
+              </li>
+              <li>
+                Focus on:
+                <ul>
+                  <li>TCP vs UDP — map to EE protocols you know</li>
+                  <li>
+                    HTTP request/response format — read the example byte by byte
+                  </li>
+                  <li>
+                    Status codes — memorize the categories (2xx=success,
+                    3xx=redirect, 4xx=client error, 5xx=server error)
+                  </li>
+                  <li>
+                    TLS handshake — map to secure communication protocols you
+                    know
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>Practice (50 min)</h4>
+            <p>
+              Open a terminal and run these commands to see real HTTP in action:
+            </p>
+            <pre><code><span class="cm"># See the full HTTP request/response</span>
+curl -v https://httpbin.org/get
+
+<span class="cm"># See response headers</span>
+curl -I https://httpbin.org/get
+
+<span class="cm"># Send a POST request with JSON body</span>
+curl -X POST https://httpbin.org/post -H <span class="str">"Content-Type: application/json"</span> -d <span class="str">'{"name": "test"}'</span>
+
+<span class="cm"># See a redirect</span>
+curl -v -L https://httpbin.org/redirect/1</code></pre>
+            <p>
+              For each response, identify: status code, content-type, any
+              caching headers.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "HTTP status codes I memorized: <strong>___</strong>. TLS
+                handshake reminds me of <strong>___</strong> in EE."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 22 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 22</span>
+              <div class="card-title">Full Algorithm Assessment</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Delete your <code>solutions/</code> directory and regenerate fresh
+              templates:
+            </p>
+            <pre><code>rm -rf solutions/
+python main.py --generate</code></pre>
+            <p>
+              Re-solve as many problems as you can in 110 minutes WITHOUT
+              looking at your previous solutions or the hints. Solve them in
+              this priority order (highest value first):
+            </p>
+            <ol>
+              <li><code>arr_01</code> (20 min)</li>
+              <li><code>dp_01</code> (20 min)</li>
+              <li><code>graph_02</code> (15 min)</li>
+              <li><code>sw_02</code> (15 min)</li>
+              <li><code>arr_02</code> (20 min)</li>
+              <li>Any remaining problems in the time you have left</li>
+            </ol>
+            <p>Run the full report:</p>
+            <pre><code>python main.py --report</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Re-solved <strong>___</strong> problems from memory. Patterns I
+                can now apply without thinking: <strong>___</strong>. Still need
+                practice on: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 23 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 23</span>
+              <div class="card-title">Pattern Recognition Mastery Check</div>
+            </div>
+
+            <h4>Practice (60 min)</h4>
+            <pre><code>python main.py --train</code></pre>
+            <p>
+              Full 25-scenario session. Target: >85% accuracy (22/25). For every
+              miss, trace the decision tree to find where you went wrong.
+            </p>
+
+            <h4>Read (50 min)</h4>
+            <ul>
+              <li>
+                <a href="systems_design.html">Systems Design guide</a> — Read
+                <strong>Part 1: The Building Blocks</strong> only (sections 1.1
+                through 1.6).
+              </li>
+              <li>
+                Focus on the database selection table. For each database type,
+                write one sentence about when you'd use it.
+              </li>
+              <li>
+                Focus on caching strategies (cache-aside, write-through,
+                write-behind).
+              </li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Pattern recognition: <strong>___/25</strong> (up from
+                <strong>___/25</strong> on Day 4/11). System design building
+                blocks I now know: <strong>___</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 24 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-blue">Day 24</span>
+              <div class="card-title">System Design Method + First Design</div>
+            </div>
+
+            <h4>Read (30 min)</h4>
+            <ul>
+              <li>
+                <a href="systems_design.html">Systems Design guide</a> — Read
+                <strong>Part 2: Distributed Systems Fundamentals</strong>
+                (sections 2.1 through 2.4).
+              </li>
+              <li>
+                Read <strong>Part 3: System Design Method</strong> (all 5
+                steps).
+              </li>
+              <li>
+                Memorize the 5 steps: Clarify &rarr; Estimate &rarr; High-Level
+                &rarr; Deep Dive &rarr; Bottlenecks.
+              </li>
+              <li>
+                Memorize the latency numbers (section 2.4). Copy them to a card
+                you can reference.
+              </li>
+            </ul>
+
+            <h4>Practice (80 min)</h4>
+            <p>
+              System design exercise: <strong>URL Shortener</strong> (TinyURL)
+            </p>
+            <p>Set a timer for 35 minutes. On paper or in a text file:</p>
+            <ol>
+              <li>
+                (5 min) Clarify requirements: What operations? Read/write ratio?
+                Scale?
+              </li>
+              <li>
+                (5 min) Estimate: 100M URLs, 10:1 read:write ratio, ~1000
+                writes/sec, ~10000 reads/sec
+              </li>
+              <li>
+                (10 min) High-level design: Draw API endpoints, database choice,
+                caching layer
+              </li>
+              <li>
+                (10 min) Deep dive: How to generate unique short codes? (hash?
+                counter? base62?)
+              </li>
+              <li>
+                (5 min) Bottlenecks: What if the database is slow? (cache hot
+                URLs in Redis)
+              </li>
+            </ol>
+            <p>
+              After the timer, read
+              <a href="systems_design.html">Systems Design guide</a> Part 4,
+              problem 1 (URL Shortener) and compare your design to the key
+              concepts listed. Write down what you missed.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "First system design complete. Things I included:
+                <strong>___</strong>. Things I missed: <strong>___</strong>.
+                Month 1 is done."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ===== MONTH 1 CHECKPOINT ===== -->
+          <h2>Month 1 Checkpoint</h2>
+          <p>
+            Before proceeding to <a href="daily_month2.html">Month 2</a>,
+            verify:
+          </p>
+
+          <ul class="checklist">
+            <li>
+              Pattern recognition accuracy >85% (<code
+                >python main.py --train</code
+              >)
+            </li>
+            <li>
+              At least 18/26 algorithm problems solved (<code
+                >python main.py --report</code
+              >)
+            </li>
+            <li>Can write basic SQL (SELECT, JOIN, GROUP BY, subquery)</li>
+            <li>
+              Understand concurrency: threading vs multiprocessing vs asyncio
+            </li>
+            <li>Completed 1 system design exercise (URL Shortener)</li>
+            <li>
+              Have read guides: <a href="mental_models.html">Mental Models</a>,
+              <a href="software_engineering.html">SWE</a> (Part 2),
+              <a href="cs_fundamentals.html">CS Fundamentals</a>
+            </li>
+          </ul>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Not there yet?</div>
+            <p>
+              If you are below these thresholds, spend Day 25-26 catching up
+              before starting Month 2.
+            </p>
+          </div>
+
+          <p>
+            Ready? Continue to
+            <a href="daily_month2.html">Month 2: Architecture</a>.
+          </p>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

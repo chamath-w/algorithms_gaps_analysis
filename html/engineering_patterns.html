@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Engineering Patterns — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Engineering Patterns (Staff Recognition)</h1>
+          <p>
+            These are not LeetCode patterns. They are the recurring shapes you
+            should recognize in design reviews, RFCs, and incidents — the
+            systems analogue of “sliding window vs two pointers.” Drill the
+            <em>when</em> until naming the pattern is automatic.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE bridge</div>
+            <p>
+              Think protection relays, isolation, and control loops: rate limits
+              are current limiters, circuit breakers are trip coils, bulkheads are
+              compartmentalized buses, backpressure is a governor, and the outbox
+              is dual-write avoidance — one atomic commit, then async publish.
+            </p>
+          </div>
+
+          <section id="cache_aside">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    1. Cache-Aside
+                  </h2>
+                </div>
+                <span class="badge badge-blue">data</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  App reads cache → on miss, load DB → fill cache. Writes update
+                  DB then invalidate (or update) cache. App owns consistency
+                  policy.
+                </p>
+                <div class="signals">
+                  <span class="signal">read-heavy path</span>
+                  <span class="signal">TTL + invalidation</span>
+                  <span class="signal">stampede risk</span>
+                </div>
+                <div class="callout callout-warning">
+                  <div class="callout-title">Staff check</div>
+                  <p>
+                    What is the stale window? Who wins on thundering herd? Is
+                    invalidation race-safe with concurrent writers?
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="idempotency">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    2. Idempotency Keys
+                  </h2>
+                </div>
+                <span class="badge badge-blue">API</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  Client sends a unique key with a mutating request. Server
+                  stores result keyed by that id so retries return the same
+                  outcome instead of double-charging / double-creating.
+                </p>
+                <div class="signals">
+                  <span class="signal">payments / create</span>
+                  <span class="signal">at-least-once delivery</span>
+                  <span class="signal">client retries</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="outbox">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    3. Transactional Outbox
+                  </h2>
+                </div>
+                <span class="badge badge-blue">messaging</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  In the same DB transaction as the business write, insert an
+                  outbox row. A relay publishes outbox events to the bus. Avoids
+                  “DB committed but message lost” dual-write.
+                </p>
+                <div class="signals">
+                  <span class="signal">DB + publish</span>
+                  <span class="signal">exactly-once illusion</span>
+                  <span class="signal">CDC / relay</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="circuit_breaker">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    4. Circuit Breaker
+                  </h2>
+                </div>
+                <span class="badge badge-blue">resilience</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  After error threshold, open the circuit and fail fast (or
+                  serve fallback). Half-open probes recovery. Protects callers
+                  from waiting on a dead dependency.
+                </p>
+                <div class="signals">
+                  <span class="signal">cascading failure</span>
+                  <span class="signal">timeout storms</span>
+                  <span class="signal">fallback path</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="rate_limit">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    5. Rate Limiting
+                  </h2>
+                </div>
+                <span class="badge badge-blue">capacity</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  Token bucket / sliding window / leaky bucket to protect
+                  capacity. Decide: per user, per IP, per API key, global.
+                </p>
+                <div class="signals">
+                  <span class="signal">429 / quota</span>
+                  <span class="signal">abuse protection</span>
+                  <span class="signal">fairness</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="saga">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    6. Saga / Compensation
+                  </h2>
+                </div>
+                <span class="badge badge-blue">workflow</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  Multi-service workflow without distributed 2PC: each step has
+                  a compensating action. Choreography (events) vs orchestration
+                  (central coordinator).
+                </p>
+                <div class="signals">
+                  <span class="signal">multi-service booking</span>
+                  <span class="signal">compensate / undo</span>
+                  <span class="signal">no 2PC</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="optimistic_concurrency">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    7. Optimistic Concurrency
+                  </h2>
+                </div>
+                <span class="badge badge-blue">consistency</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  Version column or ETag: update only if version matches. On
+                  conflict, reload and retry. Beats coarse locking for low
+                  contention.
+                </p>
+                <div class="signals">
+                  <span class="signal">version / ETag</span>
+                  <span class="signal">lost update</span>
+                  <span class="signal">COMPARE-AND-SWAP</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="bulkhead">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    8. Bulkhead Isolation
+                  </h2>
+                </div>
+                <span class="badge badge-blue">isolation</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  Separate thread pools / connection pools / queues per
+                  dependency so one slow partner cannot exhaust the whole
+                  process.
+                </p>
+                <div class="signals">
+                  <span class="signal">pool per dependency</span>
+                  <span class="signal">blast radius</span>
+                  <span class="signal">noisy neighbor</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="backpressure">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    9. Backpressure
+                  </h2>
+                </div>
+                <span class="badge badge-blue">flow control</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  When consumers cannot keep up, producers must slow, drop, or
+                  shed load — bounded queues, TCP windows, reactive streams,
+                  load-shed 503s. Unbounded buffers are a delayed outage.
+                </p>
+                <div class="signals">
+                  <span class="signal">bounded queue</span>
+                  <span class="signal">load shed</span>
+                  <span class="signal">producer slowdown</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="callout callout-success">
+            <div class="callout-title">How to practice</div>
+            <p>
+              In every systems design, force yourself to name which of these
+              apply. Pair with
+              <a href="systems_design.html">Systems Design</a> and
+              <a href="staff_level.html">Staff-Level Skills</a>. Algorithm drills
+              stay on
+              <a href="patterns.html">Algorithm Patterns</a> /
+              <a href="practice.html">Practice Arena</a>.
+            </p>
+          </div>
+
+          <div class="footer">Staff SDE Mastery — Engineering Patterns</div>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/course.js"></script>
+  </body>
+</html>

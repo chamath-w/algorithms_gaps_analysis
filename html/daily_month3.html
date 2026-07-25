@@ -1,0 +1,1851 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Month 3: Staff Impact (Days 45-72) — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Month 3: Staff Impact + Capstone</h1>
+          <p>
+            Days 45-72 (Weeks 9-12). You shift from learning to
+            <strong>building and leading</strong>. The focus is staff-level
+            skills, a distributed systems project, and final assessments that
+            prove your growth.
+          </p>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Behind schedule?</div>
+            <p>
+              If you are behind on the Month 2 checkpoint, spend Days 45-46
+              catching up before proceeding.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 9 ========== -->
+          <h2>WEEK 9: Staff Skills + Project 2 Start</h2>
+
+          <!-- Day 45 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 45</span>
+              <div class="card-title">Staff Engineer Skills (Part 1)</div>
+            </div>
+
+            <h4>Read (80 min)</h4>
+            <ul>
+              <li>
+                <a href="staff_level.html">Staff-Level Skills guide</a> — Read
+                <strong>Part 1: The Staff Engineer's Job</strong> and
+                <strong>Part 2: Writing Design Documents</strong> (sections 1.1
+                through 2.3).
+              </li>
+              <li>
+                Take notes on:
+                <ul>
+                  <li>
+                    Which archetype (Tech Lead, Architect, Solver, Right Hand)
+                    fits your current role?
+                  </li>
+                  <li>The RFC template — you will use this tomorrow.</li>
+                </ul>
+              </li>
+            </ul>
+
+            <h4>Practice (30 min)</h4>
+            <ul>
+              <li>
+                Write a 1-page RFC for a hypothetical migration: "Migrate a
+                monolithic Python API to 3 microservices." Use the template from
+                section 2.1.
+              </li>
+              <li>
+                Focus on: Context, Goals/Non-Goals, Alternatives Considered.
+              </li>
+              <li>
+                Save as
+                <code>exercises/practice_rfc_1.md</code>.
+              </li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "My staff archetype is closest to <strong>__</strong>. The RFC
+                section I found hardest to write: <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 46 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 46</span>
+              <div class="card-title">
+                Staff Engineer Skills (Part 2) + Project 2 Design
+              </div>
+            </div>
+
+            <h4>Read (50 min)</h4>
+            <ul>
+              <li>
+                <a href="staff_level.html">Staff-Level Skills guide</a> — Read
+                <strong>Part 3: Making Technical Decisions</strong> and
+                <strong>Part 4: Cross-Team Influence</strong> (sections 3.1
+                through 4.3).
+              </li>
+              <li>
+                Key concepts: one-way vs two-way doors, build vs buy vs adopt,
+                ADRs, disagree and commit.
+              </li>
+            </ul>
+
+            <h4>Practice — Project 2 Design (60 min)</h4>
+            <ul>
+              <li>
+                You are building the
+                <strong>URL Shortener with Analytics</strong> (see
+                <a href="three_month_plan.html">Three-Month Plan</a>, Capstone
+                Projects, Project 2).
+              </li>
+              <li>
+                Write the design doc FIRST, before any code. Save as
+                <code>project2/DESIGN.md</code>.
+              </li>
+            </ul>
+            <p>Architecture reminder:</p>
+            <pre><code>Service 1: URL Shortener API
+  - POST /shorten    <span class="cm">→ create short URL</span>
+  - GET /{code}      <span class="cm">→ redirect, publish click event</span>
+
+Service 2: Analytics API
+  - GET /analytics/{code}  <span class="cm">→ click stats (total, by country, by time)</span>
+
+Worker: Click Processor
+  - Consumes click events from queue
+  - Aggregates and stores analytics</code></pre>
+
+            <p>Your RFC must include:</p>
+            <ul>
+              <li>Context and Goals/Non-Goals</li>
+              <li>
+                Data model (URLs table, clicks table, analytics aggregation
+                table)
+              </li>
+              <li>API contracts for both services</li>
+              <li>
+                Inter-service communication choice (Redis pub/sub, or HTTP, or
+                queue) with justification
+              </li>
+              <li>
+                Alternatives considered (monolith vs microservices for this use
+                case)
+              </li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Writing the design BEFORE code changes my approach by
+                <strong>__</strong>. Inter-service communication choice:
+                <strong>__</strong> because <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 47 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 47</span>
+              <div class="card-title">Project 2: Service 1 Setup</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Create the project structure:</p>
+            <pre><code><span class="fn">mkdir</span> -p project2/shortener project2/analytics project2/worker project2/tests</code></pre>
+
+            <p>Set up Service 1 (URL Shortener API):</p>
+            <ul>
+              <li>Initialize FastAPI app</li>
+              <li>
+                Create the URLs table schema (SQLite for now):
+                <code>id</code>, <code>code</code> (unique, 7 chars),
+                <code>original_url</code>, <code>created_at</code>,
+                <code>click_count</code>
+              </li>
+            </ul>
+
+            <p>Implement short code generation (base62 encoding or nanoid):</p>
+            <pre><code><span class="kw">import</span> string
+<span class="kw">import</span> random
+
+ALPHABET = string.ascii_letters + string.digits  <span class="cm"># 62 chars</span>
+
+<span class="kw">def</span> <span class="fn">generate_code</span>(length=<span class="num">7</span>):
+    <span class="kw">return</span> <span class="str">''</span>.join(random.choices(ALPHABET, k=length))</code></pre>
+
+            <p>Implement <code>POST /shorten</code>:</p>
+            <ul>
+              <li>
+                Accept
+                <code>{"url": "https://example.com/long-path"}</code>
+              </li>
+              <li>Validate URL format</li>
+              <li>Generate short code, store in DB</li>
+              <li>
+                Return
+                <code
+                  >{"short_url": "http://localhost:8001/{code}", "code":
+                  "{code}"}</code
+                >
+              </li>
+            </ul>
+
+            <p>Implement <code>GET /{code}</code>:</p>
+            <ul>
+              <li>Look up code in DB</li>
+              <li>Return 307 redirect to original URL</li>
+              <li>
+                For now, just increment <code>click_count</code> directly (we
+                will add the event pipeline later)
+              </li>
+            </ul>
+
+            <p>Write basic tests for both endpoints.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Service 1 endpoints working: <strong>__</strong>. Base62 code
+                generation is like <strong>__</strong> in EE (hint: encoding
+                schemes)."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 48 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 48</span>
+              <div class="card-title">Project 2: Service 2 (Analytics API)</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Create the analytics data model:</p>
+            <ul>
+              <li>
+                <code>clicks</code> table: <code>id</code>, <code>code</code>,
+                <code>timestamp</code>, <code>ip_address</code>,
+                <code>user_agent</code>, <code>country</code> (nullable)
+              </li>
+              <li>
+                <code>analytics_hourly</code> table: <code>code</code>,
+                <code>hour_bucket</code> (datetime), <code>click_count</code>
+              </li>
+            </ul>
+
+            <p>
+              Implement Service 2 (Analytics API) as a separate FastAPI app.
+              <code>GET /analytics/{code}</code> returns:
+            </p>
+            <pre><code>{
+  <span class="str">"code"</span>: <span class="str">"abc1234"</span>,
+  <span class="str">"total_clicks"</span>: <span class="num">1542</span>,
+  <span class="str">"clicks_today"</span>: <span class="num">87</span>,
+  <span class="str">"clicks_by_hour"</span>: [
+    { <span class="str">"hour"</span>: <span class="str">"2026-06-16T14:00:00"</span>, <span class="str">"count"</span>: <span class="num">23</span> },
+    { <span class="str">"hour"</span>: <span class="str">"2026-06-16T15:00:00"</span>, <span class="str">"count"</span>: <span class="num">31</span> }
+  ],
+  <span class="str">"top_referrers"</span>: [<span class="str">"google.com"</span>, <span class="str">"twitter.com"</span>]
+}</code></pre>
+
+            <p>
+              <code>GET /analytics/{code}/summary</code> returns a simplified
+              view (total clicks, first click, last click).
+            </p>
+
+            <p>
+              Seed the <code>clicks</code> table with fake data so you can test
+              the analytics queries:
+            </p>
+            <pre><code><span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">seed_clicks</span>(db, code, count=<span class="num">100</span>):
+    now = datetime.utcnow()
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(count):
+        timestamp = now - timedelta(hours=random.randint(<span class="num">0</span>, <span class="num">72</span>))
+        db.execute(<span class="str">"INSERT INTO clicks (code, timestamp, country) VALUES (?, ?, ?)"</span>,
+                   (code, timestamp, random.choice([<span class="str">"US"</span>, <span class="str">"UK"</span>, <span class="str">"DE"</span>, <span class="str">"JP"</span>, <span class="str">"BR"</span>])))</code></pre>
+
+            <p>Write tests for the analytics endpoints.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Analytics queries use <strong>__</strong> SQL patterns (GROUP
+                BY, time bucketing). Time-series aggregation is like
+                <strong>__</strong> from signal processing."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 49 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 49</span>
+              <div class="card-title">Project 2: Click Event Pipeline</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Implement the event pipeline to connect Service 1 and the Worker.
+              When <code>GET /{code}</code> is called in Service 1, instead of
+              directly incrementing the count, publish a click event. Use an
+              in-process queue for simplicity (or Redis pub/sub if you have
+              Redis):
+            </p>
+            <pre><code><span class="kw">import</span> queue
+<span class="kw">import</span> threading
+<span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Shared event queue (in production: Redis/Kafka/RabbitMQ)</span>
+click_queue = queue.Queue()
+
+<span class="kw">def</span> <span class="fn">publish_click_event</span>(code: <span class="fn">str</span>, ip: <span class="fn">str</span>, user_agent: <span class="fn">str</span>):
+    event = {
+        <span class="str">"code"</span>: code,
+        <span class="str">"timestamp"</span>: datetime.utcnow().isoformat(),
+        <span class="str">"ip"</span>: ip,
+        <span class="str">"user_agent"</span>: user_agent,
+    }
+    click_queue.put(json.dumps(event))</code></pre>
+
+            <p>
+              Implement the Worker (Click Processor) — runs as a background
+              thread (or separate process), consumes events from the queue,
+              inserts into the <code>clicks</code> table, and updates the
+              <code>analytics_hourly</code> aggregation table:
+            </p>
+            <pre><code><span class="kw">def</span> <span class="fn">click_processor</span>(click_queue, db):
+    <span class="kw">while</span> <span class="num">True</span>:
+        event_json = click_queue.get()
+        event = json.loads(event_json)
+        <span class="cm"># Insert raw click</span>
+        db.execute(<span class="str">"INSERT INTO clicks (code, timestamp, ip_address, user_agent) VALUES (?, ?, ?, ?)"</span>,
+                   (event[<span class="str">"code"</span>], event[<span class="str">"timestamp"</span>], event[<span class="str">"ip"</span>], event[<span class="str">"user_agent"</span>]))
+        <span class="cm"># Update hourly aggregation</span>
+        hour_bucket = event[<span class="str">"timestamp"</span>][:<span class="num">13</span>] + <span class="str">":00:00"</span>
+        db.execute(<span class="str">"""
+            INSERT INTO analytics_hourly (code, hour_bucket, click_count)
+            VALUES (?, ?, 1)
+            ON CONFLICT(code, hour_bucket) DO UPDATE SET click_count = click_count + 1
+        """</span>, (event[<span class="str">"code"</span>], hour_bucket))
+        db.commit()</code></pre>
+
+            <p>
+              Wire it together: Service 1 publishes, Worker consumes, Service 2
+              reads the aggregated data. Test the full flow: shorten a URL,
+              click it 5 times, check analytics.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Event pipeline is like <strong>__</strong> in hardware
+                (producer-consumer, interrupt-driven). Async processing
+                advantage: <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 50 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 50</span>
+              <div class="card-title">
+                Project 2: Health Checks + Structured Logging
+              </div>
+            </div>
+
+            <h4>Read (30 min)</h4>
+            <ul>
+              <li>
+                <a href="staff_level.html">Staff-Level Skills guide</a> — Read
+                <strong>Part 5: Observability and Operations</strong> (sections
+                5.1 through 5.3).
+              </li>
+              <li>
+                Focus on: the three pillars (logs, metrics, traces) and the Four
+                Golden Signals.
+              </li>
+            </ul>
+
+            <h4>Practice (80 min)</h4>
+            <p>Add health check endpoints to both services:</p>
+            <pre><code><span class="kw">@</span>app.get(<span class="str">"/health"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">return</span> {
+        <span class="str">"status"</span>: <span class="str">"ok"</span>,
+        <span class="str">"service"</span>: <span class="str">"shortener"</span>,
+        <span class="str">"timestamp"</span>: datetime.utcnow().isoformat(),
+        <span class="str">"db"</span>: <span class="str">"connected"</span> <span class="kw">if</span> check_db() <span class="kw">else</span> <span class="str">"error"</span>,
+    }</code></pre>
+
+            <p>Add structured JSON logging to both services:</p>
+            <pre><code><span class="kw">import</span> logging
+<span class="kw">import</span> json
+
+<span class="kw">class</span> <span class="fn">JSONFormatter</span>(logging.Formatter):
+    <span class="kw">def</span> <span class="fn">format</span>(self, record):
+        log_data = {
+            <span class="str">"timestamp"</span>: self.formatTime(record),
+            <span class="str">"level"</span>: record.levelname,
+            <span class="str">"service"</span>: <span class="str">"shortener"</span>,
+            <span class="str">"message"</span>: record.getMessage(),
+        }
+        <span class="kw">if</span> <span class="fn">hasattr</span>(record, <span class="str">"extra"</span>):
+            log_data.update(record.extra)
+        <span class="kw">return</span> json.dumps(log_data)</code></pre>
+
+            <p>
+              Add request logging middleware (log every request with method,
+              path, status, duration). Add logging to the worker: log every
+              event processed, log errors. Test: make several requests, verify
+              logs are structured JSON.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Structured logging vs print statements:
+                <strong>__</strong>. Health checks in production are like
+                <strong>__</strong> in hardware."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 10 ========== -->
+          <h2>WEEK 10: Resilience + Observability + Project 2 Continue</h2>
+
+          <!-- Day 51 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 51</span>
+              <div class="card-title">Error Handling + Retry Logic</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Add robust error handling to Project 2:</p>
+            <ul>
+              <li>
+                Service 1: Handle DB errors, invalid URLs, duplicate codes
+                gracefully
+              </li>
+              <li>
+                Service 2: Handle missing codes (404), DB connection errors
+              </li>
+              <li>Worker: Handle malformed events, DB write failures</li>
+            </ul>
+
+            <p>Implement retry logic for the worker:</p>
+            <pre><code><span class="kw">import</span> time
+
+<span class="kw">def</span> <span class="fn">process_with_retry</span>(event, db, max_retries=<span class="num">3</span>):
+    <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries):
+        <span class="kw">try</span>:
+            process_click(event, db)
+            <span class="kw">return</span>
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            wait = <span class="num">2</span> ** attempt  <span class="cm"># exponential backoff: 1, 2, 4 seconds</span>
+            logger.warning(<span class="str">f"Retry {attempt + 1}/{max_retries} after {wait}s: {e}"</span>)
+            time.sleep(wait)
+    logger.error(<span class="str">f"Failed after {max_retries} retries: {event}"</span>)
+    <span class="cm"># Dead letter: save failed events for manual inspection</span>
+    save_to_dead_letter(event)</code></pre>
+
+            <p>
+              Implement a simple circuit breaker for inter-service calls (if
+              Service 2 calls Service 1 for URL info):
+            </p>
+            <pre><code><span class="kw">class</span> <span class="fn">CircuitBreaker</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, failure_threshold=<span class="num">5</span>, reset_timeout=<span class="num">30</span>):
+        self.failures = <span class="num">0</span>
+        self.threshold = failure_threshold
+        self.reset_timeout = reset_timeout
+        self.last_failure_time = <span class="num">None</span>
+        self.state = <span class="str">"closed"</span>  <span class="cm"># closed=normal, open=failing, half_open=testing</span>
+
+    <span class="kw">def</span> <span class="fn">call</span>(self, func, *args):
+        <span class="kw">if</span> self.state == <span class="str">"open"</span>:
+            <span class="kw">if</span> time.time() - self.last_failure_time > self.reset_timeout:
+                self.state = <span class="str">"half_open"</span>
+            <span class="kw">else</span>:
+                <span class="kw">raise</span> Exception(<span class="str">"Circuit breaker is open"</span>)
+        <span class="kw">try</span>:
+            result = func(*args)
+            <span class="kw">if</span> self.state == <span class="str">"half_open"</span>:
+                self.state = <span class="str">"closed"</span>
+                self.failures = <span class="num">0</span>
+            <span class="kw">return</span> result
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            self.failures += <span class="num">1</span>
+            self.last_failure_time = time.time()
+            <span class="kw">if</span> self.failures >= self.threshold:
+                self.state = <span class="str">"open"</span>
+            <span class="kw">raise</span></code></pre>
+
+            <p>Write tests for the retry logic and circuit breaker.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Exponential backoff is like <strong>__</strong> in
+                communication protocols. Circuit breaker pattern prevents
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 52 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 52</span>
+              <div class="card-title">Metrics + Simple Monitoring</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              Add application metrics to both services. Use simple counters (no
+              external libraries needed):
+            </p>
+            <pre><code><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">from</span> threading <span class="kw">import</span> Lock
+
+<span class="kw">class</span> <span class="fn">Metrics</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self._counters = defaultdict(<span class="fn">int</span>)
+        self._histograms = defaultdict(<span class="fn">list</span>)
+        self._lock = Lock()
+
+    <span class="kw">def</span> <span class="fn">increment</span>(self, name, value=<span class="num">1</span>):
+        <span class="kw">with</span> self._lock:
+            self._counters[name] += value
+
+    <span class="kw">def</span> <span class="fn">observe</span>(self, name, value):
+        <span class="kw">with</span> self._lock:
+            self._histograms[name].append(value)
+
+    <span class="kw">def</span> <span class="fn">snapshot</span>(self):
+        <span class="kw">with</span> self._lock:
+            result = {<span class="str">"counters"</span>: <span class="fn">dict</span>(self._counters), <span class="str">"histograms"</span>: {}}
+            <span class="kw">for</span> name, values <span class="kw">in</span> self._histograms.items():
+                <span class="kw">if</span> values:
+                    sorted_v = <span class="fn">sorted</span>(values)
+                    result[<span class="str">"histograms"</span>][name] = {
+                        <span class="str">"count"</span>: <span class="fn">len</span>(values),
+                        <span class="str">"p50"</span>: sorted_v[<span class="fn">len</span>(values) // <span class="num">2</span>],
+                        <span class="str">"p95"</span>: sorted_v[<span class="fn">int</span>(<span class="fn">len</span>(values) * <span class="num">0.95</span>)],
+                        <span class="str">"p99"</span>: sorted_v[<span class="fn">int</span>(<span class="fn">len</span>(values) * <span class="num">0.99</span>)],
+                    }
+            <span class="kw">return</span> result
+
+metrics = Metrics()</code></pre>
+
+            <p>Track the Four Golden Signals:</p>
+            <ul>
+              <li>
+                <strong>Latency</strong>:
+                <code>metrics.observe("request_duration_ms", duration)</code>
+              </li>
+              <li>
+                <strong>Error rate</strong>:
+                <code>metrics.increment("errors_total")</code> on failures
+              </li>
+              <li>
+                <strong>Throughput</strong>:
+                <code>metrics.increment("requests_total")</code>
+              </li>
+              <li>
+                <strong>Saturation</strong>:
+                <code
+                  >metrics.increment("queue_depth", click_queue.qsize())</code
+                >
+              </li>
+            </ul>
+
+            <p>
+              Add a <code>GET /metrics</code> endpoint that returns the
+              snapshot. Run your services, make 50+ requests, then check
+              <code>/metrics</code> to see the data.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "The Four Golden Signals are: <strong>__</strong>. P95 latency
+                is more important than average because <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 53 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 53</span>
+              <div class="card-title">Load Testing</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Write a simple load test script (no external tools needed):</p>
+            <pre><code><span class="cm"># load_test.py</span>
+<span class="kw">import</span> requests
+<span class="kw">import</span> time
+<span class="kw">import</span> statistics
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, as_completed
+
+BASE_URL = <span class="str">"http://localhost:8001"</span>
+
+<span class="kw">def</span> <span class="fn">create_url</span>():
+    resp = requests.post(<span class="str">f"{BASE_URL}/shorten"</span>, json={<span class="str">"url"</span>: <span class="str">f"https://example.com/{time.time()}"</span>})
+    <span class="kw">return</span> resp.json()[<span class="str">"code"</span>]
+
+<span class="kw">def</span> <span class="fn">click_url</span>(code):
+    start = time.time()
+    resp = requests.get(<span class="str">f"{BASE_URL}/{code}"</span>, allow_redirects=<span class="num">False</span>)
+    duration = (time.time() - start) * <span class="num">1000</span>
+    <span class="kw">return</span> resp.status_code, duration
+
+<span class="kw">def</span> <span class="fn">run_load_test</span>(num_requests=<span class="num">200</span>, concurrency=<span class="num">10</span>):
+    <span class="cm"># Setup: create 10 URLs</span>
+    codes = [create_url() <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]
+    <span class="fn">print</span>(<span class="str">f"Created {len(codes)} URLs"</span>)
+
+    <span class="cm"># Load test: hit them concurrently</span>
+    durations = []
+    errors = <span class="num">0</span>
+    start_time = time.time()
+
+    <span class="kw">with</span> ThreadPoolExecutor(max_workers=concurrency) <span class="kw">as</span> executor:
+        futures = []
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(num_requests):
+            code = codes[i % <span class="fn">len</span>(codes)]
+            futures.append(executor.submit(click_url, code))
+
+        <span class="kw">for</span> future <span class="kw">in</span> as_completed(futures):
+            status, duration = future.result()
+            <span class="kw">if</span> status >= <span class="num">400</span>:
+                errors += <span class="num">1</span>
+            durations.append(duration)
+
+    elapsed = time.time() - start_time
+    durations.sort()
+
+    <span class="fn">print</span>(<span class="str">f"\nResults ({num_requests} requests, {concurrency} concurrent):"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Total time: {elapsed:.1f}s"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Throughput: {num_requests / elapsed:.1f} req/s"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Errors: {errors} ({errors/num_requests*100:.1f}%)"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Latency p50: {durations[len(durations)//2]:.1f}ms"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Latency p95: {durations[int(len(durations)*0.95)]:.1f}ms"</span>)
+    <span class="fn">print</span>(<span class="str">f"  Latency p99: {durations[int(len(durations)*0.99)]:.1f}ms"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    run_load_test()</code></pre>
+
+            <p>Run the load test. Record the results. Identify bottlenecks:</p>
+            <ul>
+              <li>Is the DB the bottleneck? (check if writes are slow)</li>
+              <li>Is the event queue backing up? (check queue depth)</li>
+              <li>Is CPU the issue? (unlikely for this workload)</li>
+            </ul>
+            <p>
+              Optimize one bottleneck you find (e.g., batch DB writes, add
+              connection pooling, add caching for popular URLs). Re-run the load
+              test. Compare before/after.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Load test results — throughput: <strong>__</strong> req/s, p95:
+                <strong>__</strong>ms. Bottleneck was <strong>__</strong>. After
+                optimization: <strong>__</strong> req/s."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 54 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 54</span>
+              <div class="card-title">ADRs + Tenth System Design</div>
+            </div>
+
+            <h4>Practice — ADRs (50 min)</h4>
+            <p>
+              Write 3 Architecture Decision Records for Project 2. Save as
+              <code>project2/adrs/</code>. For each, use this format:
+            </p>
+            <pre><code><span class="cm"># ADR-001: [Title]</span>
+
+<span class="cm">## Status: Accepted</span>
+
+<span class="cm">## Context</span>
+What is the situation? What forces are at play?
+
+<span class="cm">## Decision</span>
+What did we decide?
+
+<span class="cm">## Consequences</span>
+What are the positive, negative, and neutral consequences?</code></pre>
+
+            <p>Suggested ADRs:</p>
+            <ol>
+              <li>"Use SQLite instead of PostgreSQL for development"</li>
+              <li>"Use in-process queue instead of Redis/Kafka for events"</li>
+              <li>
+                "Separate analytics into its own service vs keeping in the main
+                API"
+              </li>
+            </ol>
+
+            <h4>Practice — System Design (60 min)</h4>
+            <p>System design exercise: <strong>Web Crawler</strong></p>
+            <p>Timer: 45 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Scale (how many pages)? Depth? Politeness (rate
+                limit per domain)?
+              </li>
+              <li>
+                (5 min) Estimate: 1B pages, 1 page/sec/worker, need 1000
+                workers, complete in ~12 days
+              </li>
+              <li>
+                (15 min) High-level: URL frontier (priority queue), fetcher
+                workers, content parser, URL extractor, deduplication (bloom
+                filter or set)
+              </li>
+              <li>
+                (15 min) Deep dive: Politeness (robots.txt, per-domain delay)?
+                Deduplicate URLs? Handle redirects/errors? Distribute work
+                across machines?
+              </li>
+              <li>
+                (5 min) Bottlenecks: DNS resolution, network bandwidth, storage
+                for crawled pages
+              </li>
+            </ol>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "ADR writing forces me to <strong>__</strong>. Web crawler:
+                distributed work scheduling is similar to <strong>__</strong> in
+                my experience."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 11 ========== -->
+          <h2>WEEK 11: Algorithm Refresh + Project 2 Complete</h2>
+
+          <!-- Day 55 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 55</span>
+              <div class="card-title">Algorithm Refresh (Full)</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Full pattern recognition session:</p>
+            <pre><code>python main.py --train</code></pre>
+
+            <p>
+              Target: >90% accuracy. If below 90%, review the patterns you
+              missed:
+            </p>
+            <pre><code>python main.py --pattern &lt;missed_pattern_id&gt;</code></pre>
+
+            <p>
+              Then re-solve 3 algorithm problems you previously struggled with.
+              Do NOT look at your old solutions first. Attempt from scratch:
+            </p>
+            <pre><code>python main.py --run &lt;problem_id_1&gt;
+python main.py --run &lt;problem_id_2&gt;
+python main.py --run &lt;problem_id_3&gt;</code></pre>
+
+            <p>
+              After solving (or getting stuck for 20 min), compare with your old
+              solution. Note what changed in your approach.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Pattern recognition: <strong>__/25</strong>. Problems
+                re-solved: <strong>__</strong>. Compared to Month 1, my biggest
+                improvement is <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 56 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 56</span>
+              <div class="card-title">Re-Solve Failed Problems</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Run a full report to see your current standing:</p>
+            <pre><code>python main.py --report</code></pre>
+
+            <p>
+              Identify all problems where you scored &lt;80%. Re-solve each one:
+            </p>
+            <ul>
+              <li>Give yourself the original time limit</li>
+              <li>If stuck after 15 minutes, read the hints</li>
+              <li>
+                If stuck after 25 minutes, read/study the solution approach,
+                then close it and re-implement from memory
+              </li>
+            </ul>
+
+            <p>For each re-solved problem, write in your journal:</p>
+            <ul>
+              <li>What pattern does it use?</li>
+              <li>What was the key insight you were missing before?</li>
+              <li>
+                What would you say if someone asked you to explain the approach
+                in 30 seconds?
+              </li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Re-solved <strong>__</strong> problems. The pattern I'm now
+                strongest in: <strong>__</strong>. Still weakest in:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 57 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 57</span>
+              <div class="card-title">Project 2: Comprehensive Tests</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Write comprehensive tests for Project 2:</p>
+
+            <p><strong>Unit tests</strong> for each component:</p>
+            <ul>
+              <li>Code generation (uniqueness, format)</li>
+              <li>URL validation</li>
+              <li>Analytics aggregation queries</li>
+              <li>Retry logic</li>
+              <li>Circuit breaker state transitions</li>
+              <li>Metrics collection</li>
+            </ul>
+
+            <p><strong>Integration tests</strong> for the full flow:</p>
+            <pre><code><span class="kw">def</span> <span class="fn">test_full_flow</span>():
+    <span class="str">"""Shorten URL -> click -> verify analytics"""</span>
+    <span class="cm"># Create short URL</span>
+    resp = client.post(<span class="str">"/shorten"</span>, json={<span class="str">"url"</span>: <span class="str">"https://example.com"</span>})
+    <span class="kw">assert</span> resp.status_code == <span class="num">200</span>
+    code = resp.json()[<span class="str">"code"</span>]
+
+    <span class="cm"># Click it multiple times</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+        resp = client.get(<span class="str">f"/{code}"</span>, follow_redirects=<span class="num">False</span>)
+        <span class="kw">assert</span> resp.status_code == <span class="num">307</span>
+
+    <span class="cm"># Wait for worker to process events</span>
+    time.sleep(<span class="num">1</span>)
+
+    <span class="cm"># Check analytics</span>
+    resp = analytics_client.get(<span class="str">f"/analytics/{code}"</span>)
+    <span class="kw">assert</span> resp.status_code == <span class="num">200</span>
+    <span class="kw">assert</span> resp.json()[<span class="str">"total_clicks"</span>] == <span class="num">5</span></code></pre>
+
+            <p><strong>Edge case tests</strong>:</p>
+            <ul>
+              <li>Shorten the same URL twice (should get different codes)</li>
+              <li>Click a non-existent code (404)</li>
+              <li>Analytics for a URL with zero clicks</li>
+              <li>Very long URLs</li>
+              <li>Special characters in URLs</li>
+            </ul>
+
+            <p>
+              Run all tests:
+              <code>pytest project2/tests/ -v</code>
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Total tests written: <strong>__</strong>. Integration tests are
+                harder because <strong>__</strong>. Edge case I almost missed:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 58 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 58</span>
+              <div class="card-title">Project 2: Finalize + Documentation</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Finalize Project 2:</p>
+            <ul>
+              <li>Fix any failing tests</li>
+              <li>Add <code>requirements.txt</code></li>
+              <li>
+                Create <code>project2/Dockerfile</code> for each service (or a
+                single multi-stage Dockerfile)
+              </li>
+            </ul>
+
+            <p>Create <code>project2/docker-compose.yml</code>:</p>
+            <pre><code><span class="cm">version: "3.8"</span>
+<span class="fn">services</span>:
+  <span class="fn">shortener</span>:
+    <span class="kw">build</span>:
+      <span class="kw">context</span>: .
+      <span class="kw">dockerfile</span>: shortener/Dockerfile
+    <span class="kw">ports</span>:
+      - <span class="str">"8001:8000"</span>
+
+  <span class="fn">analytics</span>:
+    <span class="kw">build</span>:
+      <span class="kw">context</span>: .
+      <span class="kw">dockerfile</span>: analytics/Dockerfile
+    <span class="kw">ports</span>:
+      - <span class="str">"8002:8000"</span>
+
+  <span class="fn">worker</span>:
+    <span class="kw">build</span>:
+      <span class="kw">context</span>: .
+      <span class="kw">dockerfile</span>: worker/Dockerfile</code></pre>
+
+            <p>Write <code>project2/README.md</code>:</p>
+            <ul>
+              <li>What it is (1 paragraph)</li>
+              <li>Architecture diagram (ASCII art)</li>
+              <li>
+                How to run (<code>docker-compose up</code> or manual setup)
+              </li>
+              <li>API endpoints with curl examples</li>
+              <li>How to run tests</li>
+              <li>Design decisions (link to DESIGN.md and ADRs)</li>
+            </ul>
+
+            <p>Push to GitHub (if you have an account).</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Project 2 complete. Total lines of code: roughly
+                <strong>__</strong>. Services: <strong>__</strong>. The hardest
+                part was <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 59 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 59</span>
+              <div class="card-title">Eleventh System Design (Advanced)</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              System design exercise:
+              <strong>Google Drive / Dropbox (File Storage System)</strong>
+            </p>
+            <p>Timer: 50 minutes:</p>
+            <ol>
+              <li>
+                (5 min) Clarify: Max file size? Versioning? Sharing? Real-time
+                collaboration? Offline support?
+              </li>
+              <li>
+                (5 min) Estimate: 500M users, 100M DAU, average 2GB
+                storage/user, 100PB total
+              </li>
+              <li>
+                (20 min) High-level:
+                <ul>
+                  <li>
+                    Metadata service (file hierarchy, permissions, versions)
+                  </li>
+                  <li>
+                    Block storage (files chunked into 4MB blocks, deduplicated)
+                  </li>
+                  <li>
+                    Sync service (detect local changes, push to server, pull
+                    from server)
+                  </li>
+                  <li>
+                    Notification service (tell other devices about changes)
+                  </li>
+                </ul>
+              </li>
+              <li>
+                (15 min) Deep dive:
+                <ul>
+                  <li>
+                    How to handle conflicts (two devices edit the same file
+                    offline)?
+                  </li>
+                  <li>
+                    How to sync efficiently (only changed blocks, not entire
+                    file)?
+                  </li>
+                  <li>
+                    How to handle large files (chunking + parallel upload)?
+                  </li>
+                  <li>How to implement sharing and permissions?</li>
+                </ul>
+              </li>
+              <li>
+                (5 min) Bottlenecks: Storage cost, sync latency, conflict
+                resolution complexity
+              </li>
+            </ol>
+
+            <p>After the timer: review your design. What would you change?</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "File sync is fundamentally a <strong>__</strong> problem.
+                Block-level dedup reminds me of <strong>__</strong> in data
+                compression. Key insight: <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 60 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 60</span>
+              <div class="card-title">Mock Interview + Self-Assessment</div>
+            </div>
+
+            <h4>Practice — Mock Interview (60 min)</h4>
+            <p>
+              <strong>Option A</strong> (preferred): Ask a peer, friend, or
+              colleague to give you a random system design question. Use a
+              whiteboard or paper. Timer: 45 minutes. Ask them for honest
+              feedback.
+            </p>
+            <p>
+              <strong>Option B</strong> (solo): Pick one of these without
+              looking at the details first:
+            </p>
+            <ul>
+              <li>Design a video streaming service (YouTube/Netflix)</li>
+              <li>Design a ride-sharing service (Uber/Lyft)</li>
+              <li>Design a real-time gaming leaderboard</li>
+            </ul>
+            <p>Set a 45-minute timer. Design it from scratch on paper.</p>
+
+            <h4>Practice — Self-Assessment (50 min)</h4>
+            <p>Score yourself honestly on each area (1-10):</p>
+            <ul>
+              <li>Algorithm pattern recognition: __/10</li>
+              <li>Algorithm implementation speed: __/10</li>
+              <li>System design: high-level architecture: __/10</li>
+              <li>System design: deep dive / data model: __/10</li>
+              <li>System design: bottleneck analysis: __/10</li>
+              <li>Code quality and testing: __/10</li>
+              <li>Design documentation (RFC/ADR): __/10</li>
+              <li>Python fluency: __/10</li>
+            </ul>
+            <p>
+              Compare to your Month 1 self. Where did you improve most? What 3
+              areas need the most continued work?
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Mock interview went: <strong>__/10</strong>. Strongest area:
+                <strong>__</strong>. Biggest remaining gap:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== WEEK 12 ========== -->
+          <h2>WEEK 12: Final Assessments + Integration</h2>
+
+          <!-- Day 61 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 61</span>
+              <div class="card-title">Final Algorithm Assessment (Part 1)</div>
+            </div>
+
+            <h4>Practice (120 min)</h4>
+            <p>
+              Run a complete fresh report. If possible, delete your old
+              solutions and re-implement from scratch (or use a separate
+              directory):
+            </p>
+            <pre><code><span class="cm"># Option 1: Fresh start</span>
+<span class="fn">mkdir</span> solutions_final
+<span class="cm"># Copy templates, solve fresh</span>
+
+<span class="cm"># Option 2: Re-run existing</span>
+python main.py --report</code></pre>
+
+            <p>
+              Solve problems by category, spending no more than the time limit
+              per problem:
+            </p>
+            <ul>
+              <li>
+                Arrays and Strings: <code>arr_01</code>, <code>arr_02</code>
+              </li>
+              <li>Sliding Window: <code>sw_01</code>, <code>sw_02</code></li>
+              <li>Two Pointers: <code>tp_01</code>, <code>tp_02</code></li>
+              <li>Binary Search: <code>bs_01</code></li>
+              <li>
+                Graphs: <code>graph_01</code>, <code>graph_02</code>,
+                <code>graph_03</code>
+              </li>
+            </ul>
+
+            <p>
+              For each problem, write the pattern you chose and why BEFORE
+              coding.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Solved <strong>__/10</strong> problems in this session. Time
+                management: <strong>__</strong>. Pattern recognition before
+                coding is now <strong>__</strong> (automatic/deliberate)."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 62 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 62</span>
+              <div class="card-title">Final Algorithm Assessment (Part 2)</div>
+            </div>
+
+            <h4>Practice (120 min)</h4>
+            <p>Continue the assessment. Remaining categories:</p>
+            <ul>
+              <li>Trees: <code>tree_01</code>, <code>tree_02</code></li>
+              <li>DP: <code>dp_01</code>, <code>dp_02</code></li>
+              <li>Linked Lists: <code>ll_01</code></li>
+              <li>Stacks: <code>stk_01</code>, <code>stk_02</code></li>
+              <li>Heap: <code>heap_01</code></li>
+              <li>Backtracking: <code>bt_01</code></li>
+              <li>Trie: <code>trie_01</code></li>
+              <li>Bit Manipulation: <code>bit_01</code></li>
+              <li>Prefix Sum: <code>ps_01</code></li>
+              <li>Union Find: <code>uf_01</code></li>
+            </ul>
+
+            <p>Run the final report:</p>
+            <pre><code>python main.py --report</code></pre>
+
+            <p>
+              Compare to your Month 1 report. Calculate improvement per
+              category.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Final report — strong categories: <strong>__</strong>.
+                Moderate: <strong>__</strong>. Weak: <strong>__</strong>.
+                Improvement from Month 1: <strong>__</strong> categories moved
+                up."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 63 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 63</span>
+              <div class="card-title">Final Pattern Recognition</div>
+            </div>
+
+            <h4>Practice (80 min)</h4>
+            <p>Full pattern recognition training:</p>
+            <pre><code>python main.py --train</code></pre>
+
+            <p>
+              Record your accuracy: __/25. For any pattern you missed, spend 5
+              minutes reviewing it:
+            </p>
+            <pre><code>python main.py --pattern &lt;pattern_id&gt;</code></pre>
+
+            <p>
+              Then do a speed round — go through the decision tree mentally for
+              10 random problems from the problem bank. For each, state the
+              pattern in under 10 seconds (use a stopwatch):
+            </p>
+            <pre><code>python main.py --list</code></pre>
+
+            <p>
+              Pick 10 at random, read only the problem name and tags, state the
+              pattern.
+            </p>
+
+            <h4>Practice (30 min)</h4>
+            <p>
+              Write a "Pattern Cheat Sheet" in your journal — for each of the 16
+              patterns, write ONE sentence: when to use it. Keep it to a single
+              page.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Final pattern accuracy: <strong>__/25</strong>. Month 1
+                accuracy was <strong>__</strong>. The pattern I will never
+                forget: <strong>__</strong>. The one I still second-guess:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 64 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 64</span>
+              <div class="card-title">
+                Final System Design: Distributed Key-Value Store (Full RFC)
+              </div>
+            </div>
+
+            <h4>Practice (150 min)</h4>
+            <p>
+              This is your capstone system design. Write a FULL RFC for a
+              <strong>Distributed Key-Value Store</strong>. Use everything you
+              have learned. Save as
+              <code>exercises/final_system_design_rfc.md</code>.
+            </p>
+
+            <p>
+              Use the RFC template from
+              <a href="staff_level.html">Staff-Level Skills guide</a> section
+              2.1. Include:
+            </p>
+            <ol>
+              <li>
+                <strong>Context</strong>: Why build a distributed KV store? What
+                are the requirements? (High availability, low latency, eventual
+                consistency)
+              </li>
+              <li>
+                <strong>Goals</strong>: Support 100K reads/sec, 10K writes/sec,
+                100TB data, 99.99% availability
+              </li>
+              <li>
+                <strong>Non-Goals</strong>: Strong consistency, SQL queries,
+                multi-key transactions
+              </li>
+              <li>
+                <strong>Proposal</strong>:
+                <ul>
+                  <li>
+                    Consistent hashing with virtual nodes for partitioning
+                  </li>
+                  <li>Replication factor of 3</li>
+                  <li>Quorum reads/writes (W + R > N)</li>
+                  <li>
+                    Vector clocks or last-write-wins for conflict resolution
+                  </li>
+                  <li>Gossip protocol for failure detection</li>
+                  <li>Hinted handoff for temporary failures</li>
+                  <li>Merkle trees for anti-entropy repair</li>
+                  <li>Data model and API (GET, PUT, DELETE)</li>
+                </ul>
+              </li>
+              <li>
+                <strong>Alternatives Considered</strong>:
+                <ul>
+                  <li>
+                    Single-leader replication (rejected: single point of
+                    failure)
+                  </li>
+                  <li>
+                    Strong consistency with Raft (rejected: availability >
+                    consistency for this use case)
+                  </li>
+                  <li>
+                    Using an existing solution like DynamoDB (rejected: learning
+                    exercise)
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Risks and Mitigations</strong>:
+                <ul>
+                  <li>
+                    Data loss during multiple node failures -> increase
+                    replication factor
+                  </li>
+                  <li>Hot keys -> add caching layer, split hot keys</li>
+                  <li>
+                    Network partition -> sloppy quorum with hinted handoff
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <strong>Milestones</strong>: Phase 1 (single node), Phase 2
+                (partitioning), Phase 3 (replication), Phase 4 (failure
+                handling)
+              </li>
+            </ol>
+            <p>This should be 4-6 pages. Quality over speed.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "This RFC took <strong>__</strong> minutes. The section I'm most
+                confident about: <strong>__</strong>. The section that needs
+                more depth: <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 65 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 65</span>
+              <div class="card-title">Review All Guides</div>
+            </div>
+
+            <h4>Read (90 min)</h4>
+            <p>
+              Skim through all 5 guides. For each, write down your
+              <strong>top 2 takeaways</strong> that changed how you think:
+            </p>
+            <ol>
+              <li>
+                <a href="mental_models.html">Mental Models</a> — Takeaways: __,
+                __
+              </li>
+              <li>
+                <a href="systems_design.html">Systems Design</a> — Takeaways:
+                __, __
+              </li>
+              <li>
+                <a href="software_engineering.html">Software Engineering</a> —
+                Takeaways: __, __
+              </li>
+              <li>
+                <a href="cs_fundamentals.html">CS Fundamentals</a> — Takeaways:
+                __, __
+              </li>
+              <li>
+                <a href="staff_level.html">Staff-Level Skills</a> — Takeaways:
+                __, __
+              </li>
+            </ol>
+
+            <h4>Practice (20 min)</h4>
+            <p>
+              Compile your takeaways into a personal "Top 10" list. Save as
+              <code>exercises/top_10_takeaways.md</code>.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "The guide that had the most impact: <strong>__</strong>. The
+                mental model shift that changed my daily work:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 66 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 66</span>
+              <div class="card-title">
+                Personal ADR: Where I Was vs Where I Am
+              </div>
+            </div>
+
+            <h4>Practice (90 min)</h4>
+            <p>
+              Write a personal Architecture Decision Record about your own
+              growth. Save as <code>exercises/personal_adr.md</code>. Structure:
+            </p>
+            <pre><code><span class="cm"># Personal ADR: 3-Month Growth Retrospective</span>
+
+<span class="cm">## Where I Was (Month 1, Day 1)</span>
+- Algorithm skills: [honest assessment]
+- System design ability: [honest assessment]
+- Software engineering practices: [honest assessment]
+- Staff-level skills: [honest assessment]
+
+<span class="cm">## Where I Am Now (Month 3, Day 66)</span>
+- Algorithm skills: [with evidence — report scores, pattern accuracy]
+- System design ability: [with evidence — designs completed, RFC quality]
+- Software engineering practices: [with evidence — projects built, tests]
+- Staff-level skills: [with evidence — RFCs written, ADRs, mentoring]
+
+<span class="cm">## What Worked</span>
+- [Top 3 study strategies that were most effective]
+
+<span class="cm">## What I Would Do Differently</span>
+- [If starting over, what would I change?]
+
+<span class="cm">## What to Focus on Next</span>
+- [Top 3 areas for continued growth]
+- [Specific actions: daily habit, weekly practice, monthly goal]
+
+<span class="cm">## Key Decisions Going Forward</span>
+- Daily: [e.g., 1 algorithm problem per day, 20 min]
+- Weekly: [e.g., 1 system design sketch, 30 min]
+- Monthly: [e.g., 1 design doc at work, 1 technical book]</code></pre>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Looking back, the single most valuable thing I did was
+                <strong>__</strong>. The skill I'm most proud of developing:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 67 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 67</span>
+              <div class="card-title">Continued Growth Plan</div>
+            </div>
+
+            <h4>Read (40 min)</h4>
+            <ul>
+              <li>
+                <a href="three_month_plan.html">Three-Month Plan</a> — Re-read
+                the <strong>"After the 3 Months"</strong> section.
+              </li>
+              <li>
+                Key habits to maintain:
+                <ol>
+                  <li>Daily: 1 algorithm problem (20 min)</li>
+                  <li>Weekly: 1 system design sketch (30 min)</li>
+                  <li>Monthly: 1 design doc or ADR at work</li>
+                  <li>Quarterly: 1 technical book</li>
+                  <li>Ongoing: Mentor one junior engineer</li>
+                </ol>
+              </li>
+            </ul>
+
+            <h4>Practice (70 min)</h4>
+            <ul>
+              <li>
+                Set up your continued practice:
+                <ul>
+                  <li>
+                    Bookmark algorithm practice sites (LeetCode, NeetCode)
+                  </li>
+                  <li>
+                    Create a recurring calendar event: "Algorithm practice" (20
+                    min daily)
+                  </li>
+                  <li>
+                    Create a recurring calendar event: "System design sketch"
+                    (30 min weekly)
+                  </li>
+                  <li>Pick your next technical book from the reading list</li>
+                </ul>
+              </li>
+            </ul>
+
+            <p>
+              Do one last system design practice — pick any problem you have NOT
+              done yet:
+            </p>
+            <ul>
+              <li>Design a video streaming service (YouTube)</li>
+              <li>Design a ride-sharing service (Uber)</li>
+              <li>Design a social media feed (Instagram)</li>
+            </ul>
+            <p>Timer: 45 minutes.</p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "My continued growth plan: daily <strong>__</strong>, weekly
+                <strong>__</strong>, monthly <strong>__</strong>. Next book:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 68 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 68</span>
+              <div class="card-title">
+                Bonus: Real-Time Dashboard (Optional Start)
+              </div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              If you have time and energy, start <strong>Project 3</strong>
+              (Bonus) from
+              <a href="three_month_plan.html">Three-Month Plan</a>: Build a
+              simple real-time dashboard for Project 2's analytics.
+            </p>
+
+            <p>Backend: Add a WebSocket endpoint to the Analytics API:</p>
+            <pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> WebSocket
+<span class="kw">import</span> asyncio
+
+<span class="kw">@</span>app.websocket(<span class="str">"/ws/live"</span>)
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">live_analytics</span>(websocket: WebSocket):
+    <span class="kw">await</span> websocket.accept()
+    <span class="kw">while</span> <span class="num">True</span>:
+        <span class="cm"># Send latest metrics every 2 seconds</span>
+        stats = get_live_stats()  <span class="cm"># total clicks, clicks/minute, top URLs</span>
+        <span class="kw">await</span> websocket.send_json(stats)
+        <span class="kw">await</span> asyncio.sleep(<span class="num">2</span>)</code></pre>
+
+            <p>Frontend: Create a simple HTML page with JavaScript:</p>
+            <pre><code><span class="kw">&lt;!DOCTYPE html&gt;</span>
+<span class="kw">&lt;html&gt;</span>
+  <span class="kw">&lt;head&gt;</span>
+    <span class="kw">&lt;title&gt;</span>URL Shortener Analytics<span class="kw">&lt;/title&gt;</span>
+  <span class="kw">&lt;/head&gt;</span>
+  <span class="kw">&lt;body&gt;</span>
+    <span class="kw">&lt;h1&gt;</span>Live Analytics<span class="kw">&lt;/h1&gt;</span>
+    <span class="kw">&lt;div</span> id=<span class="str">"total-clicks"</span><span class="kw">&gt;</span>Total: --<span class="kw">&lt;/div&gt;</span>
+    <span class="kw">&lt;div</span> id=<span class="str">"clicks-per-minute"</span><span class="kw">&gt;</span>Rate: --/min<span class="kw">&lt;/div&gt;</span>
+    <span class="kw">&lt;div</span> id=<span class="str">"top-urls"</span><span class="kw">&gt;&lt;/div&gt;</span>
+    <span class="kw">&lt;script&gt;</span>
+      <span class="kw">const</span> ws = <span class="kw">new</span> <span class="fn">WebSocket</span>(<span class="str">"ws://localhost:8002/ws/live"</span>);
+      ws.onmessage = (event) =&gt; {
+        <span class="kw">const</span> data = JSON.parse(event.data);
+        document.getElementById(<span class="str">"total-clicks"</span>).textContent =
+          <span class="str">`Total: ${data.total_clicks}`</span>;
+        document.getElementById(<span class="str">"clicks-per-minute"</span>).textContent =
+          <span class="str">`Rate: ${data.clicks_per_minute}/min`</span>;
+      };
+    <span class="kw">&lt;/script&gt;</span>
+  <span class="kw">&lt;/body&gt;</span>
+<span class="kw">&lt;/html&gt;</span></code></pre>
+
+            <p>
+              If you skip this, use the time to catch up on anything incomplete.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "WebSocket is like <strong>__</strong> compared to HTTP polling.
+                Real-time updates are important for <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 69 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 69</span>
+              <div class="card-title">Final Polish + Portfolio Review</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>Review both projects holistically:</p>
+
+            <p><strong>Project 1</strong> (Task Management API):</p>
+            <ul class="checklist">
+              <li>README is clear and complete</li>
+              <li>All tests pass</li>
+              <li>DESIGN.md (RFC) is written</li>
+              <li>Docker works</li>
+              <li>CI/CD pipeline (if set up) is green</li>
+            </ul>
+
+            <p><strong>Project 2</strong> (URL Shortener with Analytics):</p>
+            <ul class="checklist">
+              <li>README is clear and complete</li>
+              <li>All tests pass</li>
+              <li>DESIGN.md (RFC) was written BEFORE implementation</li>
+              <li>ADRs are written for 3 key decisions</li>
+              <li>Health checks work</li>
+              <li>Structured logging is in place</li>
+              <li>Load test results are documented</li>
+              <li>Docker compose works (or manual multi-service setup)</li>
+            </ul>
+
+            <p>
+              Fix anything that is incomplete. Push final versions to GitHub.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Both projects are at <strong>__%</strong> completion. The one
+                I'm more proud of: <strong>__</strong>. If I were reviewing this
+                as a staff engineer, I would say <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 70 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 70</span>
+              <div class="card-title">Final Full Assessment</div>
+            </div>
+
+            <h4>Practice (120 min)</h4>
+            <p>Run every assessment tool one final time:</p>
+            <pre><code><span class="cm"># Pattern recognition</span>
+python main.py --train
+
+<span class="cm"># Full algorithm report</span>
+python main.py --report
+
+<span class="cm"># Review your decision tree understanding</span>
+python main.py --decision-tree</code></pre>
+
+            <p>Record final scores:</p>
+            <ul>
+              <li>Pattern recognition: __/25 (Month 1: __, Month 2: __)</li>
+              <li>Algorithm categories strong: __ (Month 1: __)</li>
+              <li>Algorithm categories moderate: __ (Month 1: __)</li>
+              <li>Algorithm categories weak: __ (Month 1: __)</li>
+            </ul>
+            <ul>
+              <li>System design self-score (1-10): __ (Month 1: __)</li>
+              <li>Total system designs completed: __</li>
+              <li>Total RFCs/ADRs written: __</li>
+            </ul>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Final scores recorded. The number I'm most proud of:
+                <strong>__</strong>. Three months ago I could not
+                <strong>__</strong>. Now I can <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 71 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 71</span>
+              <div class="card-title">Teaching Exercise</div>
+            </div>
+
+            <h4>Practice (110 min)</h4>
+            <p>
+              The best test of understanding is teaching. Pick one topic from
+              each area and explain it as if to a junior engineer (write it down
+              or record yourself):
+            </p>
+            <ol>
+              <li>
+                <strong>Algorithm</strong>: Explain the sliding window pattern —
+                when to use it, how it works, walk through an example step by
+                step. (20 min)
+              </li>
+              <li>
+                <strong>System design</strong>: Explain how you would design a
+                URL shortener to someone who has never done system design. Walk
+                through the 5 steps. (20 min)
+              </li>
+              <li>
+                <strong>Software engineering</strong>: Explain why testing
+                matters and how to structure tests (unit, integration, e2e).
+                Give a concrete example. (15 min)
+              </li>
+              <li>
+                <strong>Staff skills</strong>: Explain what an RFC is and why
+                you write one before building. Show your template. (15 min)
+              </li>
+            </ol>
+            <p>
+              If you have a colleague willing to listen, teach it to them live.
+              If not, write it up in
+              <code>exercises/teaching_notes.md</code>.
+            </p>
+
+            <div class="callout callout-info">
+              <div class="callout-title">Journal prompt</div>
+              <p>
+                "Teaching revealed that I understand <strong>__</strong> deeply
+                but still struggle to explain <strong>__</strong> simply.
+                Teaching is the best way to <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <!-- Day 72 -->
+          <div class="card">
+            <div class="card-header">
+              <span class="badge badge-purple">Day 72</span>
+              <div class="card-title">Celebration + Next Steps</div>
+            </div>
+
+            <h4>Read (20 min)</h4>
+            <ul>
+              <li>Re-read your personal ADR from Day 66.</li>
+              <li>Re-read your Day 1 journal entry.</li>
+              <li>Reflect on the journey.</li>
+            </ul>
+
+            <h4>Practice (30 min)</h4>
+            <ul>
+              <li>Update your personal ADR with any final thoughts.</li>
+              <li>Commit everything:</li>
+            </ul>
+            <pre><code><span class="kw">cd</span> C:/temp/algorithms_gaps_analysis
+<span class="fn">git</span> add -A
+<span class="fn">git</span> commit -m <span class="str">"Complete: 3-month staff SDE study program"</span></code></pre>
+
+            <div class="callout callout-success">
+              <div class="callout-title">Final journal entry</div>
+              <p>
+                "Day 72. I started this program because <strong>__</strong>. The
+                three things that changed most about how I think about software:
+                1) <strong>__</strong>, 2) <strong>__</strong>, 3)
+                <strong>__</strong>.
+              </p>
+              <p>My continued practice plan: <strong>__</strong>.</p>
+              <p>
+                What I would tell another EE making this transition:
+                <strong>__</strong>."
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ========== MONTH 3 CHECKPOINT ========== -->
+          <h2>Month 3 Checkpoint (Final)</h2>
+          <p>Verify you have completed:</p>
+          <ul class="checklist">
+            <li>
+              <a href="staff_level.html">Staff-Level Skills guide</a> read fully
+            </li>
+            <li>
+              Project 2 complete with: 2 services + 1 worker, RFC (written
+              first), ADRs, tests, health checks, structured logging, load
+              testing, Docker
+            </li>
+            <li>11+ system designs completed total</li>
+            <li>
+              Pattern recognition >90% (<code>python main.py --train</code>)
+            </li>
+            <li>
+              Final algorithm report shows strong improvement from Month 1
+            </li>
+            <li>
+              Personal ADR written (retrospective + continued growth plan)
+            </li>
+            <li>Can write an RFC from scratch in under 60 minutes</li>
+            <li>
+              Can design a distributed system (KV store level) with proper
+              tradeoff analysis
+            </li>
+          </ul>
+
+          <hr />
+
+          <!-- ========== WHAT COMES NEXT ========== -->
+          <h2>What Comes Next</h2>
+          <p>
+            After these 72 days, you have built a strong foundation. Staying
+            sharp requires:
+          </p>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon green">&#10003;</div>
+              <div class="card-title">5 Habits for Continued Growth</div>
+            </div>
+            <ol>
+              <li>
+                <strong>Daily</strong>: 1 algorithm problem, 20 min (keep
+                pattern recognition sharp)
+              </li>
+              <li>
+                <strong>Weekly</strong>: 1 system design sketch, 30 min
+                (whiteboard, no computer)
+              </li>
+              <li>
+                <strong>Monthly</strong>: Write 1 design doc or ADR at work
+                (real practice > exercises)
+              </li>
+              <li>
+                <strong>Quarterly</strong>: Read 1 technical book from the
+                reading list
+              </li>
+              <li>
+                <strong>Always</strong>: Mentor a junior engineer — teaching
+                deepens your own understanding
+              </li>
+            </ol>
+          </div>
+
+          <div class="callout callout-success">
+            <div class="callout-title">You have done the work</div>
+            <p>Now apply it.</p>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

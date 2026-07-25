@@ -1,0 +1,125 @@
+{
+  "id": "gen_two_sum_99",
+  "title": "Two Sum (generated)",
+  "pattern": "hash_map",
+  "difficulty": "easy",
+  "seed": 99,
+  "function_name": "two_sum",
+  "test_cases": [
+    {
+      "args": [
+        [
+          25,
+          13,
+          39,
+          12,
+          15,
+          16,
+          9
+        ],
+        34
+      ],
+      "expected": [
+        0,
+        6
+      ]
+    },
+    {
+      "args": [
+        [
+          47,
+          25,
+          34,
+          44,
+          45,
+          35
+        ],
+        92
+      ],
+      "expected": [
+        0,
+        4
+      ]
+    },
+    {
+      "args": [
+        [
+          13,
+          27,
+          47,
+          40,
+          38,
+          14,
+          24
+        ],
+        64
+      ],
+      "expected": [
+        3,
+        6
+      ]
+    },
+    {
+      "args": [
+        [
+          14,
+          10,
+          30,
+          43,
+          12,
+          37,
+          22,
+          6,
+          46
+        ],
+        56
+      ],
+      "expected": [
+        1,
+        8
+      ]
+    },
+    {
+      "args": [
+        [
+          21,
+          26,
+          3,
+          18,
+          36,
+          1,
+          28
+        ],
+        29
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    },
+    {
+      "args": [
+        [
+          6,
+          30,
+          34,
+          13,
+          39,
+          30,
+          4,
+          23
+        ],
+        64
+      ],
+      "expected": [
+        1,
+        2
+      ]
+    }
+  ],
+  "hints": [
+    "Store value\u2192index while scanning.",
+    "Look for target - nums[i] in the map."
+  ],
+  "mental_model": "Hash map turns 'find complement' into O(1) average lookups \u2014 like an address decoder."
+}

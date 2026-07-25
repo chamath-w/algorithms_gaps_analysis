@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Security &amp; Cryptography — Offline Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Security &amp; Cryptography</h1>
+          <p>
+            Adversarial thinking. Assume a hostile channel and a curious insider.
+          </p>
+          <div class="callout callout-ee">
+            <div class="callout-title">EE bridge</div>
+            <p>
+              Security is signal integrity under an adversary who crafts inputs —
+              like EMI, but intentional. Crypto provides sealed envelopes;
+              systems still need correct key distribution and trust boundaries.
+            </p>
+          </div>
+
+          <section id="threat">
+            <h2>Threat modeling</h2>
+            <p>
+              STRIDE: Spoofing, Tampering, Repudiation, Information disclosure,
+              Denial of service, Elevation of privilege. Draw trust boundaries;
+              ask what crosses them.
+            </p>
+            <div class="diagram-container" id="anim-threat">
+              <div class="diagram-title">Trust boundary around a service</div>
+              <svg id="svg-threat" width="100%" height="180" viewBox="0 0 480 180"></svg>
+              <div class="anim-description">Highlight what must be authenticated.</div>
+              <div class="anim-controls"></div>
+            </div>
+            <button class="anim-btn" data-mark-lesson="sec_01">Mark lesson done</button>
+          </section>
+
+          <section id="crypto">
+            <h2>Crypto primitives (roles, not math proofs)</h2>
+            <ul>
+              <li><strong>Hash:</strong> integrity fingerprint (not encryption).</li>
+              <li><strong>MAC / HMAC:</strong> integrity + authenticity with a key.</li>
+              <li><strong>AEAD (AES-GCM):</strong> confidentiality + integrity together.</li>
+              <li><strong>Public-key:</strong> key exchange / signatures; expensive — wrap symmetric keys.</li>
+              <li><strong>TLS:</strong> handshake establishes keys; then AEAD records.</li>
+            </ul>
+            <div class="callout callout-danger">
+              <div class="callout-title">Don’t</div>
+              <p>
+                Don’t invent crypto. Don’t use ECB. Don’t roll your own JWT
+                validation. Prefer boring high-level libraries.
+              </p>
+            </div>
+          </section>
+
+          <section id="web">
+            <h2>Auth &amp; web risks</h2>
+            <p>
+              <strong>Authentication</strong> = who you are.
+              <strong>Authorization</strong> = what you may do. Server must
+              enforce both. OWASP-style hits: injection, XSS, CSRF, SSRF, broken
+              access control, misconfig, vulnerable deps.
+            </p>
+            <pre><code>// mental checklist for every endpoint
+1. Is the caller authenticated?
+2. Is the caller authorized for THIS resource?
+3. Are inputs validated / parameterized (SQL/cmd)?
+4. Is output encoded for the context (HTML/JS)?
+5. Are secrets out of logs and repos?</code></pre>
+            <button class="anim-btn" data-mark-lesson="sec_03">Mark lesson done</button>
+          </section>
+
+          <h2>Track quiz</h2>
+          <div data-quiz data-track="security"></div>
+          <div data-tutor-topic="security"></div>
+
+          <p><a href="software_engineering.html">Next: Software Engineering →</a></p>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("svg-threat");
+        function paint(phase) {
+          const border = phase >= 1 ? "#f85149" : "#30363d";
+          svg.innerHTML = `
+            <rect x="140" y="30" width="220" height="120" rx="10" fill="#161b22" stroke="${border}" stroke-width="2" stroke-dasharray="${phase >= 1 ? "0" : "6 4"}"/>
+            <text x="250" y="55" text-anchor="middle" fill="#8b949e" font-size="12">Trust boundary</text>
+            <rect x="190" y="70" width="120" height="50" rx="6" fill="#21262d" stroke="#58a6ff"/>
+            <text x="250" y="100" text-anchor="middle" fill="#e6edf3" font-size="13">API Service</text>
+            <text x="40" y="100" fill="${phase >= 2 ? "#f85149" : "#8b949e"}" font-size="13">Client</text>
+            <line x1="90" y1="100" x2="190" y2="95" stroke="${phase >= 2 ? "#f85149" : "#484f58"}" stroke-width="2"/>
+            <text x="100" y="85" fill="#8b949e" font-size="11">${phase >= 2 ? "authn + authz here" : "request"}</text>
+            <text x="380" y="100" fill="#8b949e" font-size="13">DB</text>
+            <line x1="310" y1="95" x2="370" y2="100" stroke="#484f58" stroke-width="2"/>
+          `;
+        }
+        paint(0);
+        new AlgoAnimation("anim-threat", [
+          { description: "Draw the trust boundary around the service", apply: () => paint(1) },
+          { description: "Anything crossing in must be authenticated & authorized", apply: () => paint(2) },
+          { description: "DB stays inside — least privilege credentials", apply: () => paint(2) },
+        ], { onReset: () => paint(0) });
+      });
+    </script>
+  </body>
+</html>

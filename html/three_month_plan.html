@@ -1,0 +1,1865 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3-Month Plan — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>3-Month Plan: EE to Staff SDE</h1>
+          <p>
+            This plan runs 12 weeks. Budget 10-15 hours/week beyond your normal
+            work. The plan interleaves theory, practice, and projects so you are
+            never just reading — you are always building.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Structure</div>
+            <p>
+              <span class="badge badge-blue">Month 1</span> Foundations
+              (algorithms, CS fundamentals, Python mastery)
+            </p>
+            <p>
+              <span class="badge badge-green">Month 2</span> Architecture
+              (systems design, databases, APIs)
+            </p>
+            <p>
+              <span class="badge badge-purple">Month 3</span> Staff Impact
+              (design docs, leadership, capstone projects)
+            </p>
+          </div>
+
+          <!-- ===== 12-WEEK TIMELINE SVG ===== -->
+          <h2>12-Week Timeline</h2>
+          <div class="diagram-container">
+            <div class="diagram-title">Weekly Focus Areas</div>
+            <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+              <!-- Month labels -->
+              <text
+                x="187"
+                y="20"
+                fill="#58a6ff"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                MONTH 1: Foundations
+              </text>
+              <text
+                x="525"
+                y="20"
+                fill="#3fb950"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                MONTH 2: Architecture
+              </text>
+              <text
+                x="787"
+                y="20"
+                fill="#bc8cff"
+                font-size="14"
+                font-weight="700"
+                text-anchor="middle"
+                font-family="Inter, sans-serif"
+              >
+                MONTH 3: Staff Impact
+              </text>
+
+              <!-- Week blocks - Month 1 (blue) -->
+              <rect
+                x="25"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="60" y="60" class="label-text" font-size="11">
+                Week 1
+              </text>
+              <text x="60" y="78" class="label-small">Patterns</text>
+
+              <rect
+                x="105"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="140" y="60" class="label-text" font-size="11">
+                Week 2
+              </text>
+              <text x="140" y="78" class="label-small">Deep Dive</text>
+
+              <rect
+                x="185"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="220" y="60" class="label-text" font-size="11">
+                Week 3
+              </text>
+              <text x="220" y="78" class="label-small">Hard Probs</text>
+
+              <rect
+                x="265"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="300" y="60" class="label-text" font-size="11">
+                Week 4
+              </text>
+              <text x="300" y="78" class="label-small">SQL + Assess</text>
+
+              <!-- Week blocks - Month 2 (green) -->
+              <rect
+                x="370"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text x="405" y="60" class="label-text" font-size="11">
+                Week 5
+              </text>
+              <text x="405" y="78" class="label-small">Sys Design</text>
+
+              <rect
+                x="450"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text x="485" y="60" class="label-text" font-size="11">
+                Week 6
+              </text>
+              <text x="485" y="78" class="label-small">Project 1</text>
+
+              <rect
+                x="530"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text x="565" y="60" class="label-text" font-size="11">
+                Week 7
+              </text>
+              <text x="565" y="78" class="label-small">Sys Design+</text>
+
+              <rect
+                x="610"
+                y="40"
+                width="70"
+                height="50"
+                rx="6"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text x="645" y="60" class="label-text" font-size="11">
+                Week 8
+              </text>
+              <text x="645" y="78" class="label-small">Docker+CI</text>
+
+              <!-- Week blocks - Month 3 (purple) -->
+              <rect
+                x="715"
+                y="40"
+                width="40"
+                height="50"
+                rx="6"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text x="735" y="60" class="label-text" font-size="10">W9</text>
+              <text x="735" y="78" class="label-small" font-size="9">
+                Staff
+              </text>
+
+              <rect
+                x="762"
+                y="40"
+                width="40"
+                height="50"
+                rx="6"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text x="782" y="60" class="label-text" font-size="10">W10</text>
+              <text x="782" y="78" class="label-small" font-size="9">
+                Observe
+              </text>
+
+              <rect
+                x="809"
+                y="40"
+                width="40"
+                height="50"
+                rx="6"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text x="829" y="60" class="label-text" font-size="10">W11</text>
+              <text x="829" y="78" class="label-small" font-size="9">
+                Refresh
+              </text>
+
+              <rect
+                x="856"
+                y="40"
+                width="40"
+                height="50"
+                rx="6"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text x="876" y="60" class="label-text" font-size="10">W12</text>
+              <text x="876" y="78" class="label-small" font-size="9">
+                Final
+              </text>
+
+              <!-- Connector line -->
+              <line
+                x1="25"
+                y1="110"
+                x2="896"
+                y2="110"
+                stroke="#30363d"
+                stroke-width="2"
+              />
+              <!-- Milestone dots -->
+              <circle cx="170" cy="110" r="6" fill="#58a6ff" />
+              <text x="170" y="130" class="label-small" fill="#58a6ff">
+                Wk 2: >70%
+              </text>
+              <text x="170" y="143" class="label-small" fill="#58a6ff">
+                patterns
+              </text>
+
+              <circle cx="335" cy="110" r="6" fill="#58a6ff" />
+              <text x="335" y="130" class="label-small" fill="#58a6ff">
+                Wk 4: SQL +
+              </text>
+              <text x="335" y="143" class="label-small" fill="#58a6ff">
+                1st design
+              </text>
+
+              <circle cx="520" cy="110" r="6" fill="#3fb950" />
+              <text x="520" y="130" class="label-small" fill="#3fb950">
+                Wk 6: Proj 1
+              </text>
+              <text x="520" y="143" class="label-small" fill="#3fb950">
+                started
+              </text>
+
+              <circle cx="680" cy="110" r="6" fill="#3fb950" />
+              <text x="680" y="130" class="label-small" fill="#3fb950">
+                Wk 8: 6+ designs
+              </text>
+              <text x="680" y="143" class="label-small" fill="#3fb950">
+                CI/CD working
+              </text>
+
+              <circle
+                cx="896"
+                cy="110"
+                r="8"
+                fill="#bc8cff"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text x="850" y="165" class="label-small" fill="#bc8cff">
+                Wk 12: All
+              </text>
+              <text x="850" y="178" class="label-small" fill="#bc8cff">
+                assessments done
+              </text>
+
+              <!-- Key activities row -->
+              <rect
+                x="25"
+                y="190"
+                width="310"
+                height="24"
+                rx="4"
+                fill="rgba(88,166,255,0.08)"
+              />
+              <text x="180" y="206" class="label-small" fill="#58a6ff">
+                21 patterns, 26 problems, concurrency, SQL
+              </text>
+
+              <rect
+                x="370"
+                y="190"
+                width="310"
+                height="24"
+                rx="4"
+                fill="rgba(63,185,80,0.08)"
+              />
+              <text x="525" y="206" class="label-small" fill="#3fb950">
+                DDIA, 9 designs, REST API project, Docker
+              </text>
+
+              <rect
+                x="715"
+                y="190"
+                width="181"
+                height="24"
+                rx="4"
+                fill="rgba(188,140,255,0.08)"
+              />
+              <text x="805" y="206" class="label-small" fill="#bc8cff">
+                RFCs, Project 2, final exams
+              </text>
+            </svg>
+          </div>
+
+          <!-- ===== MONTH 1 ===== -->
+          <h2>Month 1: Foundations (Weeks 1-4)</h2>
+
+          <h3>Week 1: Algorithm Patterns + Python Fluency</h3>
+          <p>
+            <strong>Goal:</strong> Internalize the 16 algorithm patterns, get
+            fluent in Python idioms.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Read
+                  <a href="mental_models.html">Mental Models guide</a> fully.
+                  Journal which models feel new.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Run <code>python main.py --patterns</code> and
+                  <code>--decision-tree</code>. Study 4 patterns in depth (<code
+                    >--pattern &lt;id&gt;</code
+                  >).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Run <code>python main.py --train --train-limit 10</code>.
+                  Review every miss.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Solve 3 algorithm problems: <code>arr_01</code>,
+                  <code>sw_02</code>, <code>graph_02</code> (easiest from
+                  different categories).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Python fluency: Write solutions using list comprehensions,
+                  generators, <code>collections</code> module,
+                  <code>itertools</code>. Refactor yesterday's solutions.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>
+                  Solve 3 more: <code>dp_01</code>, <code>stk_02</code>,
+                  <code>bit_01</code>. Run <code>python main.py --report</code>.
+                </td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>
+              First gap analysis report. Identify your 3 weakest categories.
+            </p>
+          </div>
+
+          <h3>Week 2: Algorithm Deep Dive + Testing</h3>
+          <p>
+            <strong>Goal:</strong> Attack your weakest patterns. Learn pytest.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Study your 3 weakest patterns in detail. Read the template
+                  code. Trace through by hand.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Solve 3 problems from your weakest categories. Use hints if
+                  stuck > 15 min.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Read
+                  <a href="software_engineering.html"
+                    >Software Engineering guide</a
+                  >
+                  Part 2 (Testing). Write pytest tests for 2 solutions.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Run <code>python main.py --train</code> (full 30 scenarios).
+                  Target > 70% accuracy.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Solve remaining medium-difficulty problems. Run
+                  <code>--report</code>.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>Read: "A Philosophy of Software Design" chapters 1-8.</td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>
+              Pattern recognition accuracy > 70%. All medium problems attempted.
+            </p>
+          </div>
+
+          <h3>Week 3: Hard Problems + Concurrency</h3>
+          <p>
+            <strong>Goal:</strong> Tackle hard algorithm problems. Understand
+            concurrency.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Solve <code>arr_02</code> (Trapping Rain Water) and
+                  <code>stk_01</code> (Largest Rectangle). Both use monotonic
+                  patterns.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Solve <code>sw_01</code> (Min Window Substring) and
+                  <code>heap_01</code> (Merge K Lists).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Read
+                  <a href="cs_fundamentals.html">CS Fundamentals guide</a> Part
+                  1 (OS) and Part 4 (Concurrency).
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Practice: Write a producer-consumer in Python with
+                  <code>threading</code> and <code>queue</code>. Then rewrite
+                  with <code>asyncio</code>.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Solve <code>graph_03</code> (Alien Dictionary),
+                  <code>dp_02</code> (Edit Distance).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>
+                  Solve <code>ll_01</code> (LRU Cache),
+                  <code>tree_02</code> (Serialize/Deserialize).
+                </td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>
+              80%+ of algorithm problems solved. Can write concurrent Python.
+            </p>
+          </div>
+
+          <h3>Week 4: SQL + Databases + Assessment</h3>
+          <p>
+            <strong>Goal:</strong> SQL fluency. Complete the algorithm
+            assessment. First system design attempt.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Read
+                  <a href="cs_fundamentals.html">CS Fundamentals guide</a> Part
+                  3 (Databases). Do SQLZoo exercises.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Practice: Design an e-commerce schema. Write 10 queries
+                  including JOINs, GROUP BY, subqueries.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Complete remaining algorithm problems. Run final
+                  <code>--report</code>.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Run <code>python main.py --train</code> again. Target > 85%
+                  accuracy.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  First system design: URL shortener (see
+                  <a href="systems_design.html">Systems Design guide</a> Part
+                  4). 35 min timed.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>
+                  Read: "Designing Data-Intensive Applications" chapters 1-2.
+                </td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>
+              Algorithm gap report showing strong improvement. SQL basics solid.
+              First system design sketch complete.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ===== MONTH 2 ===== -->
+          <h2>Month 2: Architecture (Weeks 5-8)</h2>
+
+          <h3>Week 5: System Design Foundations</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Read
+                  <a href="systems_design.html">Systems Design guide</a> Parts
+                  1-2 fully.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>Read DDIA chapters 3-4 (Storage/Encoding).</td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  System design practice: Design a Rate Limiter. 35 min timed.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Study: Caching strategies deep dive. Set up Redis locally.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  System design practice: Design a Paste Bin. 35 min timed.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>Read DDIA chapters 5-6 (Replication/Partitioning).</td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>3 beginner system designs completed.</p>
+          </div>
+
+          <h3>Week 6: APIs + Networking + Project 1 Start</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Read
+                  <a href="systems_design.html">Systems Design guide</a> Part 5
+                  (API Design) and
+                  <a href="cs_fundamentals.html">CS Fundamentals</a> Part 2
+                  (Networking).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  <strong>Start Project 1:</strong> Build a REST API with
+                  database. Set up the project, define the schema.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Project 1: Implement CRUD endpoints with proper error
+                  handling.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Project 1: Add input validation, pagination, and basic tests.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Project 1: Add caching (Redis or in-memory). Measure the
+                  performance difference.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>
+                  Read DDIA chapters 7-8 (Transactions/Distributed Systems).
+                </td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>Working REST API with database, caching, and tests.</p>
+          </div>
+
+          <h3>Week 7: Intermediate System Design + Project 1 Complete</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  System design practice: Twitter/X News Feed. 40 min timed.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Project 1: Add authentication, rate limiting, and logging.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Project 1: Write a design doc (RFC) for the project —
+                  retroactively. Practice the format.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  System design practice: Chat System (WhatsApp). 40 min timed.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Project 1: Containerize with Docker. Write a Dockerfile and
+                  docker-compose.yml.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>Read DDIA chapter 9 (Consistency and Consensus).</td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>
+              Project 1 complete with design doc. 2 intermediate system designs.
+            </p>
+          </div>
+
+          <h3>Week 8: Advanced System Design + CI/CD</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  System design practice: Distributed Task Scheduler. 45 min
+                  timed.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Read <a href="software_engineering.html">SWE guide</a> Part 5
+                  (CI/CD). Set up GitHub Actions for Project 1.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  System design practice: Search Autocomplete. 45 min timed.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Study: Message queues. Set up producer-consumer with a message
+                  broker.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  System design practice: Notification System. 45 min timed.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>
+                  Review all 8 system designs. Identify recurring weaknesses.
+                </td>
+                <td>1.5h</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout callout-success">
+            <div class="callout-title">Deliverable</div>
+            <p>6+ system designs completed. CI/CD pipeline working.</p>
+          </div>
+
+          <hr />
+
+          <!-- ===== MONTH 3 ===== -->
+          <h2>Month 3: Staff Impact + Capstone (Weeks 9-12)</h2>
+
+          <h3>Week 9: Staff Skills + Project 2 Start</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Read <a href="staff_level.html">Staff Level guide</a> fully.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  <strong>Start Project 2:</strong> Distributed system with
+                  multiple services. Design doc FIRST.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>Project 2: Implement service 1 (core business logic).</td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Project 2: Implement service 2 (data pipeline or worker).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Project 2: Add inter-service communication (HTTP or message
+                  queue).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>Read: "Staff Engineer" by Will Larson, chapters 1-4.</td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Week 10: Observability + Project 2 Continue</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Project 2: Add structured logging and health check endpoints.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Project 2: Add metrics collection (counters, histograms).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Project 2: Add error handling, retries, and circuit breaker
+                  pattern.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Project 2: Load test the system. Identify bottlenecks.
+                  Optimize.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>Project 2: Write ADRs for 3 key decisions you made.</td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>Read: "Staff Engineer" chapters 5-8.</td>
+                <td>2h</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Week 11: Algorithm Refresh + Project 2 Complete</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Algorithm refresh: Re-run <code>python main.py --train</code>.
+                  Target > 90%.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Re-solve previously-failed algorithm problems without old
+                  solutions.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Project 2: Write comprehensive tests (unit + integration).
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>
+                  Project 2: Finalize, document, push to GitHub. Write README.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  System design: Pick any advanced problem, design from scratch.
+                  45 min timed.
+                </td>
+                <td>2h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>
+                  Mock interview: Peer gives you a system design question. 45
+                  min, whiteboard only.
+                </td>
+                <td>1.5h</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Week 12: Integration + Final Assessment</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon</td>
+                <td>
+                  Final algorithm assessment:
+                  <code>python main.py --report</code> (all problems, fresh
+                  solutions).
+                </td>
+                <td>3h</td>
+              </tr>
+              <tr>
+                <td>Tue</td>
+                <td>
+                  Final pattern recognition:
+                  <code>python main.py --train</code> (full). Record accuracy.
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Wed</td>
+                <td>
+                  Final system design: Distributed Key-Value Store. Full RFC
+                  format.
+                </td>
+                <td>2.5h</td>
+              </tr>
+              <tr>
+                <td>Thu</td>
+                <td>Review all guides. Write down your top 10 takeaways.</td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Fri</td>
+                <td>
+                  Write a personal ADR: "Where I was 3 months ago vs now."
+                </td>
+                <td>1.5h</td>
+              </tr>
+              <tr>
+                <td>Sat</td>
+                <td>Celebrate. You have put in the work.</td>
+                <td>--</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ===== CAPSTONE PROJECTS ===== -->
+          <h2>Capstone Projects</h2>
+
+          <h3>Project 1: Task Management API (Weeks 6-7)</h3>
+          <p>
+            <strong>What you build:</strong> A REST API for managing tasks (like
+            a simplified Jira).
+          </p>
+          <p>
+            <strong>Tech stack:</strong> Python (FastAPI or Flask), PostgreSQL,
+            Redis, Docker.
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Project 1 Architecture</div>
+            <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+              <!-- Client -->
+              <rect
+                x="30"
+                y="70"
+                width="100"
+                height="60"
+                rx="8"
+                class="node-fill"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="80" y="95" class="label-text">Client</text>
+              <text x="80" y="112" class="label-small">REST calls</text>
+
+              <!-- Arrow -->
+              <line
+                x1="130"
+                y1="100"
+                x2="200"
+                y2="100"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#arrowBlue)"
+              />
+              <text x="165" y="90" class="label-small" fill="#58a6ff">
+                HTTP
+              </text>
+
+              <!-- FastAPI -->
+              <rect
+                x="200"
+                y="50"
+                width="140"
+                height="100"
+                rx="8"
+                fill="rgba(88,166,255,0.15)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="270" y="80" class="label-text" fill="#58a6ff">
+                FastAPI
+              </text>
+              <text x="270" y="98" class="label-small">CRUD endpoints</text>
+              <text x="270" y="112" class="label-small">Auth + Rate limit</text>
+              <text x="270" y="126" class="label-small">Validation</text>
+
+              <!-- Arrow to SQLite -->
+              <line
+                x1="340"
+                y1="85"
+                x2="420"
+                y2="65"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#arrowGreen)"
+              />
+              <!-- Arrow to Redis -->
+              <line
+                x1="340"
+                y1="115"
+                x2="420"
+                y2="140"
+                stroke="#d29922"
+                stroke-width="2"
+                marker-end="url(#arrowOrange)"
+              />
+
+              <!-- SQLite -->
+              <rect
+                x="420"
+                y="30"
+                width="120"
+                height="60"
+                rx="8"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text x="480" y="55" class="label-text" fill="#3fb950">
+                SQLite
+              </text>
+              <text x="480" y="72" class="label-small">Tasks table</text>
+
+              <!-- Redis Cache -->
+              <rect
+                x="420"
+                y="110"
+                width="120"
+                height="60"
+                rx="8"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text x="480" y="135" class="label-text" fill="#d29922">
+                Cache
+              </text>
+              <text x="480" y="152" class="label-small">In-memory/Redis</text>
+
+              <!-- Docker box -->
+              <rect
+                x="180"
+                y="15"
+                width="380"
+                height="175"
+                rx="10"
+                fill="none"
+                stroke="#484f58"
+                stroke-width="1"
+                stroke-dasharray="6,4"
+              />
+              <text x="370" y="200" class="label-small" fill="#484f58">
+                Docker Container
+              </text>
+
+              <!-- Arrow markers -->
+              <defs>
+                <marker
+                  id="arrowBlue"
+                  markerWidth="8"
+                  markerHeight="6"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L8,3 L0,6" fill="#58a6ff" />
+                </marker>
+                <marker
+                  id="arrowGreen"
+                  markerWidth="8"
+                  markerHeight="6"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L8,3 L0,6" fill="#3fb950" />
+                </marker>
+                <marker
+                  id="arrowOrange"
+                  markerWidth="8"
+                  markerHeight="6"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L8,3 L0,6" fill="#d29922" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <h4>Requirements</h4>
+          <ul>
+            <li>Users can create, read, update, delete tasks</li>
+            <li>
+              Tasks have: title, description, status (todo/in_progress/done),
+              assignee, due_date
+            </li>
+            <li>Filter/search tasks by status, assignee, date range</li>
+            <li>Pagination for list endpoints</li>
+            <li>Authentication (API key or JWT)</li>
+            <li>Rate limiting (Redis-based)</li>
+            <li>Caching for frequently accessed tasks</li>
+            <li>Comprehensive tests (pytest)</li>
+            <li>CI/CD pipeline (GitHub Actions)</li>
+            <li>Docker containerization</li>
+          </ul>
+          <p>
+            <strong>Skills exercised:</strong> REST API design, SQL/database
+            design, caching, testing, CI/CD, Docker, authentication, input
+            validation.
+          </p>
+          <div class="callout callout-info">
+            <div class="callout-title">Stretch Goals</div>
+            <p>
+              WebSocket for real-time task updates. Task assignment
+              notifications via email queue.
+            </p>
+          </div>
+
+          <h3>Project 2: URL Shortener with Analytics (Weeks 9-11)</h3>
+          <p>
+            <strong>What you build:</strong> A distributed URL shortener with
+            real-time click analytics.
+          </p>
+          <p><strong>Architecture</strong> (2 services + 1 worker):</p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Project 2 Architecture</div>
+            <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Client -->
+              <rect
+                x="20"
+                y="120"
+                width="90"
+                height="50"
+                rx="8"
+                class="node-fill"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text x="65" y="142" class="label-text" font-size="12">
+                Client
+              </text>
+              <text x="65" y="158" class="label-small">Browser</text>
+
+              <!-- Arrow to Service 1 -->
+              <line
+                x1="110"
+                y1="145"
+                x2="170"
+                y2="100"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#arrowBlue)"
+              />
+              <line
+                x1="110"
+                y1="145"
+                x2="170"
+                y2="200"
+                stroke="#bc8cff"
+                stroke-width="2"
+                marker-end="url(#arrowPurple)"
+              />
+
+              <!-- Service 1: URL Shortener -->
+              <rect
+                x="170"
+                y="50"
+                width="170"
+                height="100"
+                rx="8"
+                fill="rgba(88,166,255,0.15)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="255"
+                y="75"
+                class="label-text"
+                fill="#58a6ff"
+                font-size="12"
+              >
+                Service 1
+              </text>
+              <text x="255" y="93" class="label-small" fill="#58a6ff">
+                URL Shortener API
+              </text>
+              <text x="255" y="110" class="label-small">POST /shorten</text>
+              <text x="255" y="124" class="label-small">GET /{code}</text>
+              <text x="255" y="138" class="label-small">
+                (redirect + event)
+              </text>
+
+              <!-- Service 2: Analytics -->
+              <rect
+                x="170"
+                y="180"
+                width="170"
+                height="80"
+                rx="8"
+                fill="rgba(188,140,255,0.15)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="255"
+                y="205"
+                class="label-text"
+                fill="#bc8cff"
+                font-size="12"
+              >
+                Service 2
+              </text>
+              <text x="255" y="223" class="label-small" fill="#bc8cff">
+                Analytics API
+              </text>
+              <text x="255" y="240" class="label-small">
+                GET /analytics/{code}
+              </text>
+
+              <!-- Event Queue -->
+              <rect
+                x="420"
+                y="70"
+                width="130"
+                height="60"
+                rx="8"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="485"
+                y="95"
+                class="label-text"
+                fill="#d29922"
+                font-size="12"
+              >
+                Event Queue
+              </text>
+              <text x="485" y="115" class="label-small">Click events</text>
+
+              <!-- Arrow from Service 1 to Queue -->
+              <line
+                x1="340"
+                y1="100"
+                x2="420"
+                y2="100"
+                stroke="#d29922"
+                stroke-width="2"
+                marker-end="url(#arrowOrange)"
+              />
+              <text x="380" y="90" class="label-small" fill="#d29922">
+                publish
+              </text>
+
+              <!-- Worker -->
+              <rect
+                x="420"
+                y="170"
+                width="130"
+                height="70"
+                rx="8"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="485"
+                y="195"
+                class="label-text"
+                fill="#3fb950"
+                font-size="12"
+              >
+                Worker
+              </text>
+              <text x="485" y="213" class="label-small" fill="#3fb950">
+                Click Processor
+              </text>
+              <text x="485" y="228" class="label-small">Aggregate + Store</text>
+
+              <!-- Arrow from Queue to Worker -->
+              <line
+                x1="485"
+                y1="130"
+                x2="485"
+                y2="170"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#arrowGreen)"
+              />
+              <text x="510" y="155" class="label-small" fill="#3fb950">
+                consume
+              </text>
+
+              <!-- Database -->
+              <rect
+                x="630"
+                y="90"
+                width="130"
+                height="100"
+                rx="8"
+                fill="rgba(57,210,192,0.15)"
+                stroke="#39d2c0"
+                stroke-width="2"
+              />
+              <text
+                x="695"
+                y="115"
+                class="label-text"
+                fill="#39d2c0"
+                font-size="12"
+              >
+                PostgreSQL
+              </text>
+              <text x="695" y="133" class="label-small">URLs table</text>
+              <text x="695" y="148" class="label-small">Clicks table</text>
+              <text x="695" y="163" class="label-small">Analytics agg</text>
+
+              <!-- Arrows to DB -->
+              <line
+                x1="550"
+                y1="205"
+                x2="630"
+                y2="165"
+                stroke="#39d2c0"
+                stroke-width="2"
+                marker-end="url(#arrowCyan)"
+              />
+              <line
+                x1="340"
+                y1="220"
+                x2="630"
+                y2="175"
+                stroke="#39d2c0"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+                marker-end="url(#arrowCyan)"
+              />
+
+              <!-- Redis Cache -->
+              <rect
+                x="630"
+                y="220"
+                width="130"
+                height="55"
+                rx="8"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="695"
+                y="245"
+                class="label-text"
+                fill="#d29922"
+                font-size="12"
+              >
+                Redis
+              </text>
+              <text x="695" y="262" class="label-small">Cache + Pub/Sub</text>
+
+              <!-- Docker Compose box -->
+              <rect
+                x="150"
+                y="30"
+                width="630"
+                height="265"
+                rx="10"
+                fill="none"
+                stroke="#484f58"
+                stroke-width="1"
+                stroke-dasharray="6,4"
+              />
+              <text x="465" y="310" class="label-small" fill="#484f58">
+                Docker Compose
+              </text>
+
+              <defs>
+                <marker
+                  id="arrowPurple"
+                  markerWidth="8"
+                  markerHeight="6"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L8,3 L0,6" fill="#bc8cff" />
+                </marker>
+                <marker
+                  id="arrowCyan"
+                  markerWidth="8"
+                  markerHeight="6"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L8,3 L0,6" fill="#39d2c0" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <p>
+            <strong>Tech stack:</strong> Python (FastAPI), PostgreSQL (URLs),
+            Redis (caching + pub/sub or use a real message queue), Docker
+            Compose for orchestration.
+          </p>
+          <h4>Requirements</h4>
+          <ul>
+            <li>Design doc (RFC) written BEFORE implementation</li>
+            <li>Short code generation (base62 or nano-id)</li>
+            <li>Click event pipeline (async processing via queue)</li>
+            <li>Analytics aggregation (time-series buckets)</li>
+            <li>Health check endpoints for all services</li>
+            <li>Structured logging (JSON format)</li>
+            <li>Retry logic for inter-service calls</li>
+            <li>Load testing (locust or wrk)</li>
+            <li>Architecture Decision Records for key choices</li>
+          </ul>
+          <p>
+            <strong>Skills exercised:</strong> Distributed systems, message
+            queues, async processing, API design, database schema for analytics,
+            observability, design documentation.
+          </p>
+
+          <h3>Project 3 (Bonus): Real-Time Dashboard</h3>
+          <p>
+            <strong>What you build:</strong> A web dashboard that displays live
+            analytics from Project 2.
+          </p>
+          <p>
+            <strong>Tech stack:</strong> Python backend (WebSocket), simple
+            HTML/JS frontend.
+          </p>
+          <ul>
+            <li>WebSocket connection for real-time updates</li>
+            <li>
+              Display: total clicks, clicks/minute, top URLs, geographic
+              distribution
+            </li>
+            <li>Auto-refreshing charts</li>
+          </ul>
+          <p>
+            <strong>Skills exercised:</strong> WebSocket, real-time data,
+            frontend basics, full-stack integration.
+          </p>
+
+          <hr />
+
+          <!-- ===== READING LIST ===== -->
+          <h2>Reading List (Priority Order)</h2>
+
+          <h3>Must-Read (Month 1-2)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Book</th>
+                <th>Author</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>A Philosophy of Software Design</strong></td>
+                <td>John Ousterhout</td>
+                <td>180 pages, read in 2 sittings</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>Designing Data-Intensive Applications</strong></td>
+                <td>Martin Kleppmann</td>
+                <td>Chapters 1-9</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>Staff Engineer</strong></td>
+                <td>Will Larson</td>
+                <td>200 pages, read in Month 3</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Should-Read (as time permits)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Book</th>
+                <th>Author</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>4</td>
+                <td><strong>The Staff Engineer's Path</strong></td>
+                <td>Tanya Reilly</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td><strong>Clean Code</strong></td>
+                <td>Robert Martin</td>
+                <td>Chapters 1-6 only</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td><strong>System Design Interview</strong></td>
+                <td>Alex Xu</td>
+                <td>Vol 1</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Reference (keep on desk)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Book</th>
+                <th>Author</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>7</td>
+                <td><strong>Refactoring</strong></td>
+                <td>Martin Fowler</td>
+                <td>Use as a catalog when refactoring</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td><strong>Google SRE book</strong></td>
+                <td>Google</td>
+                <td>Free online, read the monitoring chapters</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ===== PROGRESS TRACKING ===== -->
+          <h2>Weekly Self-Assessment</h2>
+          <p>After each week, answer these questions in a journal:</p>
+          <ul class="checklist">
+            <li>What did I learn this week that changed how I think?</li>
+            <li>What am I still confused about? (Next week's priority)</li>
+            <li>What did I build? (Tangible output)</li>
+            <li>Algorithm pattern recognition accuracy? (from trainer)</li>
+            <li>System design comfort level? (1-10, be honest)</li>
+          </ul>
+
+          <hr />
+
+          <!-- ===== MILESTONES ===== -->
+          <h2>Milestones</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th>Checkpoint</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-blue">Week 2</span></td>
+                <td>
+                  Pattern recognition > 70%. All medium algorithms attempted.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-blue">Week 4</span></td>
+                <td>
+                  Algorithm report shows improvement. SQL basics solid. First
+                  system design.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-green">Week 6</span></td>
+                <td>Project 1 started. 3 beginner system designs complete.</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-green">Week 8</span></td>
+                <td>
+                  Project 1 complete with RFC. 6+ system designs. CI/CD pipeline
+                  working.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-purple">Week 10</span></td>
+                <td>Project 2 in progress. Staff-level skills guide read.</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-purple">Week 12</span></td>
+                <td>
+                  Final assessments complete. Projects on GitHub. Clear picture
+                  of ongoing growth areas.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ===== AFTER THE 3 MONTHS ===== -->
+          <h2>After the 3 Months</h2>
+          <p>
+            This plan gets you to "extremely proficient." Staying there
+            requires:
+          </p>
+          <div class="card">
+            <ol>
+              <li>
+                <strong>Daily coding practice:</strong> 1 algorithm problem per
+                day (20 min) keeps patterns fresh
+              </li>
+              <li>
+                <strong>System design:</strong> 1 design per week (30 min
+                whiteboard sketch)
+              </li>
+              <li><strong>Reading:</strong> 1 technical book per quarter</li>
+              <li>
+                <strong>Writing:</strong> 1 design doc or ADR per month at work
+              </li>
+              <li>
+                <strong>Teaching:</strong> Mentor one junior engineer — teaching
+                is the best way to learn
+              </li>
+            </ol>
+          </div>
+
+          <p>
+            For the day-by-day breakdown, start with the
+            <a href="daily_overview.html">Daily Guide Overview</a>, then proceed
+            to <a href="daily_month1.html">Month 1</a>,
+            <a href="daily_month2.html">Month 2</a>, and
+            <a href="daily_month3.html">Month 3</a>.
+          </p>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

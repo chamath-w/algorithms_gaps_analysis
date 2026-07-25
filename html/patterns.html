@@ -1,0 +1,3927 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithm Patterns — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Algorithm Patterns</h1>
+          <p>
+            21 core patterns with visualizations, code templates, and trigger
+            signals. The original 16 cover most interviews; patterns 17–21 are
+            the high-ROI gaps senior/staff engineers still hit in design reviews
+            and harder coding rounds.
+          </p>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 1: SLIDING WINDOW -->
+          <!-- ============================================================= -->
+          <section id="sliding_window">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Sliding Window
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Time: <span>O(n)</span></span>
+                    <span class="complexity-item"
+                      >Space: <span>O(1) or O(k)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Sliding Window"?</div>
+                  <p>
+                    Picture a physical window frame sliding along a row of data.
+                    The window has a fixed width, and you slide it one position
+                    at a time, like a train window showing a fixed-width view of
+                    the passing scenery. From signal processing: a "windowed"
+                    analysis examines a subset of data at a time.
+                  </p>
+                </div>
+
+                <p>
+                  Maintain a window (subarray/substring) that slides across the
+                  input. Instead of recalculating from scratch for each
+                  position, update incrementally. Converts O(n*k) brute force
+                  into O(n).
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">contiguous subarray/substring</span>
+                  <span class="signal">max/min sum of size k</span>
+                  <span class="signal">smallest/longest subarray</span>
+                  <span class="signal">character frequency constraints</span>
+                  <span class="signal">"consecutive", "window"</span>
+                </div>
+
+                <h4>Animation: Max Sum of k=3</h4>
+                <div class="diagram-container" id="anim-sliding-window">
+                  <div class="diagram-title">
+                    Fixed Window (k=3) on [2, 1, 5, 1, 3, 2]
+                  </div>
+                  <svg id="svg-sw" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Identify what the window tracks (sum, frequency map, count)
+                  </li>
+                  <li>Decide: fixed-size or variable-size window?</li>
+                  <li>Initialize window state for the first window</li>
+                  <li>Slide: add right element, remove left element</li>
+                  <li>At each valid window, update the answer</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">sliding_window_fixed</span>(arr, k):
+    window_sum = <span class="fn">sum</span>(arr[:k])
+    best = window_sum
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(k, <span class="fn">len</span>(arr)):
+        window_sum += arr[i] - arr[i - k]
+        best = <span class="fn">max</span>(best, window_sum)
+    <span class="kw">return</span> best</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Off-by-one on window boundaries (left inclusive, right
+                      inclusive vs exclusive)
+                    </li>
+                    <li>
+                      Forgetting to handle the case where no valid window exists
+                    </li>
+                    <li>
+                      Not initializing window state correctly for the first
+                      window
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Longest Substring Without Repeating Characters</li>
+                  <li>Minimum Window Substring</li>
+                  <li>Sliding Window Maximum (with deque)</li>
+                  <li>Permutation in String</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 2: TWO POINTERS -->
+          <!-- ============================================================= -->
+          <section id="two_pointers">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Two Pointers
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Time: <span>O(n)</span></span>
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Two Pointers"?</div>
+                  <p>
+                    Literally two index markers (pointers) that walk through the
+                    data structure. Like two fingers on a ruler, each moving
+                    independently. Named for the mental image of pointing at two
+                    positions simultaneously.
+                  </p>
+                </div>
+
+                <p>
+                  Use two pointers that move through the data structure in a
+                  coordinated way. Typically one from each end (converging), or
+                  both from the start at different speeds. Reduces O(n^2) to
+                  O(n).
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">sorted array + target sum</span>
+                  <span class="signal">remove duplicates in-place</span>
+                  <span class="signal">palindrome check</span>
+                  <span class="signal">linked list cycle detection</span>
+                  <span class="signal">"pair", "sorted", "partition"</span>
+                </div>
+
+                <h4>Animation: Find Pair Summing to 10</h4>
+                <div class="diagram-container" id="anim-two-pointers">
+                  <div class="diagram-title">
+                    Converging Pointers on [1, 2, 3, 4, 6, 8, 11]
+                  </div>
+                  <svg id="svg-tp" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Identify pointer strategy: opposite ends, same direction, or
+                    two arrays
+                  </li>
+                  <li>
+                    Define the movement rule: when does each pointer advance?
+                  </li>
+                  <li>Define the termination condition</li>
+                  <li>Handle edge cases: empty input, single element</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">two_sum_sorted</span>(arr, target):
+    left, right = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> left &lt; right:
+        s = arr[left] + arr[right]
+        <span class="kw">if</span> s == target: <span class="kw">return</span> [left, right]
+        <span class="kw">elif</span> s &lt; target: left += <span class="num">1</span>
+        <span class="kw">else</span>: right -= <span class="num">1</span>
+    <span class="kw">return</span> []</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Forgetting that converging pointers require sorted input
+                    </li>
+                    <li>
+                      Infinite loops from not advancing at least one pointer
+                      each iteration
+                    </li>
+                    <li>
+                      Off-by-one: left &lt; right vs left &lt;= right depends on
+                      the problem
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Two Sum II (sorted)</li>
+                  <li>3Sum</li>
+                  <li>Container With Most Water</li>
+                  <li>Trapping Rain Water</li>
+                  <li>Valid Palindrome</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 3: BINARY SEARCH -->
+          <!-- ============================================================= -->
+          <section id="binary_search">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Binary Search
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Binary Search"?</div>
+                  <p>
+                    "Binary" = two parts. Each step divides the search space in
+                    two (bi-section). From Latin "binarius" (consisting of two).
+                    You always choose one of two halves.
+                  </p>
+                </div>
+
+                <p>
+                  Repeatedly halve the search space by checking a condition at
+                  the midpoint. Not just for sorted arrays -- works on any
+                  monotonic predicate. "Binary search on the answer" applies
+                  when you can frame the problem as finding the smallest/largest
+                  X satisfying a condition.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">sorted array lookup</span>
+                  <span class="signal"
+                    >find minimum X satisfying condition</span
+                  >
+                  <span class="signal">O(log n) time requirement</span>
+                  <span class="signal"
+                    >search space halvable by midpoint check</span
+                  >
+                </div>
+
+                <h4>Animation: Search for 7</h4>
+                <div class="diagram-container" id="anim-binary-search">
+                  <div class="diagram-title">
+                    Binary Search in [1, 3, 5, 7, 9, 11, 13, 15]
+                  </div>
+                  <svg id="svg-bs" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Define the search space: [lo, hi]</li>
+                  <li>Define the predicate: condition(mid) -> bool</li>
+                  <li>
+                    Determine: searching for leftmost True or rightmost True?
+                  </li>
+                  <li>Choose the right template to avoid off-by-one</li>
+                  <li>Verify: does lo converge to the right answer?</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> lo &lt;= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] == target: <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] &lt; target: lo = mid + <span class="num">1</span>
+        <span class="kw">else</span>: hi = mid - <span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span></code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Off-by-one: lo &lt; hi vs lo &lt;= hi -- pick one template
+                      and stick with it
+                    </li>
+                    <li>Integer overflow: use lo + (hi - lo) // 2</li>
+                    <li>
+                      Infinite loops: ensure lo or hi changes every iteration
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Binary Search</li>
+                  <li>Search in Rotated Sorted Array</li>
+                  <li>Koko Eating Bananas</li>
+                  <li>Median of Two Sorted Arrays</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 4: BFS -->
+          <!-- ============================================================= -->
+          <section id="bfs">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Breadth-First Search
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(V + E)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(V)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-green">traversal</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Breadth-First Search"?</div>
+                  <p>
+                    "Breadth" = width. Explores wide before deep -- like water
+                    rippling outward from a stone dropped in a pond. Named
+                    because it explores all neighbors (breadth) at the current
+                    depth before going deeper.
+                  </p>
+                </div>
+
+                <p>
+                  Explore nodes level by level outward from the source. Uses a
+                  queue. Guarantees shortest path in unweighted graphs. Also
+                  used for level-order tree traversal and multi-source BFS.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">shortest path (unweighted)</span>
+                  <span class="signal">level-order traversal</span>
+                  <span class="signal">minimum steps to target</span>
+                  <span class="signal"
+                    >spreading problems (fire, infection)</span
+                  >
+                  <span class="signal">"nearest", "level by level"</span>
+                </div>
+
+                <h4>Animation: Level-by-Level Traversal</h4>
+                <div class="diagram-container" id="anim-bfs">
+                  <div class="diagram-title">BFS on a 6-Node Graph</div>
+                  <svg id="svg-bfs" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Initialize queue with starting node(s), mark as visited
+                  </li>
+                  <li>Process level by level (track depth if needed)</li>
+                  <li>
+                    For each node: explore all neighbors, enqueue unvisited ones
+                  </li>
+                  <li>Stop when target found or queue empty</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(graph, start):
+    queue = deque([(start, <span class="num">0</span>)])
+    visited = {start}
+    <span class="kw">while</span> queue:
+        node, dist = queue.popleft()
+        <span class="kw">for</span> nb <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> nb <span class="kw">not in</span> visited:
+                visited.add(nb)
+                queue.append((nb, dist + <span class="num">1</span>))</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Mark nodes visited BEFORE enqueueing (not after dequeue)
+                      to avoid duplicates
+                    </li>
+                    <li>Use deque, not list.pop(0) which is O(n)</li>
+                    <li>
+                      For level-by-level: snapshot queue size at start of each
+                      level
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Number of Islands</li>
+                  <li>Rotting Oranges</li>
+                  <li>Word Ladder</li>
+                  <li>Binary Tree Level Order Traversal</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 5: DFS -->
+          <!-- ============================================================= -->
+          <section id="dfs">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Depth-First Search
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(V + E)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(h) or O(V)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-green">traversal</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Depth-First Search"?</div>
+                  <p>
+                    "Depth" = how far down. Explores deep before wide -- like a
+                    miner digging a single tunnel as deep as possible before
+                    trying another. Named because it goes to maximum depth
+                    first.
+                  </p>
+                </div>
+
+                <p>
+                  Explore as deep as possible along each branch before
+                  backtracking. Uses recursion (call stack) or an explicit
+                  stack. Natural fit for tree problems, connected components,
+                  and cycle detection.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">tree traversal (pre/in/post)</span>
+                  <span class="signal">connected components</span>
+                  <span class="signal">cycle detection</span>
+                  <span class="signal">explore all possibilities</span>
+                  <span class="signal">"all paths", "component"</span>
+                </div>
+
+                <h4>Animation: Pre-Order Traversal</h4>
+                <div class="diagram-container" id="anim-dfs">
+                  <div class="diagram-title">
+                    DFS Pre-Order on a 7-Node Binary Tree
+                  </div>
+                  <svg id="svg-dfs" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Choose recursive or iterative</li>
+                  <li>Define: what does visiting a node mean?</li>
+                  <li>Base case: null node, visited node, or boundary</li>
+                  <li>Recursive case: process current, recurse on children</li>
+                  <li>For graphs: maintain visited set</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">dfs</span>(root):
+    <span class="kw">if not</span> root: <span class="kw">return</span>
+    process(root)          <span class="cm"># preorder</span>
+    dfs(root.left)
+    dfs(root.right)</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Stack overflow on deep recursion (Python limit ~1000)
+                    </li>
+                    <li>
+                      For directed graphs: need 3-state visited for cycle
+                      detection
+                    </li>
+                    <li>Forgetting to un-visit in backtracking problems</li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Number of Islands</li>
+                  <li>Max Depth of Binary Tree</li>
+                  <li>Validate BST</li>
+                  <li>Lowest Common Ancestor</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 6: TOPOLOGICAL SORT -->
+          <!-- ============================================================= -->
+          <section id="topological_sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Topological Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(V + E)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(V + E)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Topological Sort"?</div>
+                  <p>
+                    "Topology" = study of spatial relationships and ordering
+                    (from Greek "topos" = place). A topological sort arranges
+                    nodes so that every directed edge points forward. Named
+                    because it reflects the "topology" (connection structure) of
+                    the graph, not numeric values.
+                  </p>
+                </div>
+
+                <p>
+                  Linear ordering of vertices in a DAG such that for every edge
+                  u->v, u comes before v. Kahn's algorithm uses BFS with
+                  in-degree tracking. If a cycle exists, no valid ordering is
+                  possible.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">tasks with prerequisites</span>
+                  <span class="signal">build/compile order</span>
+                  <span class="signal">cycle detection (directed)</span>
+                  <span class="signal">"prerequisite", "dependency"</span>
+                  <span class="signal">"ordering", "schedule"</span>
+                </div>
+
+                <h4>Animation: Kahn's Algorithm</h4>
+                <div class="diagram-container" id="anim-topo">
+                  <div class="diagram-title">
+                    Course Prerequisites: Kahn's Algorithm with In-Degree
+                  </div>
+                  <svg id="svg-topo" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Build adjacency list and compute in-degree for each node
+                  </li>
+                  <li>Enqueue all nodes with in-degree 0</li>
+                  <li>Process queue: reduce in-degree of neighbors</li>
+                  <li>If neighbor's in-degree becomes 0, enqueue it</li>
+                  <li>
+                    If result has fewer nodes than total, there is a cycle
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque, defaultdict
+
+<span class="kw">def</span> <span class="fn">topo_sort</span>(n, edges):
+    graph = defaultdict(list)
+    in_deg = [<span class="num">0</span>] * n
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        graph[u].append(v)
+        in_deg[v] += <span class="num">1</span>
+    q = deque(i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n) <span class="kw">if</span> in_deg[i] == <span class="num">0</span>)
+    order = []
+    <span class="kw">while</span> q:
+        node = q.popleft()
+        order.append(node)
+        <span class="kw">for</span> nb <span class="kw">in</span> graph[node]:
+            in_deg[nb] -= <span class="num">1</span>
+            <span class="kw">if</span> in_deg[nb] == <span class="num">0</span>: q.append(nb)
+    <span class="kw">return</span> order <span class="kw">if</span> <span class="fn">len</span>(order) == n <span class="kw">else</span> []</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Confusing edge direction: "A prereq of B" means edge A->B
+                    </li>
+                    <li>Not handling disconnected components</li>
+                    <li>
+                      DFS version needs 3-state coloring for cycle detection
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Course Schedule / Course Schedule II</li>
+                  <li>Alien Dictionary</li>
+                  <li>Parallel Courses</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 7: DYNAMIC PROGRAMMING -->
+          <!-- ============================================================= -->
+          <section id="dp">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Dynamic Programming
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n*m)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(n*m) or O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-orange">optimization</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Dynamic Programming"?</div>
+                  <p>
+                    Named by Richard Bellman in the 1950s. "Dynamic" was chosen
+                    to sound impressive and avoid government pushback (his boss
+                    hated the word "research"). "Programming" meant
+                    planning/scheduling (like "linear programming"), not coding.
+                    It's really "multi-stage decision optimization" but Bellman
+                    wanted a name that couldn't be criticized.
+                  </p>
+                </div>
+
+                <p>
+                  Break a problem into overlapping subproblems, solve each once,
+                  store results. The key is defining the state (what dp[i][j]
+                  represents) and the recurrence. Bottom-up (tabulation) or
+                  top-down (memoization).
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">"minimum cost", "maximum profit"</span>
+                  <span class="signal">"number of ways"</span>
+                  <span class="signal">overlapping subproblems</span>
+                  <span class="signal">optimal substructure</span>
+                  <span class="signal">take or skip decisions</span>
+                </div>
+
+                <h4>Animation: Edit Distance</h4>
+                <div class="diagram-container" id="anim-dp">
+                  <div class="diagram-title">
+                    Edit Distance: "horse" -> "ros" (simplified 4x4 grid)
+                  </div>
+                  <svg id="svg-dp" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Define the state: what does dp[i][j] represent?</li>
+                  <li>Write the recurrence relation BEFORE coding</li>
+                  <li>Identify base cases</li>
+                  <li>Determine fill order</li>
+                  <li>Optimize space if possible</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">edit_distance</span>(s1, s2):
+    m, n = <span class="fn">len</span>(s1), <span class="fn">len</span>(s2)
+    dp = [[<span class="num">0</span>]*(n+<span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m+<span class="num">1</span>)]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(m+<span class="num">1</span>): dp[i][<span class="num">0</span>] = i
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n+<span class="num">1</span>): dp[<span class="num">0</span>][j] = j
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, m+<span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, n+<span class="num">1</span>):
+            <span class="kw">if</span> s1[i-<span class="num">1</span>] == s2[j-<span class="num">1</span>]:
+                dp[i][j] = dp[i-<span class="num">1</span>][j-<span class="num">1</span>]
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="num">1</span> + <span class="fn">min</span>(dp[i-<span class="num">1</span>][j], dp[i][j-<span class="num">1</span>], dp[i-<span class="num">1</span>][j-<span class="num">1</span>])
+    <span class="kw">return</span> dp[m][n]</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Imprecise state definition leads to wrong recurrence
+                    </li>
+                    <li>Wrong base cases (off-by-one with 0/1-indexed dp)</li>
+                    <li>Confusing "ending at i" vs "using elements 0..i"</li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Climbing Stairs</li>
+                  <li>Coin Change</li>
+                  <li>Longest Increasing Subsequence</li>
+                  <li>Edit Distance</li>
+                  <li>Word Break</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 8: GREEDY -->
+          <!-- ============================================================= -->
+          <section id="greedy">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">Greedy</h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-orange">optimization</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Greedy"?</div>
+                  <p>
+                    The algorithm is "greedy" -- it always grabs the
+                    best-looking option right now without considering the
+                    future. Like a greedy person taking the biggest piece of
+                    cake at each step. Named for this short-sighted,
+                    grab-the-best-now behavior.
+                  </p>
+                </div>
+
+                <p>
+                  Make the locally optimal choice at each step. Only works when
+                  the greedy choice property holds. Often requires sorting
+                  first. When in doubt, try DP instead.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">interval scheduling</span>
+                  <span class="signal">local optimal = global optimal</span>
+                  <span class="signal">sorting + sequential selection</span>
+                  <span class="signal">"minimum number of"</span>
+                  <span class="signal">"maximum non-overlapping"</span>
+                </div>
+
+                <h4>Animation: Interval Scheduling</h4>
+                <div class="diagram-container" id="anim-greedy">
+                  <div class="diagram-title">
+                    Select Maximum Non-Overlapping Intervals (sorted by end
+                    time)
+                  </div>
+                  <svg id="svg-greedy" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Sort the input (by start time, end time, ratio, etc.)</li>
+                  <li>Iterate and make the greedy choice at each step</li>
+                  <li>
+                    PROVE it works: exchange argument or greedy stays ahead
+                  </li>
+                  <li>If you cannot prove it, consider DP instead</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">max_intervals</span>(intervals):
+    intervals.sort(key=<span class="kw">lambda</span> x: x[<span class="num">1</span>])
+    count, last_end = <span class="num">0</span>, <span class="fn">float</span>(<span class="str">'-inf'</span>)
+    <span class="kw">for</span> start, end <span class="kw">in</span> intervals:
+        <span class="kw">if</span> start >= last_end:
+            count += <span class="num">1</span>
+            last_end = end
+    <span class="kw">return</span> count</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Assuming greedy works without proof -- many problems look
+                      greedy but need DP
+                    </li>
+                    <li>
+                      Sorting by the wrong key (start time vs end time matters!)
+                    </li>
+                    <li>Not handling ties correctly</li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Jump Game / Jump Game II</li>
+                  <li>Non-overlapping Intervals</li>
+                  <li>Merge Intervals</li>
+                  <li>Task Scheduler</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 9: BACKTRACKING -->
+          <!-- ============================================================= -->
+          <section id="backtracking">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Backtracking
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(2^n) or O(n!)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Backtracking"?</div>
+                  <p>
+                    Literally "tracking back" -- retracing your steps when you
+                    hit a dead end. Like walking a maze: go forward, hit a wall,
+                    back up to the last junction, try another path. Named for
+                    the act of going backward to undo a bad choice.
+                  </p>
+                </div>
+
+                <p>
+                  Systematically explore all candidates by building choices
+                  incrementally and abandoning a path as soon as it is invalid.
+                  DFS on a decision tree with pruning.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal"
+                    >generate all permutations/combinations</span
+                  >
+                  <span class="signal">N-Queens, Sudoku</span>
+                  <span class="signal">word search in grid</span>
+                  <span class="signal">"all possible", "enumerate"</span>
+                </div>
+
+                <h4>Animation: 4-Queens</h4>
+                <div class="diagram-container" id="anim-backtrack">
+                  <div class="diagram-title">
+                    4-Queens: Place Queens, Backtrack on Conflict
+                  </div>
+                  <svg id="svg-backtrack" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Define the decision tree: what choices at each step?</li>
+                  <li>Template: choose -> explore -> un-choose</li>
+                  <li>Base case: when is a candidate complete?</li>
+                  <li>Pruning: when can you skip a branch?</li>
+                  <li>
+                    Track state: what gets modified and needs restoration?
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">backtrack</span>(candidates):
+    result = []
+    <span class="kw">def</span> <span class="fn">helper</span>(start, current):
+        <span class="kw">if</span> is_solution(current):
+            result.append(current[:])
+            <span class="kw">return</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(start, <span class="fn">len</span>(candidates)):
+            current.append(candidates[i])   <span class="cm"># choose</span>
+            helper(i + <span class="num">1</span>, current)          <span class="cm"># explore</span>
+            current.pop()                    <span class="cm"># un-choose</span>
+    helper(<span class="num">0</span>, [])
+    <span class="kw">return</span> result</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Forgetting to copy when adding to results (current[:] not
+                      current)
+                    </li>
+                    <li>
+                      Forgetting to un-choose (restore state after recursion)
+                    </li>
+                    <li>
+                      Not pruning -- backtracking without pruning is just brute
+                      force
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Subsets / Permutations</li>
+                  <li>Combination Sum</li>
+                  <li>N-Queens</li>
+                  <li>Word Search</li>
+                  <li>Sudoku Solver</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 10: HEAP -->
+          <!-- ============================================================= -->
+          <section id="heap">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Heap / Priority Queue
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n log k)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(k) or O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">structure</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Heap / Priority Queue"?</div>
+                  <p>
+                    "Heap" = a pile. The data structure looks like a pile/mound
+                    shape (complete binary tree). "Priority Queue" = a queue
+                    where the most important item comes out first, like an ER
+                    triage system. Named for the heap-ordered tree shape (parent
+                    >= children).
+                  </p>
+                </div>
+
+                <p>
+                  Data structure supporting O(log n) insert and extract-min/max,
+                  O(1) peek. Use when you repeatedly need the smallest or
+                  largest element from a dynamic collection.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">K-th largest/smallest</span>
+                  <span class="signal">merge K sorted lists</span>
+                  <span class="signal">streaming median</span>
+                  <span class="signal">process by priority</span>
+                  <span class="signal">"top K", "K-th"</span>
+                </div>
+
+                <h4>Animation: Build Min-Heap and Extract</h4>
+                <div class="diagram-container" id="anim-heap">
+                  <div class="diagram-title">
+                    Build Min-Heap from [4, 10, 3, 5, 1], then Extract Min
+                  </div>
+                  <svg id="svg-heap" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Identify: min or max? (Python heapq is min-heap; negate for
+                    max)
+                  </li>
+                  <li>For K-th largest: maintain a min-heap of size K</li>
+                  <li>
+                    For streaming median: two heaps (max-heap lower, min-heap
+                    upper)
+                  </li>
+                  <li>
+                    For K-way merge: push first element of each list,
+                    pop-and-push-next
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">top_k</span>(nums, k):
+    <span class="kw">return</span> heapq.nsmallest(k, nums)
+
+<span class="kw">def</span> <span class="fn">merge_k</span>(lists):
+    heap = []
+    <span class="kw">for</span> i, lst <span class="kw">in</span> <span class="fn">enumerate</span>(lists):
+        <span class="kw">if</span> lst: heapq.heappush(heap, (lst[<span class="num">0</span>], i, <span class="num">0</span>))
+    result = []
+    <span class="kw">while</span> heap:
+        val, li, ei = heapq.heappop(heap)
+        result.append(val)
+        <span class="kw">if</span> ei+<span class="num">1</span> &lt; <span class="fn">len</span>(lists[li]):
+            heapq.heappush(heap, (lists[li][ei+<span class="num">1</span>], li, ei+<span class="num">1</span>))
+    <span class="kw">return</span> result</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Python heapq is min-heap only -- negate for max-heap
+                    </li>
+                    <li>
+                      Tuple comparison: if first elements tie, Python compares
+                      second -- can crash
+                    </li>
+                    <li>
+                      Solution: use (value, unique_counter, object) tuples
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Kth Largest Element</li>
+                  <li>Top K Frequent Elements</li>
+                  <li>Merge K Sorted Lists</li>
+                  <li>Find Median from Data Stream</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 11: MONOTONIC STACK -->
+          <!-- ============================================================= -->
+          <section id="monotonic_stack">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Monotonic Stack
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Time: <span>O(n)</span></span>
+                    <span class="complexity-item"
+                      >Space: <span>O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">structure</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Monotonic Stack"?</div>
+                  <p>
+                    "Monotonic" = single direction (from Greek "monos" = single
+                    + "tonos" = stretching/direction). The stack maintains
+                    elements in strictly increasing or decreasing order. Named
+                    because the values in the stack are always monotonically
+                    ordered.
+                  </p>
+                </div>
+
+                <p>
+                  A stack maintaining elements in strictly increasing or
+                  decreasing order. When a new element violates order, pop until
+                  invariant restored. Popped elements have found their "answer".
+                  Converts O(n^2) to O(n).
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">next greater/smaller element</span>
+                  <span class="signal">largest rectangle in histogram</span>
+                  <span class="signal">stock span</span>
+                  <span class="signal">daily temperatures</span>
+                  <span class="signal">"next greater", "histogram"</span>
+                </div>
+
+                <h4>Animation: Next Greater Element</h4>
+                <div class="diagram-container" id="anim-mono-stack">
+                  <div class="diagram-title">
+                    Next Greater Element for [2, 1, 5, 6, 2, 3]
+                  </div>
+                  <svg id="svg-ms" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Decide: monotonic increasing or decreasing?</li>
+                  <li>
+                    For "next greater": use decreasing stack (pop when new >
+                    top)
+                  </li>
+                  <li>
+                    Iterate; while stack non-empty and current violates
+                    monotonicity: pop
+                  </li>
+                  <li>Push current element (or index) onto stack</li>
+                  <li>Remaining elements have no answer (use -1)</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">next_greater</span>(nums):
+    n = <span class="fn">len</span>(nums)
+    result = [-<span class="num">1</span>] * n
+    stack = []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        <span class="kw">while</span> stack <span class="kw">and</span> nums[stack[-<span class="num">1</span>]] &lt; nums[i]:
+            result[stack.pop()] = nums[i]
+        stack.append(i)
+    <span class="kw">return</span> result</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>Confusing increasing vs decreasing stack</li>
+                    <li>
+                      Forgetting sentinel to flush remaining stack elements
+                    </li>
+                    <li>Width calculation in histogram: i - stack[-1] - 1</li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Daily Temperatures</li>
+                  <li>Next Greater Element I &amp; II</li>
+                  <li>Largest Rectangle in Histogram</li>
+                  <li>Stock Span Problem</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 12: UNION FIND -->
+          <!-- ============================================================= -->
+          <section id="union_find">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Union Find (Disjoint Set)
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(alpha(n)) per op</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">structure</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">
+                    Why "Union-Find / Disjoint Set"?
+                  </div>
+                  <p>
+                    "Union" = merge two sets. "Find" = which set does this
+                    element belong to? Named directly after its two operations.
+                    "Disjoint Set" = sets that don't overlap (disjoint = not
+                    joined).
+                  </p>
+                </div>
+
+                <p>
+                  Track elements partitioned into disjoint sets. Near-O(1) union
+                  and find with path compression and union by rank. Use when
+                  dynamically merging groups and checking membership.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">dynamic connectivity</span>
+                  <span class="signal">merge groups incrementally</span>
+                  <span class="signal">count connected components</span>
+                  <span class="signal">Kruskal's MST</span>
+                  <span class="signal">"connected", "union", "same set"</span>
+                </div>
+
+                <h4>Animation: Union Operations with Path Compression</h4>
+                <div class="diagram-container" id="anim-uf">
+                  <div class="diagram-title">
+                    6 Nodes: Union Operations Merging Sets
+                  </div>
+                  <svg id="svg-uf" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Initialize: each element is its own parent</li>
+                  <li>
+                    Find: follow parent pointers to root, apply path compression
+                  </li>
+                  <li>
+                    Union: find roots of both, merge smaller into larger (by
+                    rank)
+                  </li>
+                  <li>
+                    Track component count: decrement on each successful union
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">class</span> <span class="ty">UnionFind</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n):
+        self.parent = <span class="fn">list</span>(<span class="fn">range</span>(n))
+        self.rank = [<span class="num">0</span>] * n
+    <span class="kw">def</span> <span class="fn">find</span>(self, x):
+        <span class="kw">if</span> self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        <span class="kw">return</span> self.parent[x]
+    <span class="kw">def</span> <span class="fn">union</span>(self, x, y):
+        px, py = self.find(x), self.find(y)
+        <span class="kw">if</span> px == py: <span class="kw">return</span>
+        <span class="kw">if</span> self.rank[px] &lt; self.rank[py]: px, py = py, px
+        self.parent[py] = px
+        <span class="kw">if</span> self.rank[px] == self.rank[py]: self.rank[px] += <span class="num">1</span></code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Forgetting path compression (makes find O(n) instead of
+                      O(alpha(n)))
+                    </li>
+                    <li>Use union by rank OR size, not both -- pick one</li>
+                    <li>
+                      For string/object keys: use a dict instead of list for
+                      parent
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Number of Connected Components</li>
+                  <li>Redundant Connection</li>
+                  <li>Accounts Merge</li>
+                  <li>Graph Valid Tree</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 13: TRIE -->
+          <!-- ============================================================= -->
+          <section id="trie">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Trie (Prefix Tree)
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(L) per op</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(total chars)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">structure</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Trie / Prefix Tree"?</div>
+                  <p>
+                    "Trie" comes from "retrieval" (pronounced "try" by creator
+                    Edward Fredkin, 1960). It's a tree where each path from root
+                    spells out a prefix of stored strings. Named for its
+                    purpose: information retrieval by prefix.
+                  </p>
+                </div>
+
+                <p>
+                  Tree where each node represents a character and paths from
+                  root spell prefixes. Enables O(L) lookup/insert where L is
+                  word length, regardless of dictionary size.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">prefix matching / autocomplete</span>
+                  <span class="signal"
+                    >word dictionary with prefix queries</span
+                  >
+                  <span class="signal">word search on board (trie + DFS)</span>
+                  <span class="signal">"prefix", "dictionary"</span>
+                </div>
+
+                <h4>Animation: Insert "cat", "car", "card"</h4>
+                <div class="diagram-container" id="anim-trie">
+                  <div class="diagram-title">
+                    Building a Trie: Insert "cat", "car", "card"
+                  </div>
+                  <svg id="svg-trie" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Build trie: for each word, walk/create nodes character by
+                    character
+                  </li>
+                  <li>Mark end-of-word nodes</li>
+                  <li>Search: walk trie following character path</li>
+                  <li>
+                    Prefix search: same as search but do not require is_end
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">class</span> <span class="ty">TrieNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.children = {}
+        self.is_end = <span class="kw">False</span>
+
+<span class="kw">class</span> <span class="ty">Trie</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self.root = TrieNode()
+    <span class="kw">def</span> <span class="fn">insert</span>(self, word):
+        node = self.root
+        <span class="kw">for</span> ch <span class="kw">in</span> word:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children:
+                node.children[ch] = TrieNode()
+            node = node.children[ch]
+        node.is_end = <span class="kw">True</span></code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>Memory-heavy: each node has a dict of children</li>
+                    <li>For board problems: prune trie after finding words</li>
+                    <li>
+                      Do not confuse search (exact match) with starts_with
+                      (prefix match)
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Implement Trie</li>
+                  <li>Word Search II</li>
+                  <li>Design Add and Search Words</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 14: PREFIX SUM -->
+          <!-- ============================================================= -->
+          <section id="prefix_sum">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Prefix Sum
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n) build, O(1) query</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Prefix Sum"?</div>
+                  <p>
+                    "Prefix" = the beginning part of something. A prefix sum at
+                    position i is the sum of all elements from the start
+                    (prefix) up to position i. Named because each entry stores
+                    the cumulative sum of the prefix ending at that index.
+                  </p>
+                </div>
+
+                <p>
+                  Precompute cumulative sums so any subarray sum is O(1).
+                  prefix[i] = sum(arr[0..i-1]). Then sum(arr[l..r]) =
+                  prefix[r+1] - prefix[l]. Extends to 2D, XOR, product.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">multiple subarray sum queries</span>
+                  <span class="signal">"subarrays with sum equal to K"</span>
+                  <span class="signal">range sum queries</span>
+                  <span class="signal">"cumulative", "subarray sum"</span>
+                </div>
+
+                <h4>Animation: Build Prefix Sum, Range Query [1,3]</h4>
+                <div class="diagram-container" id="anim-prefix">
+                  <div class="diagram-title">
+                    Prefix Sum of [1, 2, 3, 4, 5] and Range Query
+                  </div>
+                  <svg id="svg-ps" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Build prefix array: prefix[0] = 0, prefix[i] = prefix[i-1] +
+                    arr[i-1]
+                  </li>
+                  <li>Subarray sum [l, r] = prefix[r+1] - prefix[l]</li>
+                  <li>
+                    For "count subarrays with sum K": hash map of prefix sums
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">prefix_sum</span>(nums):
+    prefix = [<span class="num">0</span>] * (<span class="fn">len</span>(nums) + <span class="num">1</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(nums)):
+        prefix[i+<span class="num">1</span>] = prefix[i] + nums[i]
+    <span class="kw">def</span> <span class="fn">query</span>(l, r):
+        <span class="kw">return</span> prefix[r+<span class="num">1</span>] - prefix[l]
+    <span class="kw">return</span> query</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>Off-by-one: prefix has n+1 elements, prefix[0] = 0</li>
+                    <li>For "sum equals K": initialize hash map with {0: 1}</li>
+                    <li>Does not work for subarray product directly</li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Subarray Sum Equals K</li>
+                  <li>Range Sum Query</li>
+                  <li>Product of Array Except Self</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 15: HASH MAP -->
+          <!-- ============================================================= -->
+          <section id="hash_map">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Hash Map Patterns
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Time: <span>O(n)</span></span>
+                    <span class="complexity-item"
+                      >Space: <span>O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">structure</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Hash Map"?</div>
+                  <p>
+                    "Hash" = to chop/mix up. A hash function "hashes"
+                    (chops/scrambles) a key into a number (index). From the
+                    culinary term -- like making a hash (mixed dish) from
+                    ingredients. The key is "hashed" into a seemingly random but
+                    deterministic position.
+                  </p>
+                </div>
+
+                <p>
+                  Use hash maps for O(1) lookup/insert to replace O(n) scans.
+                  Common patterns: complement lookup (Two Sum), frequency
+                  counting, grouping by canonical key, and caching.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">O(1) lookup needed</span>
+                  <span class="signal">Two Sum complement check</span>
+                  <span class="signal">frequency counting</span>
+                  <span class="signal">group by key (anagrams)</span>
+                  <span class="signal">"find pair", "group by"</span>
+                </div>
+
+                <h4>Animation: Group Anagrams</h4>
+                <div class="diagram-container" id="anim-hashmap">
+                  <div class="diagram-title">
+                    Group Anagrams: "eat", "tea", "ate" by Sorted Key
+                  </div>
+                  <svg id="svg-hm" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>
+                    Identify what to store: element->index, element->count,
+                    pattern->group
+                  </li>
+                  <li>
+                    Single-pass when possible: check then insert (Two Sum)
+                  </li>
+                  <li>For frequency: Counter or defaultdict(int)</li>
+                  <li>For grouping: defaultdict(list), key = canonical form</li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+
+<span class="kw">def</span> <span class="fn">group_anagrams</span>(strs):
+    groups = defaultdict(list)
+    <span class="kw">for</span> s <span class="kw">in</span> strs:
+        key = <span class="fn">tuple</span>(<span class="fn">sorted</span>(s))
+        groups[key].append(s)
+    <span class="kw">return</span> <span class="fn">list</span>(groups.values())</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Mutable objects (lists) cannot be dict keys -- convert to
+                      tuples
+                    </li>
+                    <li>
+                      For sliding window + hash map: decrement/remove when
+                      shrinking
+                    </li>
+                    <li>
+                      Hash collisions rare in practice but exist in theory
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Two Sum</li>
+                  <li>Group Anagrams</li>
+                  <li>Longest Consecutive Sequence</li>
+                  <li>Top K Frequent Elements</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 16: DIJKSTRA -->
+          <!-- ============================================================= -->
+          <section id="dijkstra">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Dijkstra's Shortest Path
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O((V+E) log V)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(V + E)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Dijkstra's Algorithm"?</div>
+                  <p>
+                    Named after Edsger W. Dijkstra, the Dutch computer scientist
+                    who invented it in 1956 (published 1959). He conceived it in
+                    20 minutes at a cafe in Amsterdam while thinking about the
+                    shortest route between Rotterdam and Groningen. Pronounced
+                    "DIKE-struh".
+                  </p>
+                </div>
+
+                <p>
+                  Find shortest paths from source to all nodes in a weighted
+                  graph with non-negative edges. Uses a min-heap to always
+                  process the nearest unvisited node. Greedy approach that works
+                  because non-negative weights guarantee correctness.
+                </p>
+
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal"
+                    >shortest path (weighted, non-negative)</span
+                  >
+                  <span class="signal">minimum cost to destination</span>
+                  <span class="signal">network delay time</span>
+                  <span class="signal">"weighted graph"</span>
+                  <span class="signal">NOT for negative weights</span>
+                </div>
+
+                <h4>Animation: Shortest Path Discovery</h4>
+                <div class="diagram-container" id="anim-dijkstra">
+                  <div class="diagram-title">
+                    Dijkstra on 5-Node Weighted Graph
+                  </div>
+                  <svg id="svg-dij" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Approach</h4>
+                <ol>
+                  <li>Initialize: dist[source] = 0, all others = infinity</li>
+                  <li>Push (0, source) to min-heap</li>
+                  <li>Pop minimum distance node from heap</li>
+                  <li>
+                    If already visited with shorter distance, skip (lazy
+                    deletion)
+                  </li>
+                  <li>
+                    For each neighbor: if new distance &lt; known, update and
+                    push
+                  </li>
+                </ol>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graph, src):
+    dist = {src: <span class="num">0</span>}
+    heap = [(<span class="num">0</span>, src)]
+    <span class="kw">while</span> heap:
+        d, u = heapq.heappop(heap)
+        <span class="kw">if</span> d > dist.get(u, <span class="fn">float</span>(<span class="str">'inf'</span>)): <span class="kw">continue</span>
+        <span class="kw">for</span> v, w <span class="kw">in</span> graph[u]:
+            nd = d + w
+            <span class="kw">if</span> nd &lt; dist.get(v, <span class="fn">float</span>(<span class="str">'inf'</span>)):
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+    <span class="kw">return</span> dist</code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>Does not work with negative edge weights</li>
+                    <li>Must use lazy deletion (skip stale heap entries)</li>
+                    <li>
+                      Do not confuse with BFS -- BFS is unweighted, Dijkstra is
+                      weighted
+                    </li>
+                  </ul>
+                </div>
+
+                <h4>Canonical Problems</h4>
+                <ul>
+                  <li>Network Delay Time</li>
+                  <li>Cheapest Flights Within K Stops</li>
+                  <li>Path with Minimum Effort</li>
+                  <li>Swim in Rising Water</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 17: BINARY SEARCH ON ANSWER -->
+          <!-- ============================================================= -->
+          <section id="binary_search_answer">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Binary Search on Answer
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(check · log R)</span></span
+                    >
+                    <span class="complexity-item">Space: <span>O(1)</span></span>
+                  </div>
+                </div>
+                <span class="badge badge-blue">optimization</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE bridge</div>
+                  <p>
+                    Like successive-approximation ADC / binary search on a
+                    threshold: the feasibility line is monotone (FFF…TTT), so
+                    each mid discards half the answer range.
+                  </p>
+                </div>
+                <p>
+                  Distinct from binary search on a sorted array index. Here the
+                  <em>answer</em> is a number on a monotone feasibility line —
+                  you invent <code>can(mid)</code> and search for the boundary.
+                </p>
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">minimize maximum / maximize minimum</span>
+                  <span class="signal">capacity / speed / allocation</span>
+                  <span class="signal">monotone can(x)</span>
+                  <span class="signal">Koko / ship packages / split array</span>
+                </div>
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">binary_search_answer</span>(lo, hi, can):
+    ans = hi
+    <span class="kw">while</span> lo &lt;= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> can(mid):
+            ans = mid
+            hi = mid - <span class="num">1</span>
+        <span class="kw">else</span>:
+            lo = mid + <span class="num">1</span>
+    <span class="kw">return</span> ans</code></pre>
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>can(x) must be monotone — otherwise BS is wrong</li>
+                    <li>First True vs last False off-by-one</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 18: SWEEP LINE -->
+          <!-- ============================================================= -->
+          <section id="sweep_line">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Sweep Line / Intervals
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item">Space: <span>O(n)</span></span>
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE bridge</div>
+                  <p>
+                    Like counting concurrent signals on a timeline: rising edges
+                    (+1) and falling edges (−1); the running sum is instantaneous
+                    load — same idea as peak concurrent sessions in a service.
+                  </p>
+                </div>
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">meeting rooms / platforms</span>
+                  <span class="signal">max overlap / concurrency</span>
+                  <span class="signal">skyline / car pooling</span>
+                  <span class="signal">load over time</span>
+                </div>
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">max_concurrent</span>(intervals):
+    events = []
+    <span class="kw">for</span> s, e <span class="kw">in</span> intervals:
+        events.append((s, <span class="num">1</span>))
+        events.append((e, -<span class="num">1</span>))
+    events.sort(key=<span class="kw">lambda</span> x: (x[<span class="num">0</span>], x[<span class="num">1</span>]))
+    cur = best = <span class="num">0</span>
+    <span class="kw">for</span> _, d <span class="kw">in</span> events:
+        cur += d
+        best = max(best, cur)
+    <span class="kw">return</span> best</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 19: LINKED LIST -->
+          <!-- ============================================================= -->
+          <section id="linked_list">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Linked List Techniques
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Time: <span>O(n)</span></span>
+                    <span class="complexity-item">Space: <span>O(1)</span></span>
+                  </div>
+                </div>
+                <span class="badge badge-green">structure</span>
+              </div>
+              <div class="pattern-card-body">
+                <p>
+                  Dummy head, fast/slow (tortoise-hare), reverse, merge. Small
+                  API surface — easy to fumble under pressure until muscle memory.
+                </p>
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">reverse / rotate list</span>
+                  <span class="signal">cycle detection (Floyd)</span>
+                  <span class="signal">middle / nth from end</span>
+                  <span class="signal">merge sorted lists</span>
+                </div>
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">reverse_list</span>(head):
+    prev, cur = <span class="kw">None</span>, head
+    <span class="kw">while</span> cur:
+        nxt = cur.next
+        cur.next = prev
+        prev, cur = cur, nxt
+    <span class="kw">return</span> prev</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 20: BIT MANIPULATION -->
+          <!-- ============================================================= -->
+          <section id="bit_manipulation">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Bit Manipulation
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Time: <span>O(n)</span></span>
+                    <span class="complexity-item">Space: <span>O(1)</span></span>
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE bridge</div>
+                  <p>
+                    Flags, permission masks, and protocol bitfields — same
+                    mental model as register bit packing. XOR cancels pairs like
+                    differential signaling nulling common mode.
+                  </p>
+                </div>
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">single number (XOR)</span>
+                  <span class="signal">bitmask subsets (n ≤ 20)</span>
+                  <span class="signal">power of two / popcount</span>
+                  <span class="signal">flag packs / permissions</span>
+                </div>
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">single_number</span>(nums):
+    x = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        x ^= n
+    <span class="kw">return</span> x</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- PATTERN 21: DIFFERENCE ARRAY -->
+          <!-- ============================================================= -->
+          <section id="difference_array">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    Difference Array
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n + u)</span></span
+                    >
+                    <span class="complexity-item">Space: <span>O(n)</span></span>
+                  </div>
+                </div>
+                <span class="badge badge-blue">technique</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE bridge</div>
+                  <p>
+                    Inverse of prefix/integration: encode a step impulse at L and
+                    −impulse at R+1, then integrate once. Batch range writes
+                    without touching every cell each time.
+                  </p>
+                </div>
+                <h4>When to Use</h4>
+                <div class="signals">
+                  <span class="signal">many range increments</span>
+                  <span class="signal">then read final array</span>
+                  <span class="signal">corporate flight bookings</span>
+                  <span class="signal">batch config over ranges</span>
+                </div>
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">apply_range_updates</span>(n, updates):
+    diff = [<span class="num">0</span>] * (n + <span class="num">1</span>)
+    <span class="kw">for</span> L, R, val <span class="kw">in</span> updates:
+        diff[L] += val
+        <span class="kw">if</span> R + <span class="num">1</span> &lt; len(diff):
+            diff[R + <span class="num">1</span>] -= val
+    out, run = [<span class="num">0</span>] * n, <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        run += diff[i]
+        out[i] = run
+    <span class="kw">return</span> out</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Staff systems patterns</div>
+            <p>
+              Algorithm patterns above are for coding recognition. For production
+              systems recognition (cache-aside, outbox, saga, circuit breaker,
+              …) see
+              <a href="engineering_patterns.html">Engineering Patterns</a>.
+            </p>
+          </div>
+
+          <div class="footer">
+            Staff SDE Mastery -- Algorithm Gaps Analysis Tool
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <button class="scroll-top" aria-label="Scroll to top">&#8593;</button>
+
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+      /* ================================================================
+       ANIMATION DEFINITIONS (patterns 1–16; 17–21 use static templates)
+       ================================================================ */
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // ---------------------------------------------------------------
+        // 1. SLIDING WINDOW: max sum k=3 on [2,1,5,1,3,2]
+        // ---------------------------------------------------------------
+        (function () {
+          var vals = [2, 1, 5, 1, 3, 2];
+          var layout = buildArraySVG("svg-sw", vals);
+          var sums = [];
+          for (var i = 0; i <= vals.length - 3; i++) {
+            sums.push(vals[i] + vals[i + 1] + vals[i + 2]);
+          }
+          function resetSW() {
+            for (var i = 0; i < vals.length; i++)
+              setArrayCellClass("svg-sw", i, "array-cell");
+          }
+          new AlgoAnimation(
+            "anim-sliding-window",
+            [
+              {
+                apply: function () {
+                  for (var i = 0; i < 3; i++)
+                    setArrayCellClass("svg-sw", i, "array-cell-window");
+                },
+                description:
+                  "Step 1: Initialize window [0..2]. Sum = 2+1+5 = 8. Best = 8.",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-sw", 0, "array-cell");
+                  setArrayCellClass("svg-sw", 3, "array-cell-window");
+                },
+                description:
+                  "Step 2: Slide window to [1..3]. Remove 2, add 1. Sum = 1+5+1 = 7. Best = 8.",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-sw", 1, "array-cell");
+                  setArrayCellClass("svg-sw", 4, "array-cell-window");
+                },
+                description:
+                  "Step 3: Slide window to [2..4]. Remove 1, add 3. Sum = 5+1+3 = 9. Best = 9!",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-sw", 2, "array-cell");
+                  setArrayCellClass("svg-sw", 5, "array-cell-window");
+                },
+                description:
+                  "Step 4: Slide window to [3..5]. Remove 5, add 2. Sum = 1+3+2 = 6. Best = 9.",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-sw", 3, "array-cell");
+                  setArrayCellClass("svg-sw", 4, "array-cell");
+                  setArrayCellClass("svg-sw", 5, "array-cell");
+                  for (var i = 2; i <= 4; i++)
+                    setArrayCellClass("svg-sw", i, "array-cell-result");
+                },
+                description:
+                  "Done! Maximum sum window is [2..4] = [5,1,3] with sum = 9.",
+              },
+            ],
+            { onReset: resetSW },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 2. TWO POINTERS: find pair summing to 10 in [1,2,3,4,6,8,11]
+        // ---------------------------------------------------------------
+        (function () {
+          var vals = [1, 2, 3, 4, 6, 8, 11];
+          var layout = buildArraySVG("svg-tp", vals);
+          function resetTP() {
+            for (var i = 0; i < vals.length; i++)
+              setArrayCellClass("svg-tp", i, "array-cell");
+            var g = document.getElementById("svg-tp-pointers");
+            if (g) g.innerHTML = "";
+          }
+          new AlgoAnimation(
+            "anim-two-pointers",
+            [
+              {
+                apply: function () {
+                  setArrayCellClass("svg-tp", 0, "array-cell-active");
+                  setArrayCellClass("svg-tp", 6, "array-cell-active");
+                  addPointer("svg-tp", 0, "L", "#d29922", layout);
+                  addPointer("svg-tp", 6, "R", "#f85149", layout);
+                },
+                description:
+                  "Step 1: L=0, R=6. Sum = 1+11 = 12. Too large, move R left.",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-tp", 6, "array-cell");
+                  setArrayCellClass("svg-tp", 5, "array-cell-active");
+                  movePointer("svg-tp", "R", 5, layout);
+                },
+                description:
+                  "Step 2: L=0, R=5. Sum = 1+8 = 9. Too small, move L right.",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-tp", 0, "array-cell");
+                  setArrayCellClass("svg-tp", 1, "array-cell-active");
+                  movePointer("svg-tp", "L", 1, layout);
+                },
+                description: "Step 3: L=1, R=5. Sum = 2+8 = 10. Found it!",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-tp", 1, "array-cell-result");
+                  setArrayCellClass("svg-tp", 5, "array-cell-result");
+                },
+                description: "Done! Pair (2, 8) at indices [1, 5] sums to 10.",
+              },
+            ],
+            { onReset: resetTP },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 3. BINARY SEARCH: search for 7 in [1,3,5,7,9,11,13,15]
+        // ---------------------------------------------------------------
+        (function () {
+          var vals = [1, 3, 5, 7, 9, 11, 13, 15];
+          var layout = buildArraySVG("svg-bs", vals);
+          function resetBS() {
+            for (var i = 0; i < vals.length; i++)
+              setArrayCellClass("svg-bs", i, "array-cell");
+            var g = document.getElementById("svg-bs-pointers");
+            if (g) g.innerHTML = "";
+          }
+          new AlgoAnimation(
+            "anim-binary-search",
+            [
+              {
+                apply: function () {
+                  addPointer("svg-bs", 0, "lo", "#3fb950", layout);
+                  addPointer("svg-bs", 7, "hi", "#f85149", layout);
+                  for (var i = 0; i < 8; i++)
+                    setArrayCellClass("svg-bs", i, "array-cell-window");
+                },
+                description: "Step 1: Search space [0..7]. lo=0, hi=7.",
+              },
+              {
+                apply: function () {
+                  for (var i = 0; i < 8; i++)
+                    setArrayCellClass("svg-bs", i, "array-cell-window");
+                  setArrayCellClass("svg-bs", 3, "array-cell-active");
+                  addPointer("svg-bs", 3, "mid", "#d29922", layout);
+                },
+                description:
+                  "Step 2: mid = 3, arr[3] = 7. Compare with target 7.",
+              },
+              {
+                apply: function () {
+                  for (var i = 0; i < 8; i++)
+                    setArrayCellClass("svg-bs", i, "array-cell");
+                  setArrayCellClass("svg-bs", 3, "array-cell-result");
+                },
+                description:
+                  "Step 3: arr[3] == 7. Found! Target is at index 3.",
+              },
+            ],
+            { onReset: resetBS, speed: 1200 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 4. BFS: level-by-level traversal on 6-node graph
+        // ---------------------------------------------------------------
+        (function () {
+          var nodes = [
+            { x: 250, y: 40, label: "A" }, // 0
+            { x: 120, y: 120, label: "B" }, // 1
+            { x: 380, y: 120, label: "C" }, // 2
+            { x: 60, y: 220, label: "D" }, // 3
+            { x: 200, y: 220, label: "E" }, // 4
+            { x: 340, y: 220, label: "F" }, // 5
+          ];
+          var edges = [
+            { from: 0, to: 1 },
+            { from: 0, to: 2 },
+            { from: 1, to: 3 },
+            { from: 1, to: 4 },
+            { from: 2, to: 5 },
+          ];
+          buildGraphSVG("svg-bfs", nodes, edges, {
+            width: 440,
+            height: 270,
+            directed: false,
+          });
+          function resetBFS() {
+            for (var i = 0; i < 6; i++)
+              setClass("svg-bfs-node-" + i, "node-fill node-stroke");
+            for (var i = 0; i < 5; i++) setClass("svg-bfs-edge-" + i, "edge");
+          }
+          new AlgoAnimation(
+            "anim-bfs",
+            [
+              {
+                apply: function () {
+                  setClass("svg-bfs-node-0", "node-current");
+                },
+                description:
+                  "Step 1: Start BFS from node A. Queue: [A]. Level 0.",
+              },
+              {
+                apply: function () {
+                  setClass("svg-bfs-node-0", "node-visited");
+                  setClass("svg-bfs-node-1", "node-current");
+                  setClass("svg-bfs-node-2", "node-current");
+                  setClass("svg-bfs-edge-0", "edge-active");
+                  setClass("svg-bfs-edge-1", "edge-active");
+                },
+                description:
+                  "Step 2: Visit A. Enqueue neighbors B, C. Queue: [B, C]. Level 1.",
+              },
+              {
+                apply: function () {
+                  setClass("svg-bfs-node-1", "node-visited");
+                  setClass("svg-bfs-node-2", "node-visited");
+                  setClass("svg-bfs-node-3", "node-current");
+                  setClass("svg-bfs-node-4", "node-current");
+                  setClass("svg-bfs-node-5", "node-current");
+                  setClass("svg-bfs-edge-2", "edge-active");
+                  setClass("svg-bfs-edge-3", "edge-active");
+                  setClass("svg-bfs-edge-4", "edge-active");
+                },
+                description:
+                  "Step 3: Visit B, C. Enqueue D, E, F. Queue: [D, E, F]. Level 2.",
+              },
+              {
+                apply: function () {
+                  setClass("svg-bfs-node-3", "node-visited");
+                  setClass("svg-bfs-node-4", "node-visited");
+                  setClass("svg-bfs-node-5", "node-visited");
+                  for (var i = 0; i < 5; i++)
+                    setClass("svg-bfs-edge-" + i, "edge-path");
+                },
+                description:
+                  "Step 4: Visit D, E, F. Queue empty. BFS complete! All 6 nodes visited in 3 levels.",
+              },
+            ],
+            { onReset: resetBFS, speed: 1000 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 5. DFS: pre-order traversal on 7-node binary tree
+        // ---------------------------------------------------------------
+        (function () {
+          var tree = [
+            { label: "1", x: 250, y: 35, children: [1, 2] }, // 0: root
+            { label: "2", x: 140, y: 105, children: [3, 4] }, // 1
+            { label: "3", x: 360, y: 105, children: [5, 6] }, // 2
+            { label: "4", x: 80, y: 175, children: [] }, // 3
+            { label: "5", x: 200, y: 175, children: [] }, // 4
+            { label: "6", x: 300, y: 175, children: [] }, // 5
+            { label: "7", x: 420, y: 175, children: [] }, // 6
+          ];
+          buildTreeSVG("svg-dfs", tree, { width: 500, height: 220 });
+          function resetDFS() {
+            for (var i = 0; i < 7; i++)
+              setClass("svg-dfs-tnode-" + i, "node-fill node-stroke");
+          }
+          // Pre-order: 1,2,4,5,3,6,7
+          var order = [0, 1, 3, 4, 2, 5, 6];
+          var labels = ["1", "2", "4", "5", "3", "6", "7"];
+          var steps = [];
+          for (var si = 0; si < 7; si++) {
+            (function (idx, lbl, step) {
+              steps.push({
+                apply: function () {
+                  if (step > 0)
+                    setClass(
+                      "svg-dfs-tnode-" + order[step - 1],
+                      "node-visited",
+                    );
+                  setClass("svg-dfs-tnode-" + idx, "node-current");
+                },
+                description:
+                  "Step " +
+                  (step + 1) +
+                  ": Visit node " +
+                  lbl +
+                  ". Pre-order sequence so far: " +
+                  labels.slice(0, step + 1).join(" -> "),
+              });
+            })(order[si], labels[si], si);
+          }
+          steps.push({
+            apply: function () {
+              setClass("svg-dfs-tnode-" + order[6], "node-visited");
+            },
+            description:
+              "Done! Pre-order traversal: 1 -> 2 -> 4 -> 5 -> 3 -> 6 -> 7",
+          });
+          new AlgoAnimation("anim-dfs", steps, {
+            onReset: resetDFS,
+            speed: 800,
+          });
+        })();
+
+        // ---------------------------------------------------------------
+        // 6. TOPOLOGICAL SORT: Kahn's on 6-node DAG
+        // ---------------------------------------------------------------
+        (function () {
+          var nodes = [
+            { x: 80, y: 40, label: "C0" }, // 0 - no prereqs
+            { x: 280, y: 40, label: "C1" }, // 1 - no prereqs
+            { x: 80, y: 150, label: "C2" }, // 2 - prereq: C0
+            { x: 280, y: 150, label: "C3" }, // 3 - prereq: C0,C1
+            { x: 180, y: 260, label: "C4" }, // 4 - prereq: C2,C3
+            { x: 400, y: 150, label: "C5" }, // 5 - prereq: C1
+          ];
+          var edges = [
+            { from: 0, to: 2 },
+            { from: 0, to: 3 },
+            { from: 1, to: 3 },
+            { from: 1, to: 5 },
+            { from: 2, to: 4 },
+            { from: 3, to: 4 },
+          ];
+          buildGraphSVG("svg-topo", nodes, edges, {
+            width: 480,
+            height: 300,
+            directed: true,
+          });
+          function resetTopo() {
+            for (var i = 0; i < 6; i++)
+              setClass("svg-topo-node-" + i, "node-fill node-stroke");
+            for (var i = 0; i < 6; i++) setClass("svg-topo-edge-" + i, "edge");
+          }
+          new AlgoAnimation(
+            "anim-topo",
+            [
+              {
+                apply: function () {
+                  // Show in-degrees: C0=0, C1=0, C2=1, C3=2, C4=2, C5=1
+                },
+                description:
+                  "Step 1: Compute in-degrees: C0=0, C1=0, C2=1, C3=2, C4=2, C5=1. Queue: [C0, C1]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-topo-node-0", "node-current");
+                  setClass("svg-topo-node-1", "node-current");
+                },
+                description:
+                  "Step 2: Nodes C0 and C1 have in-degree 0. Process C0 first.",
+              },
+              {
+                apply: function () {
+                  setClass("svg-topo-node-0", "node-visited");
+                  setClass("svg-topo-edge-0", "edge-path");
+                  setClass("svg-topo-edge-1", "edge-path");
+                  setClass("svg-topo-node-2", "node-active");
+                },
+                description:
+                  "Step 3: Process C0. Decrement neighbors: C2 in-deg=0, C3 in-deg=1. Queue: [C1, C2]. Order: [C0]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-topo-node-1", "node-visited");
+                  setClass("svg-topo-edge-2", "edge-path");
+                  setClass("svg-topo-edge-3", "edge-path");
+                  setClass("svg-topo-node-5", "node-active");
+                },
+                description:
+                  "Step 4: Process C1. C3 in-deg=0, C5 in-deg=0. Queue: [C2, C3, C5]. Order: [C0, C1]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-topo-node-2", "node-visited");
+                  setClass("svg-topo-node-5", "node-visited");
+                  setClass("svg-topo-node-3", "node-current");
+                  setClass("svg-topo-edge-4", "edge-path");
+                },
+                description:
+                  "Step 5: Process C2, C5, C3. C4 in-deg=0. Order: [C0, C1, C2, C5, C3]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-topo-node-3", "node-visited");
+                  setClass("svg-topo-node-4", "node-visited");
+                  setClass("svg-topo-edge-5", "edge-path");
+                  for (var i = 0; i < 6; i++)
+                    setClass("svg-topo-node-" + i, "node-visited");
+                },
+                description:
+                  "Step 6: Process C4. All 6 nodes processed. Order: [C0, C1, C2, C5, C3, C4]. No cycle.",
+              },
+            ],
+            { onReset: resetTopo, speed: 1000 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 7. DP: Edit Distance "hor" -> "ro" (simplified 4x4)
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-dp");
+          if (!svg) return;
+          // We'll show a 4x4 grid for "hor" vs "ro" (first 3 chars of horse vs first 2 of ros)
+          var rows = ["", "h", "o", "r"];
+          var cols = ["", "r", "o"];
+          var cellSize = 55;
+          var ox = 60,
+            oy = 60;
+          var w = ox + cols.length * cellSize + 30;
+          var h = oy + rows.length * cellSize + 20;
+          svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+
+          var html = "";
+          // Column headers
+          for (var j = 0; j < cols.length; j++) {
+            html +=
+              '<text class="label-text" x="' +
+              (ox + j * cellSize + cellSize / 2) +
+              '" y="' +
+              (oy - 12) +
+              '">' +
+              cols[j] +
+              "</text>";
+          }
+          // Row headers
+          for (var i = 0; i < rows.length; i++) {
+            html +=
+              '<text class="label-text" x="' +
+              (ox - 20) +
+              '" y="' +
+              (oy + i * cellSize + cellSize / 2) +
+              '">' +
+              rows[i] +
+              "</text>";
+          }
+          // Grid cells
+          for (var i = 0; i < rows.length; i++) {
+            for (var j = 0; j < cols.length; j++) {
+              var cx = ox + j * cellSize;
+              var cy = oy + i * cellSize;
+              html +=
+                '<rect id="dp-cell-' +
+                i +
+                "-" +
+                j +
+                '" class="array-cell" x="' +
+                cx +
+                '" y="' +
+                cy +
+                '" width="' +
+                cellSize +
+                '" height="' +
+                cellSize +
+                '" rx="4"/>';
+              html +=
+                '<text id="dp-val-' +
+                i +
+                "-" +
+                j +
+                '" class="array-value" x="' +
+                (cx + cellSize / 2) +
+                '" y="' +
+                (cy + cellSize / 2) +
+                '"></text>';
+            }
+          }
+          svg.innerHTML = html;
+
+          // dp table for "hor" vs "ro"
+          var dp = [
+            [0, 1, 2],
+            [1, 1, 2],
+            [2, 2, 1],
+            [3, 3, 2],
+          ];
+          function resetDP() {
+            for (var i = 0; i < 4; i++)
+              for (var j = 0; j < 3; j++) {
+                setClass("dp-cell-" + i + "-" + j, "array-cell");
+                setText("dp-val-" + i + "-" + j, "");
+              }
+          }
+          new AlgoAnimation(
+            "anim-dp",
+            [
+              {
+                apply: function () {
+                  // Fill base row
+                  for (var j = 0; j < 3; j++) {
+                    setText("dp-val-0-" + j, dp[0][j]);
+                    setClass("dp-cell-0-" + j, "array-cell-active");
+                  }
+                },
+                description:
+                  'Step 1: Base case row: converting "" to "", "r", "ro" costs 0, 1, 2 insertions.',
+              },
+              {
+                apply: function () {
+                  for (var j = 0; j < 3; j++)
+                    setClass("dp-cell-0-" + j, "array-cell-window");
+                  for (var i = 1; i < 4; i++) {
+                    setText("dp-val-" + i + "-0", dp[i][0]);
+                    setClass("dp-cell-" + i + "-0", "array-cell-active");
+                  }
+                },
+                description:
+                  'Step 2: Base case column: converting "", "h", "ho", "hor" to "" costs 0, 1, 2, 3 deletions.',
+              },
+              {
+                apply: function () {
+                  for (var i = 1; i < 4; i++)
+                    setClass("dp-cell-" + i + "-0", "array-cell-window");
+                  setText("dp-val-1-1", "1");
+                  setClass("dp-cell-1-1", "array-cell-current");
+                },
+                description:
+                  'Step 3: dp[1][1]: "h" vs "r". Different chars. min(dp[0][0]+1, dp[0][1]+1, dp[1][0]+1) = min(1,2,2) = 1.',
+              },
+              {
+                apply: function () {
+                  setClass("dp-cell-1-1", "array-cell-window");
+                  setText("dp-val-1-2", "2");
+                  setClass("dp-cell-1-2", "array-cell-current");
+                },
+                description:
+                  'Step 4: dp[1][2]: "h" vs "ro". Different. min(dp[0][1]+1, dp[0][2]+1, dp[1][1]+1) = min(2,3,2) = 2.',
+              },
+              {
+                apply: function () {
+                  setClass("dp-cell-1-2", "array-cell-window");
+                  setText("dp-val-2-1", "2");
+                  setClass("dp-cell-2-1", "array-cell-current");
+                },
+                description:
+                  'Step 5: dp[2][1]: "ho" vs "r". Different. min(1+1, 1+1, 2+1) = 2.',
+              },
+              {
+                apply: function () {
+                  setClass("dp-cell-2-1", "array-cell-window");
+                  setText("dp-val-2-2", "1");
+                  setClass("dp-cell-2-2", "array-cell-current");
+                },
+                description:
+                  'Step 6: dp[2][2]: "ho" vs "ro". o==o! dp[1][1] = 1 (no extra cost). So dp[2][2] = 1.',
+              },
+              {
+                apply: function () {
+                  setClass("dp-cell-2-2", "array-cell-window");
+                  setText("dp-val-3-1", "3");
+                  setClass("dp-cell-3-1", "array-cell-current");
+                  setText("dp-val-3-2", "2");
+                  setClass("dp-cell-3-2", "array-cell-current");
+                },
+                description:
+                  'Step 7: dp[3][1]=3, dp[3][2]=2. Edit distance "hor" -> "ro" = 2.',
+              },
+              {
+                apply: function () {
+                  setClass("dp-cell-3-1", "array-cell-window");
+                  setClass("dp-cell-3-2", "array-cell-result");
+                },
+                description:
+                  "Done! Edit distance = 2. The bottom-right cell holds the answer.",
+              },
+            ],
+            { onReset: resetDP, speed: 1000 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 8. GREEDY: Interval scheduling
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-greedy");
+          if (!svg) return;
+          // Intervals (sorted by end): [1,3], [2,4], [3,5], [5,7], [6,8]
+          var intervals = [
+            [1, 3],
+            [2, 4],
+            [3, 5],
+            [5, 7],
+            [6, 8],
+          ];
+          var labels = ["A", "B", "C", "D", "E"];
+          var w = 500,
+            h = 200;
+          svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+          var timeScale = 50,
+            ox = 40,
+            barH = 25,
+            gap = 8;
+
+          var html = "";
+          // Time axis
+          for (var t = 0; t <= 9; t++) {
+            var tx = ox + t * timeScale;
+            html +=
+              '<line x1="' +
+              tx +
+              '" y1="' +
+              (h - 20) +
+              '" x2="' +
+              tx +
+              '" y2="25" stroke="#30363d" stroke-width="1" stroke-dasharray="2"/>';
+            html +=
+              '<text class="array-index" x="' +
+              tx +
+              '" y="' +
+              (h - 5) +
+              '">' +
+              t +
+              "</text>";
+          }
+          // Interval bars
+          for (var i = 0; i < intervals.length; i++) {
+            var y = 30 + i * (barH + gap);
+            var x1 = ox + intervals[i][0] * timeScale;
+            var bw = (intervals[i][1] - intervals[i][0]) * timeScale;
+            html +=
+              '<rect id="grdy-bar-' +
+              i +
+              '" x="' +
+              x1 +
+              '" y="' +
+              y +
+              '" width="' +
+              bw +
+              '" height="' +
+              barH +
+              '" rx="4" class="array-cell"/>';
+            html +=
+              '<text id="grdy-lbl-' +
+              i +
+              '" class="array-value" x="' +
+              (x1 + bw / 2) +
+              '" y="' +
+              (y + barH / 2) +
+              '">' +
+              labels[i] +
+              " [" +
+              intervals[i][0] +
+              "," +
+              intervals[i][1] +
+              "]</text>";
+          }
+          svg.innerHTML = html;
+
+          function resetGreedy() {
+            for (var i = 0; i < 5; i++) setClass("grdy-bar-" + i, "array-cell");
+          }
+          new AlgoAnimation(
+            "anim-greedy",
+            [
+              {
+                apply: function () {
+                  // Already sorted by end time
+                },
+                description:
+                  "Step 1: Sort intervals by end time: A[1,3], B[2,4], C[3,5], D[5,7], E[6,8]. last_end = -inf.",
+              },
+              {
+                apply: function () {
+                  setClass("grdy-bar-0", "array-cell-window");
+                },
+                description:
+                  "Step 2: A[1,3]: start=1 >= -inf. SELECT! last_end = 3. Count = 1.",
+              },
+              {
+                apply: function () {
+                  setClass("grdy-bar-1", "array-cell-pointer");
+                },
+                description:
+                  "Step 3: B[2,4]: start=2 < 3. SKIP (overlaps with A).",
+              },
+              {
+                apply: function () {
+                  setClass("grdy-bar-2", "array-cell-pointer");
+                },
+                description:
+                  "Step 4: C[3,5]: start=3 >= 3. SELECT! last_end = 5. Count = 2.",
+              },
+              {
+                apply: function () {
+                  setClass("grdy-bar-2", "array-cell-window");
+                  setClass("grdy-bar-3", "array-cell-window");
+                },
+                description:
+                  "Step 5: D[5,7]: start=5 >= 5. SELECT! last_end = 7. Count = 3.",
+              },
+              {
+                apply: function () {
+                  setClass("grdy-bar-4", "array-cell-pointer");
+                },
+                description:
+                  "Step 6: E[6,8]: start=6 < 7. SKIP (overlaps with D).",
+              },
+              {
+                apply: function () {
+                  setClass("grdy-bar-0", "array-cell-result");
+                  setClass("grdy-bar-2", "array-cell-result");
+                  setClass("grdy-bar-3", "array-cell-result");
+                },
+                description:
+                  "Done! Maximum non-overlapping: A, C, D. Count = 3.",
+              },
+            ],
+            { onReset: resetGreedy, speed: 900 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 9. BACKTRACKING: 4-Queens simplified
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-backtrack");
+          if (!svg) return;
+          var sz = 45,
+            ox = 60,
+            oy = 30;
+          var w = ox + 4 * sz + 40,
+            h = oy + 4 * sz + 30;
+          svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+          var html = "";
+          // Draw 4x4 board
+          for (var r = 0; r < 4; r++) {
+            for (var c = 0; c < 4; c++) {
+              var fill = (r + c) % 2 === 0 ? "#21262d" : "#161b22";
+              html +=
+                '<rect id="bk-cell-' +
+                r +
+                "-" +
+                c +
+                '" x="' +
+                (ox + c * sz) +
+                '" y="' +
+                (oy + r * sz) +
+                '" width="' +
+                sz +
+                '" height="' +
+                sz +
+                '" fill="' +
+                fill +
+                '" stroke="#30363d"/>';
+              html +=
+                '<text id="bk-q-' +
+                r +
+                "-" +
+                c +
+                '" class="label-text" x="' +
+                (ox + c * sz + sz / 2) +
+                '" y="' +
+                (oy + r * sz + sz / 2) +
+                '" style="display:none;font-size:20px">Q</text>';
+            }
+          }
+          svg.innerHTML = html;
+
+          function clearBoard() {
+            for (var r = 0; r < 4; r++)
+              for (var c = 0; c < 4; c++) {
+                var fill = (r + c) % 2 === 0 ? "#21262d" : "#161b22";
+                document
+                  .getElementById("bk-cell-" + r + "-" + c)
+                  .setAttribute("fill", fill);
+                hideEl("bk-q-" + r + "-" + c);
+              }
+          }
+          function placeQ(r, c) {
+            showEl("bk-q-" + r + "-" + c);
+          }
+          function removeQ(r, c) {
+            hideEl("bk-q-" + r + "-" + c);
+          }
+          function markConflict(r, c) {
+            document
+              .getElementById("bk-cell-" + r + "-" + c)
+              .setAttribute("fill", "rgba(248,81,73,0.3)");
+          }
+          function markSafe(r, c) {
+            document
+              .getElementById("bk-cell-" + r + "-" + c)
+              .setAttribute("fill", "rgba(63,185,80,0.2)");
+          }
+
+          new AlgoAnimation(
+            "anim-backtrack",
+            [
+              {
+                apply: function () {
+                  placeQ(0, 0);
+                  markSafe(0, 0);
+                },
+                description: "Step 1: Place Q at row 0, col 0.",
+              },
+              {
+                apply: function () {
+                  placeQ(1, 2);
+                  markSafe(1, 2);
+                },
+                description:
+                  "Step 2: Place Q at row 1, col 2 (first safe column in row 1).",
+              },
+              {
+                apply: function () {
+                  markConflict(2, 0);
+                  markConflict(2, 1);
+                  markConflict(2, 2);
+                  markConflict(2, 3);
+                },
+                description:
+                  "Step 3: Row 2 -- no safe column! All conflict. BACKTRACK.",
+              },
+              {
+                apply: function () {
+                  clearBoard();
+                  placeQ(0, 0);
+                  markSafe(0, 0);
+                  placeQ(1, 3);
+                  markSafe(1, 3);
+                },
+                description: "Step 4: Backtrack to row 1. Try col 3 instead.",
+              },
+              {
+                apply: function () {
+                  placeQ(2, 1);
+                  markSafe(2, 1);
+                },
+                description: "Step 5: Row 2, col 1 is safe. Place Q.",
+              },
+              {
+                apply: function () {
+                  markConflict(3, 0);
+                  markConflict(3, 1);
+                  markConflict(3, 2);
+                  markConflict(3, 3);
+                },
+                description:
+                  "Step 6: Row 3 -- no safe column. BACKTRACK again.",
+              },
+              {
+                apply: function () {
+                  clearBoard();
+                  placeQ(0, 1);
+                  markSafe(0, 1);
+                  placeQ(1, 3);
+                  markSafe(1, 3);
+                  placeQ(2, 0);
+                  markSafe(2, 0);
+                  placeQ(3, 2);
+                  markSafe(3, 2);
+                },
+                description:
+                  "Step 7: After more backtracking, found solution: (0,1), (1,3), (2,0), (3,2).",
+              },
+            ],
+            { onReset: clearBoard, speed: 1000 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 10. HEAP: Build min-heap from [4,10,3,5,1], extract min
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-heap");
+          if (!svg) return;
+          // Show as tree: positions for 5 nodes in a binary heap
+          var w = 400,
+            h = 220;
+          svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+
+          function drawHeap(arr) {
+            var positions = [
+              { x: 200, y: 35 }, // 0
+              { x: 110, y: 105 }, // 1
+              { x: 290, y: 105 }, // 2
+              { x: 65, y: 175 }, // 3
+              { x: 155, y: 175 }, // 4
+            ];
+            var r = 22;
+            var html = "";
+            // edges
+            for (var i = 0; i < arr.length; i++) {
+              var li = 2 * i + 1,
+                ri = 2 * i + 2;
+              if (li < arr.length)
+                html +=
+                  '<line id="heap-e-' +
+                  i +
+                  "-" +
+                  li +
+                  '" class="edge" x1="' +
+                  positions[i].x +
+                  '" y1="' +
+                  (positions[i].y + r) +
+                  '" x2="' +
+                  positions[li].x +
+                  '" y2="' +
+                  (positions[li].y - r) +
+                  '"/>';
+              if (ri < arr.length)
+                html +=
+                  '<line id="heap-e-' +
+                  i +
+                  "-" +
+                  ri +
+                  '" class="edge" x1="' +
+                  positions[i].x +
+                  '" y1="' +
+                  (positions[i].y + r) +
+                  '" x2="' +
+                  positions[ri].x +
+                  '" y2="' +
+                  (positions[ri].y - r) +
+                  '"/>';
+            }
+            for (var i = 0; i < arr.length; i++) {
+              html +=
+                '<circle id="heap-n-' +
+                i +
+                '" class="node-fill node-stroke" cx="' +
+                positions[i].x +
+                '" cy="' +
+                positions[i].y +
+                '" r="' +
+                r +
+                '"/>';
+              html +=
+                '<text id="heap-v-' +
+                i +
+                '" class="label-text" x="' +
+                positions[i].x +
+                '" y="' +
+                positions[i].y +
+                '">' +
+                arr[i] +
+                "</text>";
+            }
+            svg.innerHTML = html;
+          }
+
+          drawHeap([4, 10, 3, 5, 1]);
+
+          function resetHeap() {
+            drawHeap([4, 10, 3, 5, 1]);
+          }
+
+          new AlgoAnimation(
+            "anim-heap",
+            [
+              {
+                apply: function () {
+                  drawHeap([4, 10, 3, 5, 1]);
+                },
+                description:
+                  "Step 1: Initial array as tree: [4, 10, 3, 5, 1]. Not a valid min-heap yet.",
+              },
+              {
+                apply: function () {
+                  drawHeap([4, 10, 3, 5, 1]);
+                  setClass("heap-n-2", "node-current");
+                  setClass("heap-n-0", "node-active");
+                },
+                description:
+                  "Step 2: Heapify from last non-leaf. Node 3 < 4? Yes, swap! (index 2 and 0)",
+              },
+              {
+                apply: function () {
+                  drawHeap([3, 10, 4, 5, 1]);
+                },
+                description:
+                  "Step 3: After swap: [3, 10, 4, 5, 1]. Now check node at index 1.",
+              },
+              {
+                apply: function () {
+                  drawHeap([3, 10, 4, 5, 1]);
+                  setClass("heap-n-1", "node-current");
+                  setClass("heap-n-4", "node-active");
+                },
+                description: "Step 4: Node 10 > child 1. Swap indices 1 and 4.",
+              },
+              {
+                apply: function () {
+                  drawHeap([3, 1, 4, 5, 10]);
+                },
+                description:
+                  "Step 5: After swap: [3, 1, 4, 5, 10]. Now sift up: 1 < 3, swap 0 and 1.",
+              },
+              {
+                apply: function () {
+                  drawHeap([1, 3, 4, 5, 10]);
+                  setClass("heap-n-0", "node-visited");
+                },
+                description:
+                  "Step 6: Valid min-heap! [1, 3, 4, 5, 10]. Root = 1 (minimum).",
+              },
+              {
+                apply: function () {
+                  drawHeap([3, 5, 4, 10]);
+                  setClass("heap-n-0", "node-current");
+                },
+                description:
+                  "Step 7: Extract min (1). Replace root with last element (10), sift down. Result: [3, 5, 4, 10].",
+              },
+            ],
+            { onReset: resetHeap, speed: 1000 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 11. MONOTONIC STACK: Next Greater Element [2,1,5,6,2,3]
+        // ---------------------------------------------------------------
+        (function () {
+          var vals = [2, 1, 5, 6, 2, 3];
+          var layout = buildArraySVG("svg-ms", vals, { startY: 40 });
+
+          // Add a "stack" and "result" display area below
+          var svg = document.getElementById("svg-ms");
+          var vb = svg.getAttribute("viewBox").split(" ");
+          var svgW = parseInt(vb[2]),
+            svgH = parseInt(vb[3]);
+          svg.setAttribute("viewBox", "0 0 " + svgW + " " + (svgH + 70));
+          // Annotations group for stack label and result
+          var ann = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text",
+          );
+          ann.id = "ms-stack-label";
+          ann.setAttribute("x", "30");
+          ann.setAttribute("y", "" + (svgH + 15));
+          ann.setAttribute("class", "label-small");
+          ann.setAttribute("text-anchor", "start");
+          ann.textContent = "Stack: []";
+          svg.appendChild(ann);
+          var res = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text",
+          );
+          res.id = "ms-result-label";
+          res.setAttribute("x", "30");
+          res.setAttribute("y", "" + (svgH + 40));
+          res.setAttribute("class", "label-small");
+          res.setAttribute("text-anchor", "start");
+          res.textContent = "Result: [-1,-1,-1,-1,-1,-1]";
+          svg.appendChild(res);
+
+          function resetMS() {
+            for (var i = 0; i < 6; i++)
+              setArrayCellClass("svg-ms", i, "array-cell");
+            setText("ms-stack-label", "Stack: []");
+            setText("ms-result-label", "Result: [-1,-1,-1,-1,-1,-1]");
+          }
+
+          new AlgoAnimation(
+            "anim-mono-stack",
+            [
+              {
+                apply: function () {
+                  setArrayCellClass("svg-ms", 0, "array-cell-active");
+                  setText("ms-stack-label", "Stack: [2]");
+                },
+                description:
+                  "Step 1: Process 2. Stack empty, push 2. Stack: [2]",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-ms", 0, "array-cell-window");
+                  setArrayCellClass("svg-ms", 1, "array-cell-active");
+                  setText("ms-stack-label", "Stack: [2, 1]");
+                },
+                description:
+                  "Step 2: Process 1. 1 < 2, push. Stack: [2, 1] (decreasing)",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-ms", 1, "array-cell-window");
+                  setArrayCellClass("svg-ms", 2, "array-cell-active");
+                  setText("ms-stack-label", "Stack: [5]");
+                  setText("ms-result-label", "Result: [5,5,-1,-1,-1,-1]");
+                },
+                description:
+                  "Step 3: Process 5. Pop 1 (next greater=5), pop 2 (next greater=5). Push 5. Stack: [5]",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-ms", 2, "array-cell-window");
+                  setArrayCellClass("svg-ms", 3, "array-cell-active");
+                  setText("ms-stack-label", "Stack: [6]");
+                  setText("ms-result-label", "Result: [5,5,6,-1,-1,-1]");
+                },
+                description:
+                  "Step 4: Process 6. Pop 5 (next greater=6). Push 6. Stack: [6]",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-ms", 3, "array-cell-window");
+                  setArrayCellClass("svg-ms", 4, "array-cell-active");
+                  setText("ms-stack-label", "Stack: [6, 2]");
+                },
+                description: "Step 5: Process 2. 2 < 6, push. Stack: [6, 2]",
+              },
+              {
+                apply: function () {
+                  setArrayCellClass("svg-ms", 4, "array-cell-window");
+                  setArrayCellClass("svg-ms", 5, "array-cell-active");
+                  setText("ms-stack-label", "Stack: [6, 3]");
+                  setText("ms-result-label", "Result: [5,5,6,-1,3,-1]");
+                },
+                description:
+                  "Step 6: Process 3. Pop 2 (next greater=3). Push 3. Stack: [6, 3]",
+              },
+              {
+                apply: function () {
+                  for (var i = 0; i < 6; i++)
+                    setArrayCellClass("svg-ms", i, "array-cell-result");
+                  setText("ms-result-label", "Result: [5, 5, 6, -1, 3, -1]");
+                  setText(
+                    "ms-stack-label",
+                    "Stack: [6, 3] (no answer for these)",
+                  );
+                },
+                description:
+                  "Done! Remaining stack elements have no next greater (use -1). Result: [5,5,6,-1,3,-1]",
+              },
+            ],
+            { onReset: resetMS, speed: 900 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 12. UNION FIND: 6 nodes, union operations
+        // ---------------------------------------------------------------
+        (function () {
+          var nodes = [
+            { x: 70, y: 60, label: "0" },
+            { x: 200, y: 60, label: "1" },
+            { x: 330, y: 60, label: "2" },
+            { x: 70, y: 180, label: "3" },
+            { x: 200, y: 180, label: "4" },
+            { x: 330, y: 180, label: "5" },
+          ];
+          buildGraphSVG("svg-uf", nodes, [], {
+            width: 400,
+            height: 240,
+            directed: false,
+          });
+
+          function resetUF() {
+            for (var i = 0; i < 6; i++)
+              setClass("svg-uf-node-" + i, "node-fill node-stroke");
+            // Remove any dynamically added edges
+            var eg = document.getElementById("svg-uf-edges");
+            if (eg) eg.innerHTML = "";
+          }
+
+          function addUFEdge(f, t, cls) {
+            var eg = document.getElementById("svg-uf-edges");
+            if (!eg) return;
+            var line = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line",
+            );
+            line.setAttribute("x1", nodes[f].x);
+            line.setAttribute("y1", nodes[f].y);
+            line.setAttribute("x2", nodes[t].x);
+            line.setAttribute("y2", nodes[t].y);
+            line.setAttribute("class", cls || "edge-active");
+            eg.appendChild(line);
+          }
+
+          new AlgoAnimation(
+            "anim-uf",
+            [
+              {
+                apply: function () {
+                  for (var i = 0; i < 6; i++)
+                    setClass("svg-uf-node-" + i, "node-active");
+                },
+                description:
+                  "Step 1: Initialize 6 nodes, each in its own set. Components = 6. parent = [0,1,2,3,4,5]",
+              },
+              {
+                apply: function () {
+                  addUFEdge(0, 1, "edge-active");
+                  setClass("svg-uf-node-0", "node-visited");
+                  setClass("svg-uf-node-1", "node-visited");
+                },
+                description:
+                  "Step 2: Union(0, 1). Merge sets. parent[1] = 0. Components = 5.",
+              },
+              {
+                apply: function () {
+                  addUFEdge(2, 3, "edge-active");
+                  setClass("svg-uf-node-2", "node-current");
+                  setClass("svg-uf-node-3", "node-current");
+                },
+                description:
+                  "Step 3: Union(2, 3). Merge sets. parent[3] = 2. Components = 4.",
+              },
+              {
+                apply: function () {
+                  addUFEdge(0, 3, "edge-path");
+                  setClass("svg-uf-node-0", "node-visited");
+                  setClass("svg-uf-node-1", "node-visited");
+                  setClass("svg-uf-node-2", "node-visited");
+                  setClass("svg-uf-node-3", "node-visited");
+                },
+                description:
+                  "Step 4: Union(1, 3). Find(1)=0, Find(3)=2. Merge: parent[2] = 0. Components = 3. {0,1,2,3} merged!",
+              },
+              {
+                apply: function () {
+                  addUFEdge(4, 5, "edge-active");
+                  setClass("svg-uf-node-4", "node-current");
+                  setClass("svg-uf-node-5", "node-current");
+                },
+                description:
+                  "Step 5: Union(4, 5). parent[5] = 4. Components = 2.",
+              },
+              {
+                apply: function () {
+                  addUFEdge(0, 4, "edge-path");
+                  for (var i = 0; i < 6; i++)
+                    setClass("svg-uf-node-" + i, "node-visited");
+                },
+                description:
+                  "Step 6: Union(0, 4). All nodes now in one set! Components = 1. Path compression flattens tree.",
+              },
+            ],
+            { onReset: resetUF, speed: 1000 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 13. TRIE: Insert "cat", "car", "card"
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-trie");
+          if (!svg) return;
+          var w = 400,
+            h = 280;
+          svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+          var r = 18;
+          // Pre-defined positions for trie nodes
+          // root -> c -> a -> t (end), r (end) -> d (end)
+          var pos = {
+            root: { x: 200, y: 30 },
+            c: { x: 200, y: 90 },
+            a: { x: 200, y: 150 },
+            t: { x: 130, y: 220 },
+            r: { x: 270, y: 220 },
+            d: { x: 330, y: 270 },
+          };
+
+          function drawTrieState(showNodes) {
+            var html = "";
+            // Draw edges for shown nodes
+            var edgePairs = [
+              ["root", "c"],
+              ["c", "a"],
+              ["a", "t"],
+              ["a", "r"],
+              ["r", "d"],
+            ];
+            var edgeLabels = ["c", "a", "t", "r", "d"];
+            for (var i = 0; i < edgePairs.length; i++) {
+              var from = edgePairs[i][0],
+                to = edgePairs[i][1];
+              if (showNodes.indexOf(from) >= 0 && showNodes.indexOf(to) >= 0) {
+                html +=
+                  '<line class="edge" x1="' +
+                  pos[from].x +
+                  '" y1="' +
+                  (pos[from].y + r) +
+                  '" x2="' +
+                  pos[to].x +
+                  '" y2="' +
+                  (pos[to].y - r) +
+                  '"/>';
+                var mx = (pos[from].x + pos[to].x) / 2 - 10;
+                var my = (pos[from].y + pos[to].y) / 2;
+                html +=
+                  '<text class="label-value" x="' +
+                  mx +
+                  '" y="' +
+                  my +
+                  '" text-anchor="middle">' +
+                  edgeLabels[i] +
+                  "</text>";
+              }
+            }
+            // Draw nodes
+            for (var i = 0; i < showNodes.length; i++) {
+              var n = showNodes[i];
+              var p = pos[n];
+              var cls = "node-fill node-stroke";
+              var label = n === "root" ? "*" : n;
+              html +=
+                '<circle id="trie-n-' +
+                n +
+                '" class="' +
+                cls +
+                '" cx="' +
+                p.x +
+                '" cy="' +
+                p.y +
+                '" r="' +
+                r +
+                '"/>';
+              html +=
+                '<text class="label-text" x="' +
+                p.x +
+                '" y="' +
+                p.y +
+                '">' +
+                label +
+                "</text>";
+            }
+            svg.innerHTML = html;
+          }
+
+          drawTrieState(["root"]);
+
+          function resetTrie() {
+            drawTrieState(["root"]);
+          }
+
+          new AlgoAnimation(
+            "anim-trie",
+            [
+              {
+                apply: function () {
+                  drawTrieState(["root"]);
+                },
+                description:
+                  "Step 1: Start with empty trie (just root node *).",
+              },
+              {
+                apply: function () {
+                  drawTrieState(["root", "c"]);
+                  setClass("trie-n-c", "node-current");
+                },
+                description: 'Step 2: Insert "cat" -- create node "c".',
+              },
+              {
+                apply: function () {
+                  drawTrieState(["root", "c", "a"]);
+                  setClass("trie-n-a", "node-current");
+                },
+                description: 'Step 3: Insert "cat" -- create node "a".',
+              },
+              {
+                apply: function () {
+                  drawTrieState(["root", "c", "a", "t"]);
+                  setClass("trie-n-t", "node-visited");
+                },
+                description:
+                  'Step 4: Insert "cat" -- create node "t", mark end-of-word. "cat" inserted!',
+              },
+              {
+                apply: function () {
+                  drawTrieState(["root", "c", "a", "t", "r"]);
+                  setClass("trie-n-c", "node-visited");
+                  setClass("trie-n-a", "node-visited");
+                  setClass("trie-n-r", "node-current");
+                },
+                description:
+                  'Step 5: Insert "car" -- "c" and "a" exist. Create "r", mark end-of-word. "car" inserted!',
+              },
+              {
+                apply: function () {
+                  drawTrieState(["root", "c", "a", "t", "r", "d"]);
+                  setClass("trie-n-r", "node-visited");
+                  setClass("trie-n-d", "node-current");
+                },
+                description:
+                  'Step 6: Insert "card" -- "c","a","r" exist. Create "d", mark end-of-word. "card" inserted!',
+              },
+              {
+                apply: function () {
+                  drawTrieState(["root", "c", "a", "t", "r", "d"]);
+                  setClass("trie-n-t", "node-visited");
+                  setClass("trie-n-r", "node-visited");
+                  setClass("trie-n-d", "node-visited");
+                },
+                description:
+                  'Done! Trie contains "cat", "car", "card". Shared prefix "ca" saves space.',
+              },
+            ],
+            { onReset: resetTrie, speed: 900 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 14. PREFIX SUM: [1,2,3,4,5], query [1,3]
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-ps");
+          if (!svg) return;
+          var vals = [1, 2, 3, 4, 5];
+          var prefix = [0, 1, 3, 6, 10, 15];
+          var cellW = 50,
+            cellH = 44,
+            gap = 4,
+            ox = 30,
+            oy1 = 30,
+            oy2 = 120;
+          var totalW = 6 * (cellW + gap) - gap + ox * 2;
+          svg.setAttribute("viewBox", "0 0 " + totalW + " 210");
+
+          var html = "";
+          // Original array label
+          html +=
+            '<text class="label-small" x="' +
+            ox +
+            '" y="' +
+            (oy1 - 12) +
+            '" text-anchor="start">Original Array</text>';
+          for (var i = 0; i < 5; i++) {
+            var x = ox + i * (cellW + gap);
+            html +=
+              '<rect id="ps-orig-' +
+              i +
+              '" class="array-cell" x="' +
+              x +
+              '" y="' +
+              oy1 +
+              '" width="' +
+              cellW +
+              '" height="' +
+              cellH +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (oy1 + cellH / 2) +
+              '">' +
+              vals[i] +
+              "</text>";
+            html +=
+              '<text class="array-index" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (oy1 - 2) +
+              '">' +
+              i +
+              "</text>";
+          }
+          // Prefix array label
+          html +=
+            '<text class="label-small" x="' +
+            ox +
+            '" y="' +
+            (oy2 - 12) +
+            '" text-anchor="start">Prefix Sum Array</text>';
+          for (var i = 0; i < 6; i++) {
+            var x = ox + i * (cellW + gap);
+            html +=
+              '<rect id="ps-pre-' +
+              i +
+              '" class="array-cell" x="' +
+              x +
+              '" y="' +
+              oy2 +
+              '" width="' +
+              cellW +
+              '" height="' +
+              cellH +
+              '" rx="4"/>';
+            html +=
+              '<text id="ps-pval-' +
+              i +
+              '" class="array-value" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (oy2 + cellH / 2) +
+              '"></text>';
+            html +=
+              '<text class="array-index" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (oy2 - 2) +
+              '">' +
+              i +
+              "</text>";
+          }
+          // Result area
+          html +=
+            '<text id="ps-result" class="label-value" x="' +
+            totalW / 2 +
+            '" y="195"></text>';
+          svg.innerHTML = html;
+
+          function resetPS() {
+            for (var i = 0; i < 5; i++) setClass("ps-orig-" + i, "array-cell");
+            for (var i = 0; i < 6; i++) {
+              setClass("ps-pre-" + i, "array-cell");
+              setText("ps-pval-" + i, "");
+            }
+            setText("ps-result", "");
+          }
+
+          new AlgoAnimation(
+            "anim-prefix",
+            [
+              {
+                apply: function () {
+                  setText("ps-pval-0", "0");
+                  setClass("ps-pre-0", "array-cell-active");
+                },
+                description: "Step 1: prefix[0] = 0 (base case).",
+              },
+              {
+                apply: function () {
+                  setClass("ps-pre-0", "array-cell-window");
+                  for (var i = 1; i <= 5; i++) {
+                    setText("ps-pval-" + i, prefix[i]);
+                    setClass("ps-pre-" + i, "array-cell-active");
+                  }
+                },
+                description:
+                  "Step 2: Build prefix sums: [0, 1, 3, 6, 10, 15]. prefix[i] = prefix[i-1] + arr[i-1].",
+              },
+              {
+                apply: function () {
+                  for (var i = 0; i < 6; i++)
+                    setClass("ps-pre-" + i, "array-cell-window");
+                },
+                description:
+                  "Step 3: Prefix array complete. Now we can answer any range query in O(1).",
+              },
+              {
+                apply: function () {
+                  // Highlight query range [1,3] in original
+                  for (var i = 1; i <= 3; i++)
+                    setClass("ps-orig-" + i, "array-cell-active");
+                },
+                description:
+                  "Step 4: Query: sum of arr[1..3] = ? (elements 2 + 3 + 4)",
+              },
+              {
+                apply: function () {
+                  setClass("ps-pre-4", "array-cell-result");
+                  setClass("ps-pre-1", "array-cell-pointer");
+                },
+                description:
+                  "Step 5: sum = prefix[4] - prefix[1] = 10 - 1 = 9.",
+              },
+              {
+                apply: function () {
+                  for (var i = 1; i <= 3; i++)
+                    setClass("ps-orig-" + i, "array-cell-result");
+                  setText("ps-result", "Range sum [1,3] = 9");
+                },
+                description:
+                  "Done! 2 + 3 + 4 = 9, confirmed in O(1) using prefix sums.",
+              },
+            ],
+            { onReset: resetPS, speed: 900 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 15. HASH MAP: Group anagrams
+        // ---------------------------------------------------------------
+        (function () {
+          var svg = document.getElementById("svg-hm");
+          if (!svg) return;
+          var w = 480,
+            h = 240;
+          svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+
+          // Words on left, buckets on right
+          var words = ["eat", "tea", "ate"];
+          var ox = 30,
+            oy = 40,
+            boxW = 80,
+            boxH = 36,
+            gap = 15;
+          var bx = 280,
+            by = 60;
+
+          var html = "";
+          html +=
+            '<text class="label-small" x="' +
+            ox +
+            '" y="25" text-anchor="start">Input Words</text>';
+          for (var i = 0; i < words.length; i++) {
+            var y = oy + i * (boxH + gap);
+            html +=
+              '<rect id="hm-word-' +
+              i +
+              '" class="array-cell" x="' +
+              ox +
+              '" y="' +
+              y +
+              '" width="' +
+              boxW +
+              '" height="' +
+              boxH +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (ox + boxW / 2) +
+              '" y="' +
+              (y + boxH / 2) +
+              '">"' +
+              words[i] +
+              '"</text>';
+          }
+          // Bucket area
+          html +=
+            '<text class="label-small" x="' +
+            bx +
+            '" y="25" text-anchor="start">Buckets (by sorted key)</text>';
+          html +=
+            '<rect id="hm-bucket" class="array-cell" x="' +
+            bx +
+            '" y="' +
+            by +
+            '" width="170" height="120" rx="8" style="display:none"/>';
+          html +=
+            '<text id="hm-bkey" class="pointer-label" x="' +
+            (bx + 85) +
+            '" y="' +
+            (by + 25) +
+            '" style="display:none"></text>';
+          html +=
+            '<text id="hm-bval1" class="array-value" x="' +
+            (bx + 85) +
+            '" y="' +
+            (by + 55) +
+            '" style="display:none"></text>';
+          html +=
+            '<text id="hm-bval2" class="array-value" x="' +
+            (bx + 85) +
+            '" y="' +
+            (by + 80) +
+            '" style="display:none"></text>';
+          html +=
+            '<text id="hm-bval3" class="array-value" x="' +
+            (bx + 85) +
+            '" y="' +
+            (by + 105) +
+            '" style="display:none"></text>';
+          // Arrow
+          html +=
+            '<line id="hm-arrow" class="edge" x1="' +
+            (ox + boxW + 10) +
+            '" y1="' +
+            (oy + boxH / 2) +
+            '" x2="' +
+            (bx - 10) +
+            '" y2="' +
+            (by + 60) +
+            '" style="display:none" marker-end="url(#svg-hm-arrow)"/>';
+
+          svg.innerHTML = html;
+
+          function resetHM() {
+            for (var i = 0; i < 3; i++) setClass("hm-word-" + i, "array-cell");
+            hideEl("hm-bucket");
+            hideEl("hm-bkey");
+            hideEl("hm-bval1");
+            hideEl("hm-bval2");
+            hideEl("hm-bval3");
+            hideEl("hm-arrow");
+          }
+
+          new AlgoAnimation(
+            "anim-hashmap",
+            [
+              {
+                apply: function () {
+                  setClass("hm-word-0", "array-cell-active");
+                },
+                description:
+                  'Step 1: Process "eat". Sort chars: "aet". Use "aet" as hash key.',
+              },
+              {
+                apply: function () {
+                  showEl("hm-bucket");
+                  showEl("hm-bkey");
+                  showEl("hm-bval1");
+                  setClass("hm-bucket", "array-cell-window");
+                  setText("hm-bkey", 'Key: "aet"');
+                  setText("hm-bval1", '"eat"');
+                  setClass("hm-word-0", "array-cell-window");
+                },
+                description:
+                  'Step 2: Create bucket for key "aet". Add "eat". Map: {"aet": ["eat"]}',
+              },
+              {
+                apply: function () {
+                  setClass("hm-word-1", "array-cell-active");
+                },
+                description:
+                  'Step 3: Process "tea". Sort chars: "aet". Key "aet" exists!',
+              },
+              {
+                apply: function () {
+                  showEl("hm-bval2");
+                  setText("hm-bval2", '"tea"');
+                  setClass("hm-word-1", "array-cell-window");
+                },
+                description:
+                  'Step 4: Add "tea" to bucket "aet". Map: {"aet": ["eat", "tea"]}',
+              },
+              {
+                apply: function () {
+                  setClass("hm-word-2", "array-cell-active");
+                },
+                description:
+                  'Step 5: Process "ate". Sort chars: "aet". Key "aet" exists!',
+              },
+              {
+                apply: function () {
+                  showEl("hm-bval3");
+                  setText("hm-bval3", '"ate"');
+                  setClass("hm-word-2", "array-cell-window");
+                  setClass("hm-bucket", "array-cell-result");
+                  for (var i = 0; i < 3; i++)
+                    setClass("hm-word-" + i, "array-cell-result");
+                },
+                description:
+                  'Done! All three are anagrams. Grouped under key "aet": ["eat", "tea", "ate"].',
+              },
+            ],
+            { onReset: resetHM, speed: 900 },
+          );
+        })();
+
+        // ---------------------------------------------------------------
+        // 16. DIJKSTRA: 5-node weighted graph
+        // ---------------------------------------------------------------
+        (function () {
+          var nodes = [
+            { x: 80, y: 60, label: "A" }, // 0 - source
+            { x: 240, y: 40, label: "B" }, // 1
+            { x: 400, y: 60, label: "C" }, // 2
+            { x: 140, y: 200, label: "D" }, // 3
+            { x: 340, y: 200, label: "E" }, // 4
+          ];
+          var edges = [
+            { from: 0, to: 1, weight: 4 },
+            { from: 0, to: 3, weight: 2 },
+            { from: 1, to: 2, weight: 3 },
+            { from: 1, to: 3, weight: 1 },
+            { from: 3, to: 4, weight: 5 },
+            { from: 1, to: 4, weight: 6 },
+            { from: 4, to: 2, weight: 1 },
+          ];
+          buildGraphSVG("svg-dij", nodes, edges, {
+            width: 480,
+            height: 250,
+            directed: true,
+          });
+
+          // Add dist labels under each node
+          var svg = document.getElementById("svg-dij");
+          for (var i = 0; i < 5; i++) {
+            var t = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "text",
+            );
+            t.id = "dij-dist-" + i;
+            t.setAttribute("x", nodes[i].x);
+            t.setAttribute("y", nodes[i].y + 35);
+            t.setAttribute("class", "label-value");
+            t.setAttribute("text-anchor", "middle");
+            t.textContent = i === 0 ? "d=0" : "d=inf";
+            svg.appendChild(t);
+          }
+
+          function resetDij() {
+            for (var i = 0; i < 5; i++) {
+              setClass("svg-dij-node-" + i, "node-fill node-stroke");
+              setText("dij-dist-" + i, i === 0 ? "d=0" : "d=inf");
+            }
+            for (var i = 0; i < 7; i++) setClass("svg-dij-edge-" + i, "edge");
+          }
+
+          new AlgoAnimation(
+            "anim-dijkstra",
+            [
+              {
+                apply: function () {
+                  setClass("svg-dij-node-0", "node-current");
+                },
+                description:
+                  "Step 1: Initialize: dist[A]=0, all others=inf. Push (0, A) to heap.",
+              },
+              {
+                apply: function () {
+                  setClass("svg-dij-node-0", "node-visited");
+                  setClass("svg-dij-edge-0", "edge-active");
+                  setClass("svg-dij-edge-1", "edge-active");
+                  setText("dij-dist-1", "d=4");
+                  setText("dij-dist-3", "d=2");
+                  setClass("svg-dij-node-1", "node-active");
+                  setClass("svg-dij-node-3", "node-active");
+                },
+                description:
+                  "Step 2: Process A (d=0). Update B: 0+4=4, D: 0+2=2. Heap: [(2,D), (4,B)]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-dij-node-3", "node-visited");
+                  setClass("svg-dij-edge-4", "edge-active");
+                  setText("dij-dist-4", "d=7");
+                  setClass("svg-dij-node-4", "node-active");
+                },
+                description:
+                  "Step 3: Process D (d=2). Update E: 2+5=7. B via D: 2+1=3 < 4, update B=3! Heap: [(3,B), (7,E)]",
+              },
+              {
+                apply: function () {
+                  setText("dij-dist-1", "d=3");
+                  setClass("svg-dij-edge-3", "edge-path");
+                  setClass("svg-dij-node-1", "node-visited");
+                  setClass("svg-dij-edge-2", "edge-active");
+                  setText("dij-dist-2", "d=6");
+                  setClass("svg-dij-node-2", "node-active");
+                },
+                description:
+                  "Step 4: Process B (d=3). Update C: 3+3=6. E via B: 3+6=9 > 7 (no update). Heap: [(6,C), (7,E)]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-dij-node-2", "node-visited");
+                },
+                description:
+                  "Step 5: Process C (d=6). No outgoing edges to improve. Heap: [(7,E)]",
+              },
+              {
+                apply: function () {
+                  setClass("svg-dij-node-4", "node-visited");
+                  setClass("svg-dij-edge-6", "edge-active");
+                  // E->C: 7+1=8 > 6, no update
+                },
+                description:
+                  "Step 6: Process E (d=7). E->C: 7+1=8 > 6, no update. Heap empty.",
+              },
+              {
+                apply: function () {
+                  for (var i = 0; i < 5; i++)
+                    setClass("svg-dij-node-" + i, "node-visited");
+                  setClass("svg-dij-edge-1", "edge-path");
+                  setClass("svg-dij-edge-3", "edge-path");
+                  setClass("svg-dij-edge-2", "edge-path");
+                  setClass("svg-dij-edge-4", "edge-path");
+                },
+                description:
+                  "Done! Shortest distances from A: A=0, B=3 (via D), C=6, D=2, E=7.",
+              },
+            ],
+            { onReset: resetDij, speed: 1000 },
+          );
+        })();
+      }); // end DOMContentLoaded
+    </script>
+  </body>
+</html>

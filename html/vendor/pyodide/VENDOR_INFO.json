@@ -1,0 +1,11 @@
+{
+  "version": "0.27.5",
+  "base": "https://cdn.jsdelivr.net/pyodide/v0.27.5/full/",
+  "required": [
+    "pyodide.js",
+    "pyodide.asm.js",
+    "pyodide.asm.wasm",
+    "python_stdlib.zip",
+    "pyodide-lock.json"
+  ]
+}

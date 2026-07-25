@@ -1,0 +1,1729 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS Fundamentals — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>CS Fundamentals</h1>
+          <p>For Electrical Engineers</p>
+          <p>
+            You have an advantage: you understand how the hardware actually
+            works. This guide fills the software-side gaps, connecting each
+            concept back to your existing hardware knowledge.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 1: Operating Systems -->
+          <!-- ============================================================ -->
+          <h2 id="operating-systems">Part 1: Operating Systems</h2>
+
+          <p>
+            You understand interrupts, DMA, memory-mapped I/O, and real-time
+            scheduling from your embedded work. Here is what that looks like
+            from the software side.
+          </p>
+
+          <h3 id="processes-threads">1.1 Processes vs Threads</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origins</div>
+            <p>
+              <strong>Process:</strong> From Latin "processus" = a going
+              forward. A process is a program "in process" -- in progress,
+              actively executing. Named because it is a program that is
+              proceeding through its instructions, as opposed to a static binary
+              sitting on disk.<br /><br />
+              <strong>Thread:</strong> Named for "thread of execution" -- a
+              single sequential flow of control, like a thread being pulled
+              through fabric. Multiple threads are like multiple threads in a
+              tapestry, running in parallel through the same material (shared
+              memory).
+            </p>
+          </div>
+
+          <!-- SVG: Process vs Thread -->
+          <div class="diagram-container">
+            <div class="diagram-title">Process vs Thread Memory Model</div>
+            <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Process 1 -->
+              <rect
+                x="30"
+                y="20"
+                width="280"
+                height="260"
+                rx="12"
+                fill="rgba(88,166,255,0.08)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="170"
+                y="48"
+                class="label-text"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Process A
+              </text>
+
+              <!-- Shared memory area -->
+              <rect
+                x="55"
+                y="60"
+                width="230"
+                height="50"
+                rx="6"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="170"
+                y="82"
+                class="label-text"
+                font-size="12"
+                fill="#3fb950"
+              >
+                Shared Memory (Heap, Global)
+              </text>
+              <text x="170" y="98" class="label-small" font-size="10">
+                All threads in this process share this
+              </text>
+
+              <!-- Thread 1 -->
+              <rect
+                x="55"
+                y="125"
+                width="100"
+                height="75"
+                rx="6"
+                class="node-active"
+              />
+              <text
+                x="105"
+                y="150"
+                class="label-text"
+                font-size="11"
+                fill="#58a6ff"
+              >
+                Thread 1
+              </text>
+              <text x="105" y="168" class="label-small" font-size="10">
+                Own stack
+              </text>
+              <text x="105" y="181" class="label-small" font-size="10">
+                Own PC
+              </text>
+
+              <!-- Thread 2 -->
+              <rect
+                x="170"
+                y="125"
+                width="100"
+                height="75"
+                rx="6"
+                class="node-active"
+              />
+              <text
+                x="220"
+                y="150"
+                class="label-text"
+                font-size="11"
+                fill="#58a6ff"
+              >
+                Thread 2
+              </text>
+              <text x="220" y="168" class="label-small" font-size="10">
+                Own stack
+              </text>
+              <text x="220" y="181" class="label-small" font-size="10">
+                Own PC
+              </text>
+
+              <!-- Connection lines -->
+              <line
+                x1="105"
+                y1="125"
+                x2="105"
+                y2="110"
+                stroke="#3fb950"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="220"
+                y1="125"
+                x2="220"
+                y2="110"
+                stroke="#3fb950"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- PID -->
+              <text x="170" y="225" class="label-small" fill="#8b949e">
+                PID: 1234
+              </text>
+              <text x="170" y="240" class="label-small" fill="#8b949e">
+                Own address space
+              </text>
+              <text x="170" y="255" class="label-small" fill="#8b949e">
+                Own file descriptors
+              </text>
+
+              <!-- Process 2 (isolated) -->
+              <rect
+                x="390"
+                y="20"
+                width="280"
+                height="260"
+                rx="12"
+                fill="rgba(210,153,34,0.08)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="530"
+                y="48"
+                class="label-text"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Process B
+              </text>
+
+              <rect
+                x="415"
+                y="60"
+                width="230"
+                height="50"
+                rx="6"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="530"
+                y="82"
+                class="label-text"
+                font-size="12"
+                fill="#3fb950"
+              >
+                Separate Memory Space
+              </text>
+              <text x="530" y="98" class="label-small" font-size="10">
+                Isolated from Process A
+              </text>
+
+              <rect
+                x="440"
+                y="125"
+                width="180"
+                height="75"
+                rx="6"
+                class="node-current"
+              />
+              <text
+                x="530"
+                y="150"
+                class="label-text"
+                font-size="11"
+                fill="#d29922"
+              >
+                Main Thread
+              </text>
+              <text x="530" y="168" class="label-small" font-size="10">
+                Own stack, own PC
+              </text>
+              <text x="530" y="181" class="label-small" font-size="10">
+                Needs IPC to talk to A
+              </text>
+
+              <text x="530" y="225" class="label-small" fill="#8b949e">
+                PID: 5678
+              </text>
+              <text x="530" y="240" class="label-small" fill="#8b949e">
+                Own address space
+              </text>
+              <text x="530" y="255" class="label-small" fill="#8b949e">
+                Own file descriptors
+              </text>
+
+              <!-- Isolation barrier -->
+              <line
+                x1="345"
+                y1="30"
+                x2="345"
+                y2="270"
+                stroke="#f85149"
+                stroke-width="2"
+                stroke-dasharray="6,4"
+              />
+              <text x="345" y="290" class="label-small" fill="#f85149">
+                Isolation boundary
+              </text>
+            </svg>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Concept</th>
+                <th>What it is</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Process</strong></td>
+                <td>Independent program with its own memory space</td>
+                <td>
+                  Separate MCU on the board -- own RAM, own program counter
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Thread</strong></td>
+                <td>Lightweight execution unit sharing process memory</td>
+                <td>Multiple interrupt handlers on the same MCU sharing RAM</td>
+              </tr>
+              <tr>
+                <td><strong>Context switch</strong></td>
+                <td>OS saves/restores CPU state when switching</td>
+                <td>Interrupt context save/restore -- you know the cost</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Key Insight</div>
+            <p>
+              Threads share memory (fast communication, but race conditions).
+              Processes have isolated memory (safe, but need IPC for
+              communication).
+            </p>
+          </div>
+
+          <p>
+            <strong>Why it matters:</strong> When you start a Python program, it
+            is one process with one main thread. When you use
+            <code>threading</code>, you add threads (but Python's GIL limits
+            true parallelism). When you use <code>multiprocessing</code>, you
+            create separate processes (true parallelism, but higher overhead).
+          </p>
+
+          <h3 id="concurrency-parallelism">1.2 Concurrency vs Parallelism</h3>
+
+          <p>
+            <strong>Concurrency:</strong> Multiple tasks make progress (possibly
+            on one core, by interleaving). Like time-division multiplexing.
+          </p>
+          <p>
+            <strong>Parallelism:</strong> Multiple tasks execute simultaneously
+            on multiple cores. Like having multiple parallel datapaths.
+          </p>
+
+          <h4>Python's Concurrency Models</h4>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Best for</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>threading</code></td>
+                <td>I/O-bound tasks (network, file)</td>
+                <td>Time-multiplexed I/O with DMA</td>
+              </tr>
+              <tr>
+                <td><code>multiprocessing</code></td>
+                <td>CPU-bound tasks (computation)</td>
+                <td>Multiple cores / multiple MCUs</td>
+              </tr>
+              <tr>
+                <td><code>asyncio</code></td>
+                <td>High-concurrency I/O (thousands of connections)</td>
+                <td>
+                  Event loop with non-blocking I/O / cooperative multitasking
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="concurrency-bugs">1.3 Common Concurrency Bugs</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origins</div>
+            <p>
+              <strong>Mutex:</strong> Portmanteau of "<strong>Mut</strong>ual
+              <strong>Ex</strong>clusion." Named because it ensures mutually
+              exclusive access -- only one thread at a time. Like a bathroom
+              lock: mutual exclusion of occupants.<br /><br />
+              <strong>Semaphore:</strong> From the Greek/French signaling system
+              using flags or mechanical arms. Named after the railway semaphore
+              signals that control train access to track sections. A semaphore
+              has a counter: when it reaches zero, no more trains (threads) can
+              enter until one leaves.<br /><br />
+              <strong>Deadlock:</strong> "Dead" + "lock" = a lock from which
+              nothing can escape. Named because the system is locked in a state
+              where no progress can be made -- permanently stuck, effectively
+              "dead." Thread A holds lock X, waits for Y. Thread B holds lock Y,
+              waits for X. Neither can proceed. Ever.
+            </p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Bug</th>
+                <th>What happens</th>
+                <th>How to prevent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Race condition</strong></td>
+                <td>Two threads read-modify-write the same data</td>
+                <td>Mutex/lock, atomic operations</td>
+              </tr>
+              <tr>
+                <td><strong>Deadlock</strong></td>
+                <td>
+                  Thread A holds lock X waiting for Y; B holds Y waiting for X
+                </td>
+                <td>Lock ordering, timeouts</td>
+              </tr>
+              <tr>
+                <td><strong>Starvation</strong></td>
+                <td>A thread never gets CPU time</td>
+                <td>Fair scheduling, priority inversion prevention</td>
+              </tr>
+              <tr>
+                <td><strong>Data race</strong></td>
+                <td>Unsynchronized concurrent access to shared data</td>
+                <td>Thread-safe data structures or explicit synchronization</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              You already understand these from hardware -- metastability, bus
+              contention, priority inversion in RTOS. The concepts are
+              identical; the tools are different (mutexes instead of semaphore
+              peripherals, <code>asyncio</code> instead of interrupt-driven
+              I/O).
+            </p>
+          </div>
+
+          <h3 id="memory">1.4 Memory Management</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th>What it stores</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Stack</strong></td>
+                <td>
+                  Function call frames, local variables. Fixed size, automatic.
+                </td>
+                <td>Stack pointer in MCU -- LIFO, fast, limited</td>
+              </tr>
+              <tr>
+                <td><strong>Heap</strong></td>
+                <td>
+                  Dynamically allocated memory. Larger, slower, fragmentation
+                  risk.
+                </td>
+                <td>
+                  <code>malloc</code> in embedded C -- you allocate, you must
+                  free
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            <strong>Garbage Collection (GC):</strong> In Python, Java, Go -- the
+            runtime automatically frees unused memory. You do not call
+            <code>free()</code>. The tradeoff: occasional GC pauses (like a
+            brief system interrupt that stalls your main loop).
+          </p>
+
+          <h3 id="virtual-memory">1.5 Virtual Memory</h3>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              The OS gives each process the illusion of its own contiguous
+              address space. Like an MMU in an MCU that maps virtual addresses
+              to physical addresses. Pages (4KB typically) are the unit of
+              mapping. Pages can be swapped to disk (like paging from NAND flash
+              when SRAM is full).
+            </p>
+          </div>
+
+          <p>
+            <strong>Why it matters:</strong> Memory-mapped files, shared memory
+            between processes, and understanding why your program gets "killed"
+            (OOM killer) when it uses too much memory.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 2: Networking -->
+          <!-- ============================================================ -->
+          <h2 id="networking">Part 2: Networking (Layers 4-7)</h2>
+
+          <p>
+            You understand layers 1-3 (physical, data link, network) from EE.
+            Here are the upper layers that software engineers work with daily.
+          </p>
+
+          <h3 id="tcp-udp">2.1 TCP vs UDP</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origins</div>
+            <p>
+              <strong>TCP:</strong> <strong>T</strong>ransmission
+              <strong>C</strong>ontrol <strong>P</strong>rotocol. "Transmission"
+              = sending data. "Control" = it controls and manages the
+              transmission (ordering, retransmission, flow control). Named
+              because it <em>controls</em> how data is transmitted reliably --
+              unlike raw packet sending, TCP takes responsibility for
+              delivery.<br /><br />
+              <strong>UDP:</strong> <strong>U</strong>ser
+              <strong>D</strong>atagram <strong>P</strong>rotocol. "Datagram" =
+              a self-contained, independent message (like a telegram -- a single
+              complete message). "User" distinguishes it from lower-level
+              protocols. Named because it sends datagrams without TCP's control
+              overhead -- fire and forget.
+            </p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Protocol</th>
+                <th>Guarantees</th>
+                <th>Use case</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>TCP</strong></td>
+                <td>Ordered, reliable, flow-controlled</td>
+                <td>HTTP, databases, file transfer</td>
+                <td>UART with hardware flow control and ACK/NACK</td>
+              </tr>
+              <tr>
+                <td><strong>UDP</strong></td>
+                <td>None -- fire and forget</td>
+                <td>Video streaming, DNS, gaming</td>
+                <td>Raw SPI blast -- fast, no handshaking</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- SVG: TCP 3-Way Handshake -->
+          <div class="diagram-container">
+            <div class="diagram-title">TCP 3-Way Handshake</div>
+            <svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arr-tcp"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#58a6ff" />
+                </marker>
+                <marker
+                  id="arr-tcp-rev"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                </marker>
+              </defs>
+
+              <!-- Client timeline -->
+              <line
+                x1="100"
+                y1="40"
+                x2="100"
+                y2="260"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <rect
+                x="55"
+                y="15"
+                width="90"
+                height="30"
+                rx="6"
+                class="node-active"
+              />
+              <text
+                x="100"
+                y="35"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Client
+              </text>
+
+              <!-- Server timeline -->
+              <line
+                x1="400"
+                y1="40"
+                x2="400"
+                y2="260"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <rect
+                x="355"
+                y="15"
+                width="90"
+                height="30"
+                rx="6"
+                class="node-visited"
+              />
+              <text
+                x="400"
+                y="35"
+                class="label-text"
+                font-size="13"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                Server
+              </text>
+
+              <!-- SYN -->
+              <line
+                x1="105"
+                y1="85"
+                x2="395"
+                y2="115"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#arr-tcp)"
+              />
+              <rect
+                x="175"
+                y="78"
+                width="150"
+                height="24"
+                rx="4"
+                fill="rgba(88,166,255,0.15)"
+                stroke="#58a6ff"
+                stroke-width="1"
+              />
+              <text
+                x="250"
+                y="95"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#58a6ff"
+              >
+                SYN (seq=x)
+              </text>
+
+              <!-- SYN-ACK -->
+              <line
+                x1="395"
+                y1="145"
+                x2="105"
+                y2="175"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#arr-tcp-rev)"
+              />
+              <rect
+                x="145"
+                y="140"
+                width="210"
+                height="24"
+                rx="4"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="1"
+              />
+              <text
+                x="250"
+                y="157"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#3fb950"
+              >
+                SYN-ACK (seq=y, ack=x+1)
+              </text>
+
+              <!-- ACK -->
+              <line
+                x1="105"
+                y1="205"
+                x2="395"
+                y2="235"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#arr-tcp)"
+              />
+              <rect
+                x="175"
+                y="198"
+                width="150"
+                height="24"
+                rx="4"
+                fill="rgba(88,166,255,0.15)"
+                stroke="#58a6ff"
+                stroke-width="1"
+              />
+              <text
+                x="250"
+                y="215"
+                class="label-text"
+                font-size="12"
+                font-weight="600"
+                fill="#58a6ff"
+              >
+                ACK (ack=y+1)
+              </text>
+
+              <!-- Connected label -->
+              <text
+                x="250"
+                y="265"
+                class="label-text"
+                font-size="12"
+                fill="#8b949e"
+              >
+                Connection Established
+              </text>
+            </svg>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              TCP connection lifecycle: SYN -> SYN-ACK -> ACK (three-way
+              handshake). Like your CAN bus arbitration but for establishing a
+              session.
+            </p>
+          </div>
+
+          <h3 id="http">2.2 HTTP (Layer 7)</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>HTTP:</strong> <strong>H</strong>yper<strong>T</strong>ext
+              <strong>T</strong>ransfer <strong>P</strong>rotocol. "HyperText" =
+              text with hyperlinks, a term coined by Ted Nelson in 1965.
+              "Transfer" = moving it between client and server. Named because it
+              was designed by Tim Berners-Lee specifically to transfer hypertext
+              documents -- web pages with clickable links. The "hyper" prefix
+              means "beyond" (Greek) -- text that goes beyond flat text by
+              linking to other text.
+            </p>
+          </div>
+
+          <p>
+            The protocol that runs the web. Stateless request-response over TCP.
+          </p>
+
+          <pre><code>Client sends:
+  GET /api/users/123 HTTP/1.1
+  Host: api.example.com
+  Authorization: Bearer &lt;token&gt;
+
+Server responds:
+  HTTP/1.1 200 OK
+  Content-Type: application/json
+
+  {"id": 123, "name": "Alice"}</code></pre>
+
+          <h4>Status Codes to Know</h4>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Range</th>
+                <th>Meaning</th>
+                <th>Key codes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>2xx</strong></td>
+                <td>Success</td>
+                <td>200 OK, 201 Created, 204 No Content</td>
+              </tr>
+              <tr>
+                <td><strong>3xx</strong></td>
+                <td>Redirection</td>
+                <td>301 Moved Permanently, 304 Not Modified</td>
+              </tr>
+              <tr>
+                <td><strong>4xx</strong></td>
+                <td>Client error</td>
+                <td>
+                  400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not
+                  Found, 429 Too Many Requests
+                </td>
+              </tr>
+              <tr>
+                <td><strong>5xx</strong></td>
+                <td>Server error</td>
+                <td>
+                  500 Internal Server Error, 502 Bad Gateway, 503 Service
+                  Unavailable
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="tls">2.3 HTTPS / TLS</h3>
+
+          <!-- SVG: HTTP Request Lifecycle -->
+          <div class="diagram-container">
+            <div class="diagram-title">HTTP Request Lifecycle</div>
+            <svg viewBox="0 0 780 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arr-http"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- DNS -->
+              <rect
+                x="10"
+                y="20"
+                width="110"
+                height="50"
+                rx="8"
+                class="node-active"
+              />
+              <text
+                x="65"
+                y="42"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                DNS Lookup
+              </text>
+              <text x="65" y="58" class="label-small" font-size="10">
+                name -> IP
+              </text>
+              <line
+                x1="120"
+                y1="45"
+                x2="145"
+                y2="45"
+                class="edge"
+                marker-end="url(#arr-http)"
+              />
+
+              <!-- TCP -->
+              <rect
+                x="150"
+                y="20"
+                width="110"
+                height="50"
+                rx="8"
+                class="node-visited"
+              />
+              <text
+                x="205"
+                y="42"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                TCP Connect
+              </text>
+              <text x="205" y="58" class="label-small" font-size="10">
+                3-way handshake
+              </text>
+              <line
+                x1="260"
+                y1="45"
+                x2="285"
+                y2="45"
+                class="edge"
+                marker-end="url(#arr-http)"
+              />
+
+              <!-- TLS -->
+              <rect
+                x="290"
+                y="20"
+                width="110"
+                height="50"
+                rx="8"
+                class="node-current"
+              />
+              <text
+                x="345"
+                y="42"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#d29922"
+              >
+                TLS Handshake
+              </text>
+              <text x="345" y="58" class="label-small" font-size="10">
+                cert + key exchange
+              </text>
+              <line
+                x1="400"
+                y1="45"
+                x2="425"
+                y2="45"
+                class="edge"
+                marker-end="url(#arr-http)"
+              />
+
+              <!-- HTTP Request -->
+              <rect
+                x="430"
+                y="20"
+                width="120"
+                height="50"
+                rx="8"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="490"
+                y="42"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#bc8cff"
+              >
+                HTTP Request
+              </text>
+              <text x="490" y="58" class="label-small" font-size="10">
+                GET /api/data
+              </text>
+              <line
+                x1="550"
+                y1="45"
+                x2="575"
+                y2="45"
+                class="edge"
+                marker-end="url(#arr-http)"
+              />
+
+              <!-- Response -->
+              <rect
+                x="580"
+                y="20"
+                width="120"
+                height="50"
+                rx="8"
+                class="node-highlight"
+              />
+              <text
+                x="640"
+                y="42"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#f85149"
+              >
+                Response
+              </text>
+              <text x="640" y="58" class="label-small" font-size="10">
+                200 OK + body
+              </text>
+
+              <!-- Timeline -->
+              <text x="390" y="90" class="label-small" fill="#8b949e">
+                Each step adds latency to total request time
+              </text>
+            </svg>
+          </div>
+
+          <p>TLS is encryption for HTTP. The handshake:</p>
+          <ol>
+            <li>Client sends supported cipher suites</li>
+            <li>Server picks a cipher, sends its certificate (public key)</li>
+            <li>Client verifies certificate against trusted CAs</li>
+            <li>They negotiate a shared session key (asymmetric crypto)</li>
+            <li>
+              All further communication uses the session key (symmetric crypto,
+              fast)
+            </li>
+          </ol>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              Like establishing a secure communication channel. Asymmetric
+              crypto = key exchange (expensive, like initial configuration).
+              Symmetric crypto = data transfer (cheap, like AES hardware
+              acceleration).
+            </p>
+          </div>
+
+          <h3 id="websockets">2.4 WebSockets</h3>
+
+          <p>
+            HTTP is request-response (half-duplex). WebSockets upgrade to
+            full-duplex persistent connections. Like going from a polled UART to
+            an interrupt-driven bidirectional channel.
+          </p>
+          <p>
+            <strong>Use for:</strong> Real-time features -- chat, live updates,
+            collaborative editing.
+          </p>
+
+          <h3 id="dns">2.5 DNS</h3>
+
+          <p>
+            Domain Name System translates human-readable names to IP addresses.
+            Like an address decoder that maps logical addresses to physical
+            addresses.
+          </p>
+
+          <pre><code>api.example.com -> DNS lookup -> 93.184.216.34 -> TCP connection</code></pre>
+
+          <p>
+            DNS results are cached at multiple levels (browser, OS, ISP) with a
+            TTL. This is why DNS changes "take time to propagate" -- the caches
+            must expire.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 3: Databases Deep Dive -->
+          <!-- ============================================================ -->
+          <h2 id="databases">Part 3: Databases Deep Dive</h2>
+
+          <h3 id="sql">3.1 SQL Fluency</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origin</div>
+            <p>
+              <strong>SQL:</strong> <strong>S</strong>tructured
+              <strong>Q</strong>uery <strong>L</strong>anguage. Originally
+              called "SEQUEL" (<strong>S</strong>tructured
+              <strong>E</strong>nglish <strong>QUE</strong>ry
+              <strong>L</strong>anguage) by IBM researchers Donald Chamberlin
+              and Raymond Boyce in the 1970s. Renamed to SQL for trademark
+              reasons (a UK aircraft company had "SEQUEL"). Named because
+              queries are structured in a way that reads like English:
+              <code>SELECT name FROM users WHERE age > 30</code>.
+            </p>
+          </div>
+
+          <p>
+            As a staff engineer, you must be able to write, read, and optimize
+            SQL. This is non-negotiable -- SQL is the "assembly language" of
+            data.
+          </p>
+
+          <h4>Core Operations</h4>
+
+          <pre><code><span class="cm">-- Create</span>
+<span class="kw">INSERT INTO</span> users (name, email) <span class="kw">VALUES</span> (<span class="str">'Alice'</span>, <span class="str">'alice@example.com'</span>);
+
+<span class="cm">-- Read (with join)</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">WHERE</span> o.created_at > <span class="str">'2024-01-01'</span>
+<span class="kw">ORDER BY</span> o.total <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;
+
+<span class="cm">-- Aggregate</span>
+<span class="kw">SELECT</span> department, <span class="fn">COUNT</span>(*) <span class="kw">as</span> headcount, <span class="fn">AVG</span>(salary) <span class="kw">as</span> avg_salary
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> department
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) > <span class="num">5</span>;
+
+<span class="cm">-- Update</span>
+<span class="kw">UPDATE</span> users <span class="kw">SET</span> email = <span class="str">'new@example.com'</span> <span class="kw">WHERE</span> id = <span class="num">123</span>;
+
+<span class="cm">-- Delete</span>
+<span class="kw">DELETE FROM</span> orders <span class="kw">WHERE</span> status = <span class="str">'cancelled'</span> <span class="kw">AND</span> created_at < <span class="str">'2023-01-01'</span>;</code></pre>
+
+          <h4>Indexing (critical for performance)</h4>
+
+          <pre><code><span class="cm">-- Without index: full table scan O(n) -- like searching unsorted RAM</span>
+<span class="cm">-- With B-tree index: O(log n) -- like binary search on sorted data</span>
+
+<span class="kw">CREATE INDEX</span> idx_users_email <span class="kw">ON</span> users(email);
+
+<span class="cm">-- Composite index for multi-column queries</span>
+<span class="kw">CREATE INDEX</span> idx_orders_user_date <span class="kw">ON</span> orders(user_id, created_at);</code></pre>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Rule of Thumb</div>
+            <p>
+              If you filter (<code>WHERE</code>) or join (<code>JOIN ON</code>)
+              on a column, it probably needs an index. But indexes slow down
+              writes (must update the index structure), so don't index
+              everything.
+            </p>
+          </div>
+
+          <h3 id="acid">3.2 ACID Properties</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Naming Origins</div>
+            <p>
+              <strong>ACID:</strong> <strong>A</strong>tomicity,
+              <strong>C</strong>onsistency, <strong>I</strong>solation,
+              <strong>D</strong>urability. Coined by Andreas Reuter and Theo
+              Harder in 1983. The acronym "ACID" was deliberately chosen -- just
+              as an acid test proves gold's purity, the ACID properties test a
+              transaction's reliability. If a database is "ACID-compliant," its
+              transactions are provably reliable.<br /><br />
+              <strong>B-Tree</strong> (used in indexing below): The "B" is
+              debated -- Boeing (where creator Rudolf Bayer worked), Balanced,
+              Bayer, or Broad. Most likely "Balanced" because the tree always
+              stays balanced, guaranteeing O(log n) lookups. The name
+              distinguishes it from unbalanced binary search trees.<br /><br />
+              <strong>WAL</strong> (Write-Ahead Log): Named because you write to
+              the log <em>ahead of</em> (before) writing to the actual database.
+              The log goes first ("ahead"), so if the system crashes mid-write,
+              the log can replay the operation. The name is literally the
+              procedure: write ahead, then apply.
+            </p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>What it means</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Atomicity</strong></td>
+                <td>Transaction fully completes or fully rolls back</td>
+                <td>DMA burst -- all or nothing, no partial transfer</td>
+              </tr>
+              <tr>
+                <td><strong>Consistency</strong></td>
+                <td>Data always satisfies constraints (FK, unique, etc.)</td>
+                <td>Parity check -- invalid states are rejected</td>
+              </tr>
+              <tr>
+                <td><strong>Isolation</strong></td>
+                <td>Concurrent transactions don't interfere</td>
+                <td>
+                  Bus arbitration -- one master at a time on the critical
+                  resource
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Durability</strong></td>
+                <td>Committed data survives crashes</td>
+                <td>Data written to non-volatile storage (EEPROM/flash)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="db-scaling">3.3 Database Scaling</h3>
+
+          <!-- SVG: Database Scaling -->
+          <div class="diagram-container">
+            <div class="diagram-title">Database Scaling Patterns</div>
+            <svg viewBox="0 0 750 280" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arr-db"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Read Replicas Section -->
+              <text
+                x="185"
+                y="25"
+                class="label-text"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Read Replicas
+              </text>
+
+              <!-- Primary -->
+              <rect
+                x="130"
+                y="40"
+                width="110"
+                height="45"
+                rx="8"
+                class="node-current"
+              />
+              <text
+                x="185"
+                y="60"
+                class="label-text"
+                font-size="11"
+                font-weight="600"
+                fill="#d29922"
+              >
+                Primary
+              </text>
+              <text x="185" y="75" class="label-small" font-size="10">
+                Read + Write
+              </text>
+
+              <!-- Replicas -->
+              <line
+                x1="185"
+                y1="85"
+                x2="80"
+                y2="115"
+                class="edge"
+                marker-end="url(#arr-db)"
+              />
+              <line
+                x1="185"
+                y1="85"
+                x2="185"
+                y2="115"
+                class="edge"
+                marker-end="url(#arr-db)"
+              />
+              <line
+                x1="185"
+                y1="85"
+                x2="290"
+                y2="115"
+                class="edge"
+                marker-end="url(#arr-db)"
+              />
+
+              <rect
+                x="25"
+                y="120"
+                width="110"
+                height="45"
+                rx="8"
+                class="node-visited"
+              />
+              <text
+                x="80"
+                y="140"
+                class="label-text"
+                font-size="11"
+                fill="#3fb950"
+              >
+                Replica 1
+              </text>
+              <text x="80" y="155" class="label-small" font-size="10">
+                Read only
+              </text>
+
+              <rect
+                x="150"
+                y="120"
+                width="110"
+                height="45"
+                rx="8"
+                class="node-visited"
+              />
+              <text
+                x="205"
+                y="140"
+                class="label-text"
+                font-size="11"
+                fill="#3fb950"
+              >
+                Replica 2
+              </text>
+              <text x="205" y="155" class="label-small" font-size="10">
+                Read only
+              </text>
+
+              <rect
+                x="275"
+                y="120"
+                width="110"
+                height="45"
+                rx="8"
+                class="node-visited"
+              />
+              <text
+                x="330"
+                y="140"
+                class="label-text"
+                font-size="11"
+                fill="#3fb950"
+              >
+                Replica 3
+              </text>
+              <text x="330" y="155" class="label-small" font-size="10">
+                Read only
+              </text>
+
+              <text x="185" y="195" class="label-small" fill="#8b949e">
+                Good when reads >> writes
+              </text>
+
+              <!-- Divider -->
+              <line
+                x1="410"
+                y1="15"
+                x2="410"
+                y2="270"
+                stroke="#30363d"
+                stroke-width="1"
+                stroke-dasharray="6,4"
+              />
+
+              <!-- Sharding Section -->
+              <text
+                x="580"
+                y="25"
+                class="label-text"
+                font-weight="700"
+                fill="#bc8cff"
+              >
+                Sharding
+              </text>
+
+              <!-- Shard boxes -->
+              <rect
+                x="435"
+                y="50"
+                width="130"
+                height="70"
+                rx="8"
+                fill="rgba(88,166,255,0.15)"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="500"
+                y="75"
+                class="label-text"
+                font-size="11"
+                fill="#58a6ff"
+              >
+                Shard 1
+              </text>
+              <text x="500" y="93" class="label-small" font-size="10">
+                Users A-F
+              </text>
+
+              <rect
+                x="585"
+                y="50"
+                width="130"
+                height="70"
+                rx="8"
+                fill="rgba(63,185,80,0.15)"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="650"
+                y="75"
+                class="label-text"
+                font-size="11"
+                fill="#3fb950"
+              >
+                Shard 2
+              </text>
+              <text x="650" y="93" class="label-small" font-size="10">
+                Users G-M
+              </text>
+
+              <rect
+                x="435"
+                y="140"
+                width="130"
+                height="70"
+                rx="8"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="1.5"
+              />
+              <text
+                x="500"
+                y="165"
+                class="label-text"
+                font-size="11"
+                fill="#d29922"
+              >
+                Shard 3
+              </text>
+              <text x="500" y="183" class="label-small" font-size="10">
+                Users N-S
+              </text>
+
+              <rect
+                x="585"
+                y="140"
+                width="130"
+                height="70"
+                rx="8"
+                fill="rgba(188,140,255,0.15)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="650"
+                y="165"
+                class="label-text"
+                font-size="11"
+                fill="#bc8cff"
+              >
+                Shard 4
+              </text>
+              <text x="650" y="183" class="label-small" font-size="10">
+                Users T-Z
+              </text>
+
+              <text x="580" y="238" class="label-small" fill="#8b949e">
+                Data split by key across servers
+              </text>
+              <text x="580" y="255" class="label-small" fill="#8b949e">
+                Like address decoding to memory chips
+              </text>
+            </svg>
+          </div>
+
+          <ul>
+            <li>
+              <strong>Vertical scaling:</strong> Bigger server (more RAM, faster
+              CPU). Simple but limited.
+            </li>
+            <li>
+              <strong>Horizontal scaling:</strong> Multiple servers. Complex but
+              unlimited.
+            </li>
+            <li>
+              <strong>Read replicas:</strong> Write to one leader, read from
+              multiple followers. Good when reads >> writes.
+            </li>
+            <li>
+              <strong>Sharding:</strong> Split data across servers by key. Like
+              address decoding that routes to different memory chips.
+            </li>
+          </ul>
+
+          <h3 id="nosql">3.4 NoSQL When and Why</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">&#10004;</div>
+                <div class="card-title">Use NoSQL when...</div>
+              </div>
+              <ul>
+                <li>Schema changes frequently (document store)</li>
+                <li>Extreme write volume (column-family)</li>
+                <li>Simple key-value access patterns (Redis)</li>
+                <li>Graph relationships (graph DB)</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">&#10004;</div>
+                <div class="card-title">Use SQL when...</div>
+              </div>
+              <ul>
+                <li>Data is relational (joins needed)</li>
+                <li>ACID transactions required</li>
+                <li>Complex queries (aggregation, reporting)</li>
+                <li>Data integrity is paramount</li>
+              </ul>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 4: Concurrency Patterns -->
+          <!-- ============================================================ -->
+          <h2 id="concurrency-patterns">
+            Part 4: Concurrency Patterns in Practice
+          </h2>
+
+          <h3 id="producer-consumer">4.1 The Producer-Consumer Pattern</h3>
+
+          <pre><code><span class="kw">import</span> queue
+<span class="kw">import</span> threading
+
+buffer <span class="op">=</span> queue.Queue(maxsize<span class="op">=</span><span class="num">100</span>)
+
+<span class="kw">def</span> <span class="fn">producer</span>():
+    <span class="kw">while</span> <span class="num">True</span>:
+        item <span class="op">=</span> generate_item()
+        buffer.put(item)  <span class="cm"># blocks if buffer full</span>
+
+<span class="kw">def</span> <span class="fn">consumer</span>():
+    <span class="kw">while</span> <span class="num">True</span>:
+        item <span class="op">=</span> buffer.get()  <span class="cm"># blocks if buffer empty</span>
+        process(item)</code></pre>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              A FIFO between two clock domains. The queue handles the
+              synchronization.
+            </p>
+          </div>
+
+          <h3 id="thread-pool">4.2 The Thread Pool Pattern</h3>
+
+          <pre><code><span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor
+
+<span class="kw">def</span> <span class="fn">fetch_url</span>(url):
+    <span class="kw">return</span> requests.get(url).text
+
+<span class="kw">with</span> ThreadPoolExecutor(max_workers<span class="op">=</span><span class="num">10</span>) <span class="kw">as</span> pool:
+    urls <span class="op">=</span> [<span class="str">"http://example.com/1"</span>, <span class="str">"http://example.com/2"</span>, ...]
+    results <span class="op">=</span> <span class="fn">list</span>(pool.map(fetch_url, urls))</code></pre>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy</div>
+            <p>
+              A bank of worker processors that pull tasks from a shared queue.
+              Like a multi-lane DMA controller.
+            </p>
+          </div>
+
+          <h3 id="async-await">4.3 Async/Await (Python)</h3>
+
+          <pre><code><span class="kw">import</span> asyncio
+<span class="kw">import</span> aiohttp
+
+<span class="kw">async def</span> <span class="fn">fetch_url</span>(session, url):
+    <span class="kw">async with</span> session.get(url) <span class="kw">as</span> response:
+        <span class="kw">return await</span> response.text()
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> aiohttp.ClientSession() <span class="kw">as</span> session:
+        tasks <span class="op">=</span> [fetch_url(session, url) <span class="kw">for</span> url <span class="kw">in</span> urls]
+        results <span class="op">=</span> <span class="kw">await</span> asyncio.gather(<span class="op">*</span>tasks)
+
+asyncio.run(main())</code></pre>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">Mental Model</div>
+            <p>
+              Cooperative multitasking. Each <code>await</code> is a voluntary
+              yield point -- "I'm waiting for I/O, someone else can run." Like a
+              cooperative scheduler in an RTOS where tasks explicitly yield,
+              versus preemptive scheduling where the OS interrupts them.
+            </p>
+          </div>
+
+          <p>
+            <strong>When to use:</strong> When you have many concurrent I/O
+            operations (hundreds/thousands of connections). Threading has
+            overhead per thread (~8MB stack). Async has minimal overhead per
+            task.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 5: Data Structures -->
+          <!-- ============================================================ -->
+          <h2 id="data-structures">Part 5: Data Structures Beyond Arrays</h2>
+
+          <p>
+            You know arrays, linked lists, and trees from DSA courses. Here are
+            the data structures you need to use fluently in daily engineering:
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Structure</th>
+                <th>Python type</th>
+                <th>When to use</th>
+                <th>Access time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Hash map</strong></td>
+                <td><code>dict</code></td>
+                <td>Key-value lookup, counting, grouping</td>
+                <td>O(1) average</td>
+              </tr>
+              <tr>
+                <td><strong>Hash set</strong></td>
+                <td><code>set</code></td>
+                <td>Membership testing, deduplication</td>
+                <td>O(1) average</td>
+              </tr>
+              <tr>
+                <td><strong>Queue</strong></td>
+                <td><code>collections.deque</code></td>
+                <td>FIFO processing, BFS</td>
+                <td>O(1) append/pop</td>
+              </tr>
+              <tr>
+                <td><strong>Heap</strong></td>
+                <td><code>heapq</code></td>
+                <td>Priority queue, top-K</td>
+                <td>O(log n) push/pop</td>
+              </tr>
+              <tr>
+                <td><strong>Sorted container</strong></td>
+                <td><code>sortedcontainers.SortedList</code></td>
+                <td>Maintaining sorted order with inserts</td>
+                <td>O(log n)</td>
+              </tr>
+              <tr>
+                <td><strong>Counter</strong></td>
+                <td><code>collections.Counter</code></td>
+                <td>Frequency counting</td>
+                <td>O(1) per update</td>
+              </tr>
+              <tr>
+                <td><strong>Defaultdict</strong></td>
+                <td><code>collections.defaultdict</code></td>
+                <td>Dict with default values</td>
+                <td>O(1)</td>
+              </tr>
+              <tr>
+                <td><strong>Named tuple</strong></td>
+                <td>
+                  <code>typing.NamedTuple</code> or <code>dataclass</code>
+                </td>
+                <td>Lightweight structured data</td>
+                <td>O(1) field access</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- References -->
+          <!-- ============================================================ -->
+          <h2 id="references">References</h2>
+
+          <h3>Books</h3>
+          <ul>
+            <li>
+              <strong>"Operating Systems: Three Easy Pieces" (OSTEP)</strong> --
+              Free online. Chapters on concurrency (26-33) and persistence
+              (36-42) are essential.
+              <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/"
+                >https://pages.cs.wisc.edu/~remzi/OSTEP/</a
+              >
+            </li>
+            <li>
+              <strong
+                >"Computer Networking: A Top-Down Approach" by Kurose &amp;
+                Ross</strong
+              >
+              -- Standard networking textbook. Chapters 2 (application layer)
+              and 3 (transport layer) are most relevant.
+            </li>
+          </ul>
+
+          <h3>Online</h3>
+          <ul>
+            <li>
+              <strong>SQL tutorial:</strong>
+              <a href="https://sqlzoo.net/">https://sqlzoo.net/</a>
+              (interactive, do all exercises)
+            </li>
+            <li>
+              <strong>PostgreSQL documentation</strong> -- Surprisingly
+              readable. The indexing chapter is essential:
+              <a href="https://www.postgresql.org/docs/current/indexes.html"
+                >postgresql.org/docs/current/indexes.html</a
+              >
+            </li>
+            <li>
+              <strong>Python asyncio documentation</strong> -- Read the official
+              tutorial first:
+              <a href="https://docs.python.org/3/library/asyncio.html"
+                >docs.python.org/3/library/asyncio.html</a
+              >
+            </li>
+            <li>
+              <strong>Real Python concurrency tutorial</strong> -- Practical
+              guide to threading, multiprocessing, and asyncio with code
+              examples
+            </li>
+          </ul>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

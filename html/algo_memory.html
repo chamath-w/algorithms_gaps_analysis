@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Algorithm Memory Lab — Offline Course</title>
+    <link rel="stylesheet" href="css/style.css?v=15" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Algorithm Memory Lab</h1>
+          <p>
+            All <strong>21 algorithm patterns</strong> in one place for
+            memorization: name → picture → step-through movie → skeleton. Each
+            pattern in the catalog has its own Play/Next movie. Then drill in the
+            <a href="practice.html">Practice Arena</a>.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">How to memorize (daily loop)</div>
+            <ol>
+              <li>SRS flashcards below (honest grades).</li>
+              <li>Pick a pattern — play its movie, recite picture + skeleton aloud.</li>
+              <li>Type the skeleton from blank (cover the page).</li>
+              <li>Mark memorized when recall is instant; reinforce in Practice Arena.</li>
+            </ol>
+          </div>
+
+          <h2>1. SRS Flashcards (all patterns)</h2>
+          <p>
+            Grade honestly: <em>Again</em> if you blanked,
+            <em>Hard</em> if slow, <em>Good</em> if solid, <em>Easy</em> if instant.
+          </p>
+          <div data-flashcards></div>
+
+          <h2 id="catalog">2. Full pattern catalog (21)</h2>
+          <p>
+            Every pattern includes a step-through movie (Play/Next), triggers,
+            approach, full code skeleton, complexity, pitfalls, and canonical
+            problems.
+          </p>
+          <div data-algo-memory-catalog></div>
+
+          <h2>3. Reconstruct drill</h2>
+          <p>Fill blanks from memory — pattern recognition without coding.</p>
+          <div data-quiz data-topic="memory"></div>
+
+          <h2>4. Memory Palace station map (all 21)</h2>
+          <p>
+            Place each picture in a locus on your
+            <a href="memory_palace.html">Memory Palace</a> walk.
+          </p>
+          <div data-algo-memory-palace></div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Daily rule</div>
+            <p>
+              15 minutes flashcards + 1 catalog pattern (skeleton from blank) +
+              2 problems in
+              <a href="practice.html">Practice Arena</a>. Never zero.
+            </p>
+          </div>
+
+          <p>
+            <a href="practice.html">Practice Arena →</a> ·
+            <a href="patterns.html">All patterns (animated) →</a> ·
+            <a href="progress.html">Progress →</a>
+          </p>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/course.js?v=15"></script>
+    <script src="js/algo-memory-data.js?v=15"></script>
+    <script src="js/algo-memory-movies.js?v=15"></script>
+    <script src="js/algo-memory.js?v=15"></script>
+  </body>
+</html>

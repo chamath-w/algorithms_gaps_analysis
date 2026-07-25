@@ -1,0 +1,3658 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Systems Design — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Systems Design</h1>
+          <p>The Staff Engineer's Core Skill</p>
+          <p>
+            System design is to software what schematic/architecture design is
+            to hardware. At staff level, you will be expected to design systems
+            from a blank whiteboard and to evaluate designs proposed by others.
+            This is the single most important skill gap to close.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              Just as EE design starts with knowing your component library
+              (op-amps, ADCs, MCUs, FPGAs), system design starts with knowing
+              the software building blocks and when to use each one.
+            </p>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- SVG: System Architecture Diagram -->
+          <!-- ============================================================ -->
+          <h2 id="architecture">System Architecture Overview</h2>
+
+          <div class="diagram-container">
+            <div class="diagram-title">Generic 3-Tier Architecture</div>
+            <svg viewBox="0 0 800 340" xmlns="http://www.w3.org/2000/svg">
+              <!-- Clients -->
+              <rect
+                x="20"
+                y="130"
+                width="110"
+                height="50"
+                rx="8"
+                class="node-fill node-stroke"
+              />
+              <text x="75" y="158" class="label-text">Clients</text>
+
+              <!-- Arrow: Client -> LB -->
+              <line
+                x1="130"
+                y1="155"
+                x2="185"
+                y2="155"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+              <text x="157" y="145" class="label-small">HTTPS</text>
+
+              <!-- Load Balancer -->
+              <rect
+                x="190"
+                y="120"
+                width="130"
+                height="70"
+                rx="8"
+                class="node-active"
+              />
+              <text x="255" y="150" class="label-text">Load</text>
+              <text x="255" y="168" class="label-text">Balancer</text>
+
+              <!-- Arrow: LB -> App1 -->
+              <line
+                x1="320"
+                y1="140"
+                x2="400"
+                y2="100"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+              <!-- Arrow: LB -> App2 -->
+              <line
+                x1="320"
+                y1="155"
+                x2="400"
+                y2="155"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+              <!-- Arrow: LB -> App3 -->
+              <line
+                x1="320"
+                y1="170"
+                x2="400"
+                y2="210"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+
+              <!-- App Servers -->
+              <rect
+                x="405"
+                y="75"
+                width="120"
+                height="45"
+                rx="8"
+                class="node-fill node-stroke"
+              />
+              <text x="465" y="102" class="label-text">App Server 1</text>
+              <rect
+                x="405"
+                y="133"
+                width="120"
+                height="45"
+                rx="8"
+                class="node-fill node-stroke"
+              />
+              <text x="465" y="160" class="label-text">App Server 2</text>
+              <rect
+                x="405"
+                y="191"
+                width="120"
+                height="45"
+                rx="8"
+                class="node-fill node-stroke"
+              />
+              <text x="465" y="218" class="label-text">App Server 3</text>
+
+              <!-- Arrows to backend -->
+              <line
+                x1="525"
+                y1="97"
+                x2="610"
+                y2="70"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+              <line
+                x1="525"
+                y1="155"
+                x2="610"
+                y2="155"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+              <line
+                x1="525"
+                y1="213"
+                x2="610"
+                y2="240"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+
+              <!-- Database -->
+              <rect
+                x="615"
+                y="45"
+                width="130"
+                height="50"
+                rx="8"
+                class="node-highlight"
+              />
+              <text x="680" y="74" class="label-text">Database</text>
+
+              <!-- Cache -->
+              <rect
+                x="615"
+                y="130"
+                width="130"
+                height="50"
+                rx="8"
+                class="node-visited"
+              />
+              <text x="680" y="159" class="label-text">Cache (Redis)</text>
+
+              <!-- Message Queue -->
+              <rect
+                x="615"
+                y="215"
+                width="130"
+                height="50"
+                rx="8"
+                class="node-current"
+              />
+              <text x="680" y="244" class="label-text">Message Queue</text>
+
+              <!-- Workers from Queue -->
+              <line
+                x1="680"
+                y1="265"
+                x2="680"
+                y2="305"
+                class="edge"
+                marker-end="url(#arr-arch)"
+              />
+              <rect
+                x="625"
+                y="290"
+                width="110"
+                height="40"
+                rx="8"
+                class="node-fill node-stroke"
+              />
+              <text x="680" y="314" class="label-text">Workers</text>
+
+              <defs>
+                <marker
+                  id="arr-arch"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- Part 1: Building Blocks -->
+          <!-- ============================================================ -->
+          <h2 id="building-blocks">Part 1: The Building Blocks</h2>
+
+          <h3 id="databases">1.1 Databases</h3>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">&#128451;</div>
+                <div class="card-title">Relational (PostgreSQL, MySQL)</div>
+              </div>
+              <div class="card-desc">
+                Structured tables with relationships, ACID transactions.
+              </div>
+              <div class="callout callout-ee" style="margin-top: 0.75rem">
+                <p>
+                  <strong>EE Analogy:</strong> SRAM — reliable, structured,
+                  consistent, but fixed format.
+                </p>
+              </div>
+              <p>
+                <strong>Use when:</strong> Structured data with relationships,
+                need transactions (orders, users, inventory).
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">&#128196;</div>
+                <div class="card-title">Document (MongoDB, DynamoDB)</div>
+              </div>
+              <div class="card-desc">Schema-flexible JSON documents.</div>
+              <div class="callout callout-ee" style="margin-top: 0.75rem">
+                <p>
+                  <strong>EE Analogy:</strong> Flash storage — flexible format,
+                  fast reads, variable structure.
+                </p>
+              </div>
+              <p>
+                <strong>Use when:</strong> Semi-structured data, rapid
+                iteration, per-document access patterns.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon orange">&#9889;</div>
+                <div class="card-title">Key-Value (Redis, Memcached)</div>
+              </div>
+              <div class="card-desc">Simple key->value store, in-memory.</div>
+              <div class="callout callout-ee" style="margin-top: 0.75rem">
+                <p>
+                  <strong>EE Analogy:</strong> Register file — extremely fast,
+                  small, direct access by key.
+                </p>
+              </div>
+              <p>
+                <strong>Use when:</strong> Caching, session storage, rate
+                limiting, real-time counters.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon purple">&#128202;</div>
+                <div class="card-title">Column-family (Cassandra, HBase)</div>
+              </div>
+              <div class="card-desc">
+                Wide-column store, distributed writes.
+              </div>
+              <div class="callout callout-ee" style="margin-top: 0.75rem">
+                <p>
+                  <strong>EE Analogy:</strong> Distributed FIFO buffers — high
+                  write throughput, partitioned.
+                </p>
+              </div>
+              <p>
+                <strong>Use when:</strong> Time-series data, IoT telemetry, high
+                write volume.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon cyan">&#128279;</div>
+                <div class="card-title">Graph (Neo4j, Neptune)</div>
+              </div>
+              <div class="card-desc">Nodes and edges with traversals.</div>
+              <div class="callout callout-ee" style="margin-top: 0.75rem">
+                <p>
+                  <strong>EE Analogy:</strong> A netlist — natural for
+                  connection/relationship queries.
+                </p>
+              </div>
+              <p>
+                <strong>Use when:</strong> Social networks, recommendation
+                engines, fraud detection.
+              </p>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon red">&#128269;</div>
+                <div class="card-title">Search (Elasticsearch)</div>
+              </div>
+              <div class="card-desc">Full-text search with inverted index.</div>
+              <div class="callout callout-ee" style="margin-top: 0.75rem">
+                <p>
+                  <strong>EE Analogy:</strong> A lookup table / CAM —
+                  content-addressable search.
+                </p>
+              </div>
+              <p>
+                <strong>Use when:</strong> Search functionality, log
+                aggregation, analytics.
+              </p>
+            </div>
+          </div>
+
+          <h4>Key Decision Framework</h4>
+          <pre><code>Is your data highly relational with transactions? -> Relational (PostgreSQL)
+Is your data semi-structured and read-heavy?     -> Document (MongoDB)
+Do you need sub-millisecond access by key?        -> Key-Value (Redis)
+Is your write volume extremely high?              -> Column-family (Cassandra)
+Are you querying relationships/connections?        -> Graph (Neo4j)
+Do you need full-text search?                     -> Search (Elasticsearch)</code></pre>
+
+          <h4>What to Study</h4>
+          <ul>
+            <li>
+              <strong>SQL:</strong> Be fluent. You need JOINs, GROUP BY,
+              indexes, query plans.
+            </li>
+            <li>
+              <strong>Indexing:</strong> Understand B-trees (like a sorted
+              lookup structure) and hash indexes.
+            </li>
+            <li>
+              <strong>Normalization vs denormalization:</strong> When to split
+              tables vs duplicate data.
+            </li>
+            <li>
+              <strong>Sharding:</strong> How to split data across multiple
+              database servers.
+            </li>
+            <li>
+              <strong>Replication:</strong> Leader-follower, leader-leader,
+              quorum-based.
+            </li>
+          </ul>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Sharding"?</div>
+            <p>
+              From "shard" — a broken piece of pottery or glass. You "shatter"
+              one big database into smaller pieces, and each piece is a
+              <em>shard</em>. Each shard holds a fragment of the whole dataset.
+              The word instantly gives you the picture: one plate, broken into
+              pieces, each piece still useful on its own.
+            </p>
+          </div>
+
+          <h3 id="caching">1.2 Caching</h3>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              Caching is a buffer between a fast consumer and a slow producer —
+              exactly like a CPU cache sits between the processor and main
+              memory. Same concepts apply: cache hit, cache miss, cache
+              invalidation, eviction policy.
+            </p>
+          </div>
+
+          <h4>Cache Strategies</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Strategy</th>
+                <th>How it works</th>
+                <th>Tradeoff</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Cache-aside (lazy loading)</strong></td>
+                <td>App checks cache first, loads from DB on miss</td>
+                <td>Most common. You control what gets cached.</td>
+              </tr>
+              <tr>
+                <td><strong>Write-through</strong></td>
+                <td>Write to cache and DB simultaneously</td>
+                <td>Consistent but slower writes.</td>
+              </tr>
+              <tr>
+                <td><strong>Write-behind</strong></td>
+                <td>Write to cache, async write to DB</td>
+                <td>Fast but risk data loss.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>Cache Invalidation (the hardest problem in CS)</h4>
+          <ul>
+            <li>
+              <strong>TTL (Time-To-Live):</strong> Cache expires after N
+              seconds. Simple, slightly stale.
+            </li>
+            <li>
+              <strong>Event-driven:</strong> Invalidate cache when the source
+              data changes. Consistent but complex.
+            </li>
+          </ul>
+
+          <div class="callout callout-info">
+            <div class="callout-title">When to Cache</div>
+            <p>
+              Read-heavy workloads where the same data is requested repeatedly
+              and slight staleness is acceptable.
+            </p>
+          </div>
+
+          <h3 id="queues">1.3 Message Queues and Event Streaming</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>What it is</th>
+                <th>EE Analogy</th>
+                <th>When to use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Message Queue (RabbitMQ, SQS)</strong></td>
+                <td>Point-to-point message delivery</td>
+                <td>A FIFO buffer with flow control</td>
+                <td>
+                  Decouple producer from consumer, async processing, load
+                  leveling
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Event Stream (Kafka, Kinesis)</strong></td>
+                <td>Append-only log, multiple consumers</td>
+                <td>
+                  A shared bus / backplane that multiple listeners can tap
+                </td>
+                <td>
+                  Event sourcing, real-time analytics, data pipeline between
+                  services
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h4>Delivery Guarantees</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>Guarantee</th>
+                <th>Behavior</th>
+                <th>EE Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>At-most-once</strong></td>
+                <td>Message may be lost. Fast but unreliable.</td>
+                <td>UDP equivalent</td>
+              </tr>
+              <tr>
+                <td><strong>At-least-once</strong></td>
+                <td>Message may be duplicated. Make consumer idempotent.</td>
+                <td>TCP with retries</td>
+              </tr>
+              <tr>
+                <td><strong>Exactly-once</strong></td>
+                <td>
+                  Hard to achieve. Usually at-least-once + idempotent consumer.
+                </td>
+                <td>Transactional protocol</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="load-balancers">1.4 Load Balancers and Reverse Proxies</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Load Balancer"?</div>
+            <p>
+              Named for exactly what it does: it <em>balances</em> the
+              <em>load</em> (traffic/work) across multiple servers. Picture a
+              traffic officer at an intersection distributing cars across
+              multiple highway lanes so no single lane gets jammed.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              Distribute incoming requests across multiple servers. Like a bus
+              arbiter that distributes transactions to multiple slaves.
+            </p>
+          </div>
+
+          <ul>
+            <li><strong>Round-robin:</strong> Simple rotation.</li>
+            <li>
+              <strong>Least connections:</strong> Route to the server with
+              fewest active connections.
+            </li>
+            <li>
+              <strong>Consistent hashing:</strong> Route based on request key.
+              Same key always goes to same server (good for caching).
+              <div class="callout callout-info" style="margin-top: 0.5rem">
+                <div class="callout-title">Why "Consistent Hashing"?</div>
+                <p>
+                  "Consistent" because when you add or remove a node,
+                  <em>most</em> keys stay mapped to the same node (consistent
+                  mapping). Regular hashing redistributes everything when the
+                  number of buckets changes; consistent hashing minimizes
+                  disruption. Think of it as adding a lane to a highway — only
+                  nearby traffic shifts, not the entire road network.
+                </p>
+              </div>
+            </li>
+          </ul>
+
+          <h3 id="cdn">1.5 CDN (Content Delivery Network)</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "CDN"?</div>
+            <p>
+              <strong>C</strong>ontent <strong>D</strong>elivery
+              <strong>N</strong>etwork — a network of geographically distributed
+              servers that <em>deliver content</em> (images, videos, pages) from
+              locations close to the user. The name says it all: it is a network
+              whose job is delivering content fast.
+            </p>
+          </div>
+
+          <p>
+            Geographically distributed cache for static content. Like having
+            local register copies instead of going to main memory every time.
+            Reduces latency by serving content from the nearest edge server.
+            CDNs rely on <strong>DNS</strong> to route users to the nearest edge
+            server.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "DNS"?</div>
+            <p>
+              <strong>D</strong>omain <strong>N</strong>ame
+              <strong>S</strong>ystem — the system that translates
+              human-readable domain names (google.com) into machine-readable IP
+              addresses (142.250.80.46). "Domain" in networking means a realm of
+              administrative authority. DNS is the internet's phone book: you
+              look up a name, it gives you a number.
+            </p>
+          </div>
+
+          <h3 id="api-gateway">1.6 API Gateway</h3>
+          <p>
+            Single entry point for all clients. Handles: authentication, rate
+            limiting, routing, request transformation. Like a protocol bridge /
+            bus interface controller.
+          </p>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 2: Distributed Systems Fundamentals -->
+          <!-- ============================================================ -->
+          <h2 id="distributed-systems">
+            Part 2: Distributed Systems Fundamentals
+          </h2>
+
+          <h3 id="cap">2.1 CAP Theorem</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "CAP Theorem"?</div>
+            <p>
+              Named for the three properties: <strong>C</strong>onsistency,
+              <strong>A</strong>vailability, <strong>P</strong>artition
+              tolerance. Proposed by Eric Brewer in 2000 as "Brewer's
+              conjecture," then formally proved as a theorem by Gilbert and
+              Lynch in 2002. The acronym CAP captures the three-way trade-off —
+              pick any two, but not all three.
+            </p>
+          </div>
+
+          <p>
+            The CAP theorem states that a distributed system can provide at most
+            <strong>two out of three</strong> guarantees simultaneously:
+          </p>
+          <ul>
+            <li>
+              <strong>Consistency (C):</strong> Every read receives the most
+              recent write or an error. All nodes see the same data at the same
+              time. If you write a value to one node, a read from any other node
+              immediately returns that value.
+              <em
+                >EE analogy: like a shared bus where all devices see the same
+                signal level simultaneously — a single source of truth.</em
+              >
+            </li>
+            <li>
+              <strong>Availability (A):</strong> Every request receives a
+              non-error response, regardless of the state of any individual
+              node. The system always responds — it never says "I don't know" or
+              times out. Every functioning node returns a result, even if it
+              might be stale.
+              <em
+                >EE analogy: like a redundant power supply — the system always
+                provides power, even if one source is degraded.</em
+              >
+            </li>
+            <li>
+              <strong>Partition Tolerance (P):</strong> The system continues to
+              operate despite network partitions — when messages between nodes
+              are lost or delayed. A partition means some nodes cannot
+              communicate with each other. Since networks are unreliable,
+              <strong>partitions will happen</strong> — this is not optional in
+              any real distributed system.
+              <em
+                >EE analogy: like a circuit board where a trace is broken — some
+                chips can't talk to each other, but the system must still
+                function.</em
+              >
+            </li>
+          </ul>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">The Real Choice: CP or AP</div>
+            <p>
+              Since network partitions <strong>will</strong> happen in any
+              distributed system (you can't prevent them), P is not optional.
+              The real choice is: during a partition, do you sacrifice
+              <strong>Consistency</strong> (let nodes serve stale data so the
+              system stays available — <strong>AP</strong>) or
+              <strong>Availability</strong> (refuse to serve requests until
+              nodes agree — <strong>CP</strong>)?
+            </p>
+            <p style="margin-top: 0.5rem">
+              <strong>CP example:</strong> A banking system. During a partition,
+              it's better to reject a transaction than to allow two nodes to
+              independently approve the same withdrawal (double-spend).
+              <br />
+              <strong>AP example:</strong> A social media feed. During a
+              partition, it's better to show a slightly stale feed than to show
+              nothing at all.
+            </p>
+          </div>
+
+          <p>
+            <strong>CA (no partition tolerance)</strong> is only possible on a
+            single node — in practice, this means a traditional non-distributed
+            database like a single PostgreSQL instance. The moment you
+            distribute across multiple machines, you must tolerate partitions.
+          </p>
+
+          <!-- SVG: CAP Theorem Venn Diagram -->
+          <div class="diagram-container">
+            <div class="diagram-title">CAP Theorem</div>
+            <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+              <!-- Three circles -->
+              <circle
+                cx="200"
+                cy="170"
+                r="120"
+                fill="rgba(88,166,255,0.12)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <circle
+                cx="300"
+                cy="170"
+                r="120"
+                fill="rgba(63,185,80,0.12)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <circle
+                cx="250"
+                cy="270"
+                r="120"
+                fill="rgba(210,153,34,0.12)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+
+              <!-- Main labels -->
+              <text
+                x="145"
+                y="110"
+                class="label-text"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                Consistency
+              </text>
+              <text
+                x="315"
+                y="110"
+                class="label-text"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                Availability
+              </text>
+              <text
+                x="250"
+                y="370"
+                class="label-text"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Partition
+              </text>
+              <text
+                x="250"
+                y="388"
+                class="label-text"
+                font-weight="700"
+                fill="#d29922"
+              >
+                Tolerance
+              </text>
+
+              <!-- Intersection labels -->
+              <text
+                x="250"
+                y="135"
+                class="label-text"
+                font-weight="600"
+                fill="#e6edf3"
+              >
+                CA
+              </text>
+              <text x="250" y="152" class="label-small">(single node)</text>
+
+              <text
+                x="180"
+                y="230"
+                class="label-text"
+                font-weight="600"
+                fill="#e6edf3"
+              >
+                CP
+              </text>
+              <text x="180" y="247" class="label-small">ZooKeeper</text>
+              <text x="180" y="260" class="label-small">PostgreSQL</text>
+
+              <text
+                x="320"
+                y="230"
+                class="label-text"
+                font-weight="600"
+                fill="#e6edf3"
+              >
+                AP
+              </text>
+              <text x="320" y="247" class="label-small">Cassandra</text>
+              <text x="320" y="260" class="label-small">DynamoDB</text>
+            </svg>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              This is like a multi-master bus with arbitration. During a bus
+              fault (partition), you either halt (CP) or let each master proceed
+              independently and reconcile later (AP).
+            </p>
+          </div>
+
+          <h3 id="consistency-models">2.2 Consistency Models</h3>
+
+          <!-- SVG: Consistency Models Spectrum -->
+          <div class="diagram-container">
+            <div class="diagram-title">Consistency Models Spectrum</div>
+            <svg viewBox="0 0 700 120" xmlns="http://www.w3.org/2000/svg">
+              <!-- Main bar -->
+              <defs>
+                <linearGradient
+                  id="consistency-grad"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stop-color="#58a6ff" />
+                  <stop offset="100%" stop-color="#d29922" />
+                </linearGradient>
+              </defs>
+              <rect
+                x="50"
+                y="45"
+                width="600"
+                height="12"
+                rx="6"
+                fill="url(#consistency-grad)"
+                opacity="0.6"
+              />
+
+              <!-- Markers -->
+              <circle
+                cx="50"
+                cy="51"
+                r="8"
+                fill="#58a6ff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="50"
+                y="30"
+                class="label-text"
+                font-size="13"
+                font-weight="600"
+                fill="#58a6ff"
+              >
+                Linearizable
+              </text>
+              <text x="50" y="85" class="label-small">Strongest</text>
+              <text x="50" y="100" class="label-small">Most expensive</text>
+
+              <circle
+                cx="237"
+                cy="51"
+                r="8"
+                fill="#bc8cff"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="237"
+                y="30"
+                class="label-text"
+                font-size="13"
+                font-weight="600"
+                fill="#bc8cff"
+              >
+                Sequential
+              </text>
+
+              <circle
+                cx="425"
+                cy="51"
+                r="8"
+                fill="#f778ba"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="425"
+                y="30"
+                class="label-text"
+                font-size="13"
+                font-weight="600"
+                fill="#f778ba"
+              >
+                Causal
+              </text>
+
+              <circle
+                cx="650"
+                cy="51"
+                r="8"
+                fill="#d29922"
+                stroke="#161b22"
+                stroke-width="2"
+              />
+              <text
+                x="650"
+                y="30"
+                class="label-text"
+                font-size="13"
+                font-weight="600"
+                fill="#d29922"
+              >
+                Eventual
+              </text>
+              <text x="650" y="85" class="label-small">Weakest</text>
+              <text x="650" y="100" class="label-small">Cheapest</text>
+
+              <!-- Arrow labels -->
+              <text x="350" y="110" class="label-small">
+                Most systems use eventual consistency with stronger guarantees
+                where needed
+              </text>
+            </svg>
+          </div>
+
+          <ol>
+            <li>
+              <strong>Linearizability:</strong> Acts as if there is a single
+              copy. Most expensive.
+            </li>
+            <li>
+              <strong>Sequential consistency:</strong> All nodes see operations
+              in the same order.
+            </li>
+            <li>
+              <strong>Causal consistency:</strong> Causally related operations
+              are seen in order.
+            </li>
+            <li>
+              <strong>Eventual consistency:</strong> All nodes converge
+              eventually. Cheapest.
+            </li>
+          </ol>
+
+          <h3 id="consensus">2.3 Consensus Protocols</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Paxos"?</div>
+            <p>
+              Named after the Greek island of Paxos. Leslie Lamport wrote the
+              original paper as a parable about a fictional "Paxon parliament"
+              on the island, where legislators had to reach consensus despite
+              frequently wandering off. The whimsical framing initially caused
+              the paper to be ignored for years — but the algorithm became
+              foundational.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "Raft"?</div>
+            <p>
+              A play on "raft" — a simple boat — because it was explicitly
+              designed to be a simpler, more understandable consensus protocol
+              than Paxos. The creators (Ongaro &amp; Ousterhout, 2014) made
+              understandability the primary design goal. Also a backronym:
+              <strong>R</strong>eliable, <strong>R</strong>eplicated,
+              <strong>R</strong>edundant, <strong>A</strong>nd
+              <strong>F</strong>ault-<strong>T</strong>olerant. If Paxos is a
+              yacht, Raft is a raft — it gets you there, and you can actually
+              build one.
+            </p>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              How do distributed nodes agree on a value? Same problem as clock
+              synchronization in multi-clock-domain systems.
+            </p>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Protocol</th>
+                <th>How it works</th>
+                <th>Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Paxos / Raft</strong></td>
+                <td>
+                  Leader-based consensus. Leader proposes, majority agrees.
+                </td>
+                <td>Master-slave with quorum ACK</td>
+              </tr>
+              <tr>
+                <td><strong>Two-Phase Commit (2PC)</strong></td>
+                <td>
+                  Coordinator asks all nodes to prepare, then commit. Blocks if
+                  coordinator fails.
+                </td>
+                <td>Synchronous bus transaction with ACK</td>
+              </tr>
+              <tr>
+                <td><strong>Saga pattern</strong></td>
+                <td>
+                  Sequence of local transactions with compensating actions on
+                  failure.
+                </td>
+                <td>Async transaction pipeline with rollback</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 id="latency">2.4 Latency Numbers Every Engineer Should Know</h3>
+
+          <pre><code>L1 cache reference:                    1 ns
+L2 cache reference:                    4 ns
+RAM reference:                        100 ns
+SSD random read:                   16,000 ns   (16 us)
+HDD seek:                      2,000,000 ns   (2 ms)
+Same-datacenter network round trip:  500,000 ns (0.5 ms)
+Cross-continent network round trip: 150,000,000 ns (150 ms)</code></pre>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Why This Matters</div>
+            <p>
+              If your service makes 5 sequential database calls at 0.5ms each,
+              that is 2.5ms of latency from I/O alone. Can you parallelize them?
+              Can you batch them? Can you cache them? This is your latency
+              budget, exactly like timing analysis on a critical path.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 3: System Design Method -->
+          <!-- ============================================================ -->
+          <h2 id="design-method">Part 3: System Design Method</h2>
+
+          <p>
+            When designing a system (in an interview or at work), follow this
+            process:
+          </p>
+
+          <!-- SVG: 5-Step Design Method Pipeline -->
+          <div class="diagram-container">
+            <div class="diagram-title">5-Step System Design Method</div>
+            <svg viewBox="0 0 850 130" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arr-pipe"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Step 1 -->
+              <rect
+                x="10"
+                y="20"
+                width="140"
+                height="70"
+                rx="10"
+                class="node-active"
+              />
+              <text
+                x="80"
+                y="48"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#58a6ff"
+              >
+                1. Clarify
+              </text>
+              <text x="80" y="65" class="label-small">Requirements</text>
+              <text x="80" y="80" class="label-small" fill="#8b949e">
+                5 min
+              </text>
+              <line
+                x1="150"
+                y1="55"
+                x2="175"
+                y2="55"
+                class="edge"
+                marker-end="url(#arr-pipe)"
+              />
+
+              <!-- Step 2 -->
+              <rect
+                x="180"
+                y="20"
+                width="140"
+                height="70"
+                rx="10"
+                class="node-visited"
+              />
+              <text
+                x="250"
+                y="48"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#3fb950"
+              >
+                2. Estimate
+              </text>
+              <text x="250" y="65" class="label-small">Scale</text>
+              <text x="250" y="80" class="label-small" fill="#8b949e">
+                5 min
+              </text>
+              <line
+                x1="320"
+                y1="55"
+                x2="345"
+                y2="55"
+                class="edge"
+                marker-end="url(#arr-pipe)"
+              />
+
+              <!-- Step 3 -->
+              <rect
+                x="350"
+                y="20"
+                width="140"
+                height="70"
+                rx="10"
+                class="node-current"
+              />
+              <text
+                x="420"
+                y="48"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#d29922"
+              >
+                3. High-Level
+              </text>
+              <text x="420" y="65" class="label-small">Design</text>
+              <text x="420" y="80" class="label-small" fill="#8b949e">
+                10 min
+              </text>
+              <line
+                x1="490"
+                y1="55"
+                x2="515"
+                y2="55"
+                class="edge"
+                marker-end="url(#arr-pipe)"
+              />
+
+              <!-- Step 4 -->
+              <rect
+                x="520"
+                y="20"
+                width="140"
+                height="70"
+                rx="10"
+                fill="rgba(188,140,255,0.2)"
+                stroke="#bc8cff"
+                stroke-width="2"
+              />
+              <text
+                x="590"
+                y="48"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#bc8cff"
+              >
+                4. Deep Dive
+              </text>
+              <text x="590" y="65" class="label-small">Components</text>
+              <text x="590" y="80" class="label-small" fill="#8b949e">
+                15 min
+              </text>
+              <line
+                x1="660"
+                y1="55"
+                x2="685"
+                y2="55"
+                class="edge"
+                marker-end="url(#arr-pipe)"
+              />
+
+              <!-- Step 5 -->
+              <rect
+                x="690"
+                y="20"
+                width="140"
+                height="70"
+                rx="10"
+                class="node-highlight"
+              />
+              <text
+                x="760"
+                y="48"
+                class="label-text"
+                font-size="12"
+                font-weight="700"
+                fill="#f85149"
+              >
+                5. Address
+              </text>
+              <text x="760" y="65" class="label-small">Bottlenecks</text>
+              <text x="760" y="80" class="label-small" fill="#8b949e">
+                5 min
+              </text>
+
+              <!-- Total time bar -->
+              <text
+                x="425"
+                y="118"
+                class="label-text"
+                font-size="13"
+                fill="#8b949e"
+              >
+                Total: ~40 minutes
+              </text>
+            </svg>
+          </div>
+
+          <h3>Step 1: Clarify Requirements (5 minutes)</h3>
+          <ul>
+            <li>
+              <strong>Functional:</strong> What does the system do? (List the
+              core features)
+            </li>
+            <li>
+              <strong>Non-functional:</strong> Scale (users, QPS), latency
+              requirements, availability SLA
+            </li>
+            <li>
+              <strong>Constraints:</strong> Budget, team size, existing
+              infrastructure
+            </li>
+          </ul>
+
+          <h3>Step 2: Estimate Scale (5 minutes)</h3>
+          <ul>
+            <li>Users, requests per second, data size, storage growth rate</li>
+            <li>Read-heavy or write-heavy?</li>
+            <li>Bursty or steady traffic?</li>
+          </ul>
+
+          <h3>Step 3: High-Level Design (10 minutes)</h3>
+          <ul>
+            <li>Draw the major components (boxes) and data flow (arrows)</li>
+            <li>Identify the API endpoints</li>
+            <li>Choose the database type</li>
+            <li>Decide on synchronous vs asynchronous processing</li>
+          </ul>
+
+          <h3>Step 4: Deep Dive (15 minutes)</h3>
+          <ul>
+            <li>Pick the most complex or risky component</li>
+            <li>Design the data model (tables, fields, indexes)</li>
+            <li>Address: caching, partitioning, replication</li>
+            <li>Handle edge cases and failure modes</li>
+          </ul>
+
+          <h3>Step 5: Address Bottlenecks (5 minutes)</h3>
+          <ul>
+            <li>Single points of failure?</li>
+            <li>Scaling bottlenecks?</li>
+            <li>Monitoring and alerting?</li>
+          </ul>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 4: Practice Problems -->
+          <!-- ============================================================ -->
+          <h2 id="practice-problems">
+            Part 4: Practice System Design Problems
+          </h2>
+
+          <p>
+            Complete these in order. For each, draw the architecture, define the
+            API, choose the database, and address scaling.
+          </p>
+
+          <h3>Beginner (do first)</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon green">1</div>
+              <div>
+                <div class="card-title">URL Shortener (TinyURL)</div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> hashing, key-value store,
+              read-heavy caching
+            </p>
+            <p>
+              <strong>Key question:</strong> How to generate unique short codes?
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon green">2</div>
+              <div>
+                <div class="card-title">Rate Limiter</div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> sliding window, token bucket, Redis
+              counters
+            </p>
+            <p>
+              <strong>Key question:</strong> How to handle distributed rate
+              limiting across servers?
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon green">3</div>
+              <div>
+                <div class="card-title">Paste Bin</div>
+                <span class="badge badge-green">Beginner</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> object storage, TTL, CDN for reads
+            </p>
+            <p><strong>Key question:</strong> How to handle large pastes?</p>
+          </div>
+
+          <h3>Intermediate</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon orange">4</div>
+              <div>
+                <div class="card-title">Twitter/X News Feed</div>
+                <span class="badge badge-orange">Intermediate</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> fan-out on write vs fan-out on
+              read, timeline caching
+            </p>
+            <p>
+              <strong>Key question:</strong> How to handle celebrity accounts
+              with millions of followers?
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon orange">5</div>
+              <div>
+                <div class="card-title">Chat System (WhatsApp)</div>
+                <span class="badge badge-orange">Intermediate</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> WebSocket, message queue, presence,
+              message ordering
+            </p>
+            <p>
+              <strong>Key question:</strong> How to guarantee message ordering
+              across devices?
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon orange">6</div>
+              <div>
+                <div class="card-title">Notification System</div>
+                <span class="badge badge-orange">Intermediate</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> priority queue, multiple channels
+              (push, SMS, email), template system
+            </p>
+            <p>
+              <strong>Key question:</strong> How to handle rate limiting and
+              user preferences?
+            </p>
+          </div>
+
+          <h3>Advanced (Staff Level)</h3>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon red">7</div>
+              <div>
+                <div class="card-title">Distributed Task Scheduler</div>
+                <span class="badge badge-red">Advanced</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> task queue, worker pools,
+              at-least-once execution, dead letter queue
+            </p>
+            <p>
+              <strong>Key question:</strong> How to handle worker failures
+              mid-task?
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon red">8</div>
+              <div>
+                <div class="card-title">Search Autocomplete</div>
+                <span class="badge badge-red">Advanced</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> trie, prefix ranking, caching hot
+              prefixes, CDN
+            </p>
+            <p>
+              <strong>Key question:</strong> How to update suggestions in
+              near-real-time?
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-icon red">9</div>
+              <div>
+                <div class="card-title">Distributed Key-Value Store</div>
+                <span class="badge badge-red">Advanced</span>
+              </div>
+            </div>
+            <p>
+              <strong>Key concepts:</strong> consistent hashing, replication,
+              vector clocks, gossip protocol
+            </p>
+            <p>
+              <strong>Key question:</strong> How to handle node failures and
+              data rebalancing?
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- Part 5: API Design -->
+          <!-- ============================================================ -->
+          <h2 id="api-design">Part 5: API Design — REST vs gRPC</h2>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge</div>
+            <p>
+              APIs are the interfaces between software components — like your
+              pin-out and protocol specifications. REST is like UART/I2C —
+              simple, universal, human-readable. gRPC is like SPI or PCIe —
+              faster, binary, but needs more tooling. Staff engineers choose the
+              right protocol for each boundary.
+            </p>
+          </div>
+
+          <!-- ===== THE FUNDAMENTAL DIFFERENCE ===== -->
+          <h3>The Fundamental Difference</h3>
+
+          <p>
+            REST and gRPC solve the same problem —
+            <strong
+              >how do two services talk to each other over a network?</strong
+            >
+            — but they differ in their core philosophy:
+          </p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">R</div>
+                <div class="card-title">REST: Resource-Oriented</div>
+              </div>
+              <div class="card-desc">
+                <p>"I want to interact with <strong>things</strong>."</p>
+                <p>
+                  You model your API as a set of <em>resources</em> (nouns) and
+                  use standard HTTP methods (verbs) to act on them. The network
+                  is treated like a document store — you GET, PUT, POST, DELETE
+                  resources at URLs.
+                </p>
+                <p style="margin-bottom: 0">
+                  <strong>Mental model:</strong> A filing cabinet. Each drawer
+                  is a resource collection. You open a drawer (GET), add a file
+                  (POST), replace a file (PUT), or shred one (DELETE).
+                </p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">g</div>
+                <div class="card-title">gRPC: Action-Oriented (RPC)</div>
+              </div>
+              <div class="card-desc">
+                <p>
+                  "I want to <strong>call a function</strong> on another
+                  machine."
+                </p>
+                <p>
+                  You define <em>services</em> with <em>methods</em> (like
+                  function signatures). The client calls a method as if it were
+                  a local function — the framework handles serialization,
+                  transport, and deserialization.
+                </p>
+                <p style="margin-bottom: 0">
+                  <strong>Mental model:</strong> A function call across
+                  machines. You write
+                  <code>response = service.GetUser(request)</code> and it feels
+                  local, but it executes remotely.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">The Key Insight</div>
+            <p>
+              REST says: "The network is a collection of documents. Navigate
+              them."<br />
+              gRPC says: "The network is invisible. Call functions on remote
+              machines."<br />
+              Both are valid. The choice depends on
+              <strong>who is calling</strong> and
+              <strong>what performance you need</strong>.
+            </p>
+          </div>
+
+          <!-- ===== HOW REST WORKS ===== -->
+          <h3 id="rest-detail">How REST Works</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "REST"?</div>
+            <p>
+              <strong>RE</strong>presentational <strong>S</strong>tate
+              <strong>T</strong>ransfer — coined by Roy Fielding in his 2000 PhD
+              dissertation. "Representational" = you transfer
+              <em>representations</em> of resources (JSON, XML), not the
+              resources themselves. "State Transfer" = each request transfers
+              enough state to be understood independently — the client and
+              server pass state back and forth via these representations. The
+              name encodes the core mechanism: moving representations of state
+              over the wire.
+            </p>
+          </div>
+
+          <p>
+            REST (<strong>RE</strong>presentational <strong>S</strong>tate
+            <strong>T</strong>ransfer) is an architectural style built on HTTP.
+            It's not a protocol — it's a set of constraints:
+          </p>
+
+          <!-- REST request/response diagram -->
+          <div class="diagram-container" id="rest-diagram">
+            <div class="diagram-title">REST Request / Response Flow</div>
+            <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+              <!-- Client -->
+              <rect
+                x="30"
+                y="40"
+                width="140"
+                height="60"
+                rx="8"
+                fill="#21262d"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="100"
+                y="75"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                Client
+              </text>
+              <text x="100" y="92" class="label-small">(browser, app)</text>
+              <!-- Server -->
+              <rect
+                x="530"
+                y="40"
+                width="140"
+                height="60"
+                rx="8"
+                fill="#21262d"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="600"
+                y="75"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                Server
+              </text>
+              <text x="600" y="92" class="label-small">(API endpoint)</text>
+
+              <!-- Request arrow -->
+              <line
+                x1="170"
+                y1="60"
+                x2="525"
+                y2="60"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#rest-arrow-blue)"
+              />
+              <text
+                x="348"
+                y="48"
+                class="label-small"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                HTTP Request
+              </text>
+
+              <!-- Request box -->
+              <rect
+                x="190"
+                y="115"
+                width="320"
+                height="80"
+                rx="6"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+              <text
+                x="200"
+                y="135"
+                fill="#bc8cff"
+                font-size="12"
+                font-family="'JetBrains Mono', monospace"
+              >
+                GET /api/v1/users/42 HTTP/1.1
+              </text>
+              <text
+                x="200"
+                y="152"
+                fill="#8b949e"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                Host: api.example.com
+              </text>
+              <text
+                x="200"
+                y="167"
+                fill="#8b949e"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                Accept: application/json
+              </text>
+              <text
+                x="200"
+                y="182"
+                fill="#8b949e"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                Authorization: Bearer eyJ...
+              </text>
+
+              <!-- Response arrow -->
+              <line
+                x1="525"
+                y1="85"
+                x2="170"
+                y2="85"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#rest-arrow-green)"
+              />
+              <text
+                x="348"
+                y="106"
+                class="label-small"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                HTTP Response
+              </text>
+
+              <!-- Response box -->
+              <rect
+                x="190"
+                y="210"
+                width="320"
+                height="95"
+                rx="6"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+              />
+              <text
+                x="200"
+                y="230"
+                fill="#3fb950"
+                font-size="12"
+                font-family="'JetBrains Mono', monospace"
+              >
+                HTTP/1.1 200 OK
+              </text>
+              <text
+                x="200"
+                y="245"
+                fill="#8b949e"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                Content-Type: application/json
+              </text>
+              <text
+                x="200"
+                y="262"
+                fill="#8b949e"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                {
+              </text>
+              <text
+                x="200"
+                y="277"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                "id": 42, "name": "Alice",
+              </text>
+              <text
+                x="200"
+                y="292"
+                fill="#39d2c0"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                "email": "alice@example.com"
+              </text>
+              <text
+                x="200"
+                y="307"
+                fill="#8b949e"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                }
+              </text>
+
+              <defs>
+                <marker
+                  id="rest-arrow-blue"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#58a6ff" />
+                </marker>
+                <marker
+                  id="rest-arrow-green"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <h4>REST Design Principles</h4>
+
+          <pre><code><span class="cm"># Resources are nouns, HTTP methods are verbs</span>
+<span class="kw">GET</span>    /users/{id}          <span class="cm"># Read a user (idempotent)</span>
+<span class="kw">POST</span>   /users               <span class="cm"># Create a user</span>
+<span class="kw">PUT</span>    /users/{id}          <span class="cm"># Full replace (idempotent)</span>
+<span class="kw">PATCH</span>  /users/{id}          <span class="cm"># Partial update</span>
+<span class="kw">DELETE</span> /users/{id}          <span class="cm"># Delete (idempotent)</span>
+
+<span class="cm"># Nested resources show relationships</span>
+<span class="kw">GET</span>    /users/{id}/orders   <span class="cm"># List orders for a user</span>
+<span class="kw">POST</span>   /users/{id}/orders   <span class="cm"># Create an order for a user</span>
+
+<span class="cm"># Query parameters for filtering, pagination, sorting</span>
+<span class="kw">GET</span>    /users?role=admin&amp;page=2&amp;limit=50&amp;sort=name</code></pre>
+
+          <h4>Key Properties</h4>
+          <ul>
+            <li>
+              <strong>Stateless:</strong> Each request contains all information
+              needed. Server stores no client state between requests.
+            </li>
+            <li>
+              <strong>Uniform interface:</strong> Standard HTTP methods + status
+              codes. Every REST API works the same way.
+            </li>
+            <li>
+              <strong>Idempotent:</strong> GET, PUT, DELETE return the same
+              result no matter how many times you call them. Safe to retry on
+              network failures.
+            </li>
+            <li>
+              <strong>Cacheable:</strong> HTTP caching headers (ETag,
+              Cache-Control) let intermediaries cache responses.
+            </li>
+            <li>
+              <strong>Human-readable:</strong> JSON payloads are text. You can
+              debug with curl, browser dev tools, Postman.
+            </li>
+            <li>
+              <strong>Versioning:</strong> <code>/v1/users</code> — never break
+              existing clients when evolving the API.
+            </li>
+          </ul>
+
+          <!-- ===== HOW gRPC WORKS ===== -->
+          <h3 id="grpc-detail">How gRPC Works</h3>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Why "gRPC"?</div>
+            <p>
+              RPC = <strong>R</strong>emote <strong>P</strong>rocedure
+              <strong>C</strong>all — calling a function on another machine as
+              if it were local. The "g" originally stood for Google (who created
+              it), but it has become a running joke: each release assigns a
+              different meaning (gRPC, Good, Green, Groovy...). Officially,
+              "gRPC" is a recursive acronym:
+              <em>gRPC Remote Procedure Calls</em>.
+            </p>
+          </div>
+
+          <p>
+            gRPC is a framework by Google built on <strong>HTTP/2</strong> and
+            <strong>Protocol Buffers</strong> (protobuf). You define your
+            service in a <code>.proto</code> file, and the framework generates
+            client and server code in any language.
+          </p>
+
+          <!-- gRPC flow diagram -->
+          <div class="diagram-container" id="grpc-diagram">
+            <div class="diagram-title">
+              gRPC: From Proto Definition to Running Code
+            </div>
+            <svg viewBox="0 0 750 400" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="grpc-arr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#58a6ff" />
+                </marker>
+                <marker
+                  id="grpc-arr-g"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                </marker>
+                <marker
+                  id="grpc-arr-o"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#d29922" />
+                </marker>
+              </defs>
+
+              <!-- Step 1: Proto file -->
+              <rect
+                x="240"
+                y="10"
+                width="270"
+                height="100"
+                rx="8"
+                fill="#161b22"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="375"
+                y="30"
+                class="label-text"
+                fill="#d29922"
+                font-weight="700"
+              >
+                1. Define: user.proto
+              </text>
+              <text
+                x="255"
+                y="50"
+                fill="#bc8cff"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                service UserService {
+              </text>
+              <text
+                x="255"
+                y="64"
+                fill="#e6edf3"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                rpc GetUser(UserReq)
+              </text>
+              <text
+                x="255"
+                y="78"
+                fill="#e6edf3"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                returns (UserResp);
+              </text>
+              <text
+                x="255"
+                y="92"
+                fill="#bc8cff"
+                font-size="11"
+                font-family="'JetBrains Mono', monospace"
+              >
+                }
+              </text>
+
+              <!-- Arrow down to codegen -->
+              <line
+                x1="375"
+                y1="110"
+                x2="375"
+                y2="140"
+                stroke="#d29922"
+                stroke-width="2"
+                marker-end="url(#grpc-arr-o)"
+              />
+              <text
+                x="375"
+                y="134"
+                class="label-small"
+                fill="#d29922"
+                font-weight="600"
+              >
+                protoc compile
+              </text>
+
+              <!-- Step 2: Generated code (split) -->
+              <rect
+                x="50"
+                y="150"
+                width="240"
+                height="70"
+                rx="8"
+                fill="#21262d"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="170"
+                y="172"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                2a. Generated Client Stub
+              </text>
+              <text x="170" y="192" class="label-small">
+                Python / Go / Java / C++ / Rust
+              </text>
+              <text
+                x="170"
+                y="207"
+                fill="#39d2c0"
+                font-size="10"
+                font-family="'JetBrains Mono', monospace"
+              >
+                stub.GetUser(UserReq(id=42))
+              </text>
+
+              <rect
+                x="460"
+                y="150"
+                width="240"
+                height="70"
+                rx="8"
+                fill="#21262d"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="580"
+                y="172"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                2b. Generated Server Base
+              </text>
+              <text x="580" y="192" class="label-small">
+                Implement the service methods
+              </text>
+              <text
+                x="580"
+                y="207"
+                fill="#39d2c0"
+                font-size="10"
+                font-family="'JetBrains Mono', monospace"
+              >
+                def GetUser(self, req, ctx):
+              </text>
+
+              <line
+                x1="375"
+                y1="150"
+                x2="293"
+                y2="150"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#grpc-arr)"
+              />
+              <line
+                x1="375"
+                y1="150"
+                x2="457"
+                y2="150"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#grpc-arr-g)"
+              />
+
+              <!-- Step 3: Runtime -->
+              <rect
+                x="50"
+                y="270"
+                width="240"
+                height="55"
+                rx="8"
+                fill="#21262d"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="170"
+                y="293"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                Client App
+              </text>
+              <text x="170" y="310" class="label-small">
+                Calls stub like a local function
+              </text>
+
+              <rect
+                x="460"
+                y="270"
+                width="240"
+                height="55"
+                rx="8"
+                fill="#21262d"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="580"
+                y="293"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                Server
+              </text>
+              <text x="580" y="310" class="label-small">
+                Handles incoming gRPC calls
+              </text>
+
+              <line
+                x1="170"
+                y1="220"
+                x2="170"
+                y2="267"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#grpc-arr)"
+              />
+              <line
+                x1="580"
+                y1="220"
+                x2="580"
+                y2="267"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#grpc-arr-g)"
+              />
+
+              <!-- HTTP/2 + Protobuf channel -->
+              <line
+                x1="290"
+                y1="290"
+                x2="457"
+                y2="290"
+                stroke="#bc8cff"
+                stroke-width="3"
+                stroke-dasharray="6,4"
+              />
+              <line
+                x1="457"
+                y1="300"
+                x2="290"
+                y2="300"
+                stroke="#bc8cff"
+                stroke-width="3"
+                stroke-dasharray="6,4"
+              />
+              <rect
+                x="310"
+                y="340"
+                width="130"
+                height="30"
+                rx="6"
+                fill="rgba(188,140,255,0.15)"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+              />
+              <text
+                x="375"
+                y="360"
+                class="label-small"
+                fill="#bc8cff"
+                font-weight="600"
+              >
+                HTTP/2 + Protobuf
+              </text>
+              <line
+                x1="375"
+                y1="340"
+                x2="375"
+                y2="305"
+                stroke="#bc8cff"
+                stroke-width="1"
+                stroke-dasharray="3,3"
+              />
+
+              <!-- Labels on channel -->
+              <text x="375" y="282" class="label-small" fill="#bc8cff">
+                binary, multiplexed, bidirectional
+              </text>
+            </svg>
+          </div>
+
+          <h4>The Proto File — Your Contract</h4>
+          <pre><code><span class="cm">// user.proto — defines the service, methods, and message types</span>
+<span class="kw">syntax</span> = <span class="str">"proto3"</span>;
+
+<span class="cm">// Message types (like structs in C)</span>
+<span class="kw">message</span> <span class="ty">UserRequest</span> {
+  <span class="ty">int32</span> id = <span class="num">1</span>;        <span class="cm">// field number (not value)</span>
+}
+
+<span class="kw">message</span> <span class="ty">UserResponse</span> {
+  <span class="ty">int32</span> id = <span class="num">1</span>;
+  <span class="ty">string</span> name = <span class="num">2</span>;
+  <span class="ty">string</span> email = <span class="num">3</span>;
+  <span class="ty">int64</span> created_at = <span class="num">4</span>;
+}
+
+<span class="cm">// Service definition (like a class with methods)</span>
+<span class="kw">service</span> <span class="ty">UserService</span> {
+  <span class="kw">rpc</span> <span class="fn">GetUser</span>(<span class="ty">UserRequest</span>) <span class="kw">returns</span> (<span class="ty">UserResponse</span>);
+  <span class="kw">rpc</span> <span class="fn">ListUsers</span>(<span class="ty">ListRequest</span>) <span class="kw">returns</span> (<span class="kw">stream</span> <span class="ty">UserResponse</span>);  <span class="cm">// server streaming</span>
+}</code></pre>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Proto Files = HDL</div>
+            <p>
+              A <code>.proto</code> file is like a
+              <strong>Verilog module declaration</strong>. It defines the
+              interface (ports/pins) strictly — input types, output types,
+              method names. The <code>protoc</code> compiler is like a synthesis
+              tool that generates the implementation wiring (client stubs +
+              server skeletons) in your target language. You never manually
+              serialize data — the generated code handles it, just like
+              synthesis generates gate-level netlists from RTL.
+            </p>
+          </div>
+
+          <!-- ===== ANIMATED COMPARISON ===== -->
+          <h3 id="rest-vs-grpc-anim">REST vs gRPC: Side-by-Side Flow</h3>
+
+          <div class="diagram-container" id="api-compare-container">
+            <div class="diagram-title">Same Operation — Two Approaches</div>
+            <svg
+              id="api-compare-svg"
+              viewBox="0 0 750 360"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <marker
+                  id="cmp-arr-b"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#58a6ff" />
+                </marker>
+                <marker
+                  id="cmp-arr-g"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                </marker>
+              </defs>
+
+              <!-- Divider -->
+              <line
+                x1="375"
+                y1="10"
+                x2="375"
+                y2="350"
+                stroke="#30363d"
+                stroke-width="1"
+                stroke-dasharray="4,4"
+              />
+
+              <!-- LEFT: REST -->
+              <text
+                x="188"
+                y="28"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="700"
+                font-size="15"
+              >
+                REST (HTTP/1.1 + JSON)
+              </text>
+
+              <!-- REST Client -->
+              <rect
+                id="rc-client"
+                x="30"
+                y="50"
+                width="100"
+                height="40"
+                rx="6"
+                fill="#21262d"
+                stroke="#30363d"
+                stroke-width="1.5"
+              />
+              <text
+                x="80"
+                y="75"
+                class="label-small"
+                fill="#e6edf3"
+                font-weight="500"
+              >
+                Client
+              </text>
+
+              <!-- REST Server -->
+              <rect
+                id="rc-server"
+                x="240"
+                y="50"
+                width="100"
+                height="40"
+                rx="6"
+                fill="#21262d"
+                stroke="#30363d"
+                stroke-width="1.5"
+              />
+              <text
+                x="290"
+                y="75"
+                class="label-small"
+                fill="#e6edf3"
+                font-weight="500"
+              >
+                Server
+              </text>
+
+              <!-- REST Step 1: Build JSON -->
+              <rect
+                id="rc-step1"
+                x="20"
+                y="110"
+                width="130"
+                height="35"
+                rx="5"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="rc-step1-t"
+                x="85"
+                y="132"
+                class="label-small"
+                fill="#d29922"
+                style="display: none"
+              >
+                Build JSON string
+              </text>
+
+              <!-- REST Step 2: HTTP Request -->
+              <line
+                id="rc-req"
+                x1="130"
+                y1="165"
+                x2="237"
+                y2="165"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#cmp-arr-b)"
+                style="display: none"
+              />
+              <text
+                id="rc-req-t"
+                x="183"
+                y="155"
+                class="label-small"
+                fill="#58a6ff"
+                style="display: none"
+              >
+                GET /users/42
+              </text>
+              <rect
+                id="rc-payload1"
+                x="130"
+                y="175"
+                width="110"
+                height="22"
+                rx="4"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="rc-payload1-t"
+                x="185"
+                y="190"
+                fill="#8b949e"
+                font-size="9"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+                style="display: none"
+              >
+                ~200 bytes (text)
+              </text>
+
+              <!-- REST Step 3: Parse JSON on server -->
+              <rect
+                id="rc-step3"
+                x="225"
+                y="205"
+                width="130"
+                height="35"
+                rx="5"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="rc-step3-t"
+                x="290"
+                y="227"
+                class="label-small"
+                fill="#d29922"
+                style="display: none"
+              >
+                Parse JSON, process
+              </text>
+
+              <!-- REST Step 4: Build JSON response -->
+              <rect
+                id="rc-step4"
+                x="225"
+                y="250"
+                width="130"
+                height="35"
+                rx="5"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="rc-step4-t"
+                x="290"
+                y="272"
+                class="label-small"
+                fill="#d29922"
+                style="display: none"
+              >
+                Build JSON response
+              </text>
+
+              <!-- REST Step 5: HTTP Response -->
+              <line
+                id="rc-resp"
+                x1="237"
+                y1="305"
+                x2="130"
+                y2="305"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#cmp-arr-g)"
+                style="display: none"
+              />
+              <text
+                id="rc-resp-t"
+                x="183"
+                y="296"
+                class="label-small"
+                fill="#3fb950"
+                style="display: none"
+              >
+                200 OK + JSON body
+              </text>
+              <rect
+                id="rc-payload2"
+                x="130"
+                y="312"
+                width="110"
+                height="22"
+                rx="4"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="rc-payload2-t"
+                x="185"
+                y="327"
+                fill="#8b949e"
+                font-size="9"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+                style="display: none"
+              >
+                ~350 bytes (text)
+              </text>
+
+              <!-- REST Step 6: Parse on client -->
+              <rect
+                id="rc-step6"
+                x="20"
+                y="340"
+                width="130"
+                height="0"
+                rx="5"
+                fill="none"
+                stroke="none"
+              />
+
+              <!-- ====== RIGHT: gRPC ====== -->
+              <text
+                x="562"
+                y="28"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="700"
+                font-size="15"
+              >
+                gRPC (HTTP/2 + Protobuf)
+              </text>
+
+              <!-- gRPC Client -->
+              <rect
+                id="gc-client"
+                x="405"
+                y="50"
+                width="100"
+                height="40"
+                rx="6"
+                fill="#21262d"
+                stroke="#30363d"
+                stroke-width="1.5"
+              />
+              <text
+                x="455"
+                y="75"
+                class="label-small"
+                fill="#e6edf3"
+                font-weight="500"
+              >
+                Client
+              </text>
+
+              <!-- gRPC Server -->
+              <rect
+                id="gc-server"
+                x="615"
+                y="50"
+                width="100"
+                height="40"
+                rx="6"
+                fill="#21262d"
+                stroke="#30363d"
+                stroke-width="1.5"
+              />
+              <text
+                x="665"
+                y="75"
+                class="label-small"
+                fill="#e6edf3"
+                font-weight="500"
+              >
+                Server
+              </text>
+
+              <!-- gRPC Step 1: Serialize protobuf -->
+              <rect
+                id="gc-step1"
+                x="395"
+                y="110"
+                width="130"
+                height="35"
+                rx="5"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="gc-step1-t"
+                x="460"
+                y="132"
+                class="label-small"
+                fill="#d29922"
+                style="display: none"
+              >
+                Serialize protobuf
+              </text>
+
+              <!-- gRPC Step 2: HTTP/2 frame -->
+              <line
+                id="gc-req"
+                x1="505"
+                y1="165"
+                x2="612"
+                y2="165"
+                stroke="#58a6ff"
+                stroke-width="2"
+                marker-end="url(#cmp-arr-b)"
+                style="display: none"
+              />
+              <text
+                id="gc-req-t"
+                x="558"
+                y="155"
+                class="label-small"
+                fill="#58a6ff"
+                style="display: none"
+              >
+                HTTP/2 frame
+              </text>
+              <rect
+                id="gc-payload1"
+                x="505"
+                y="175"
+                width="110"
+                height="22"
+                rx="4"
+                fill="rgba(88,166,255,0.1)"
+                stroke="#58a6ff"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="gc-payload1-t"
+                x="560"
+                y="190"
+                fill="#8b949e"
+                font-size="9"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+                style="display: none"
+              >
+                ~20 bytes (binary)
+              </text>
+
+              <!-- gRPC Step 3: Deserialize + process -->
+              <rect
+                id="gc-step3"
+                x="600"
+                y="205"
+                width="130"
+                height="35"
+                rx="5"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="gc-step3-t"
+                x="665"
+                y="227"
+                class="label-small"
+                fill="#d29922"
+                style="display: none"
+              >
+                Deserialize, process
+              </text>
+
+              <!-- gRPC Step 4: Serialize response -->
+              <rect
+                id="gc-step4"
+                x="600"
+                y="250"
+                width="130"
+                height="35"
+                rx="5"
+                fill="#161b22"
+                stroke="#30363d"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="gc-step4-t"
+                x="665"
+                y="272"
+                class="label-small"
+                fill="#d29922"
+                style="display: none"
+              >
+                Serialize response
+              </text>
+
+              <!-- gRPC Step 5: HTTP/2 response frame -->
+              <line
+                id="gc-resp"
+                x1="612"
+                y1="305"
+                x2="505"
+                y2="305"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#cmp-arr-g)"
+                style="display: none"
+              />
+              <text
+                id="gc-resp-t"
+                x="558"
+                y="296"
+                class="label-small"
+                fill="#3fb950"
+                style="display: none"
+              >
+                HTTP/2 response
+              </text>
+              <rect
+                id="gc-payload2"
+                x="505"
+                y="312"
+                width="110"
+                height="22"
+                rx="4"
+                fill="rgba(63,185,80,0.1)"
+                stroke="#3fb950"
+                stroke-width="1"
+                style="display: none"
+              />
+              <text
+                id="gc-payload2-t"
+                x="560"
+                y="327"
+                fill="#8b949e"
+                font-size="9"
+                font-family="'JetBrains Mono', monospace"
+                text-anchor="middle"
+                style="display: none"
+              >
+                ~45 bytes (binary)
+              </text>
+            </svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <!-- ===== COMPREHENSIVE COMPARISON TABLE ===== -->
+          <h3 id="comparison">Detailed Comparison</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>REST</th>
+                <th>gRPC</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Protocol</strong></td>
+                <td>HTTP/1.1 (or HTTP/2)</td>
+                <td>HTTP/2 (required)</td>
+              </tr>
+              <tr>
+                <td><strong>Data format</strong></td>
+                <td>JSON (text, human-readable)</td>
+                <td>Protocol Buffers (binary, compact)</td>
+              </tr>
+              <tr>
+                <td><strong>Schema</strong></td>
+                <td>OpenAPI / Swagger (optional)</td>
+                <td><code>.proto</code> files (required, strongly typed)</td>
+              </tr>
+              <tr>
+                <td><strong>Code generation</strong></td>
+                <td>Optional (manual client code)</td>
+                <td>Automatic (client + server stubs in any language)</td>
+              </tr>
+              <tr>
+                <td><strong>Payload size</strong></td>
+                <td>Larger (~3-10x more bytes than protobuf)</td>
+                <td>Smaller (binary encoding, no field names in payload)</td>
+              </tr>
+              <tr>
+                <td><strong>Serialization speed</strong></td>
+                <td>Slower (JSON parse is CPU-intensive)</td>
+                <td>Faster (~5-10x faster than JSON)</td>
+              </tr>
+              <tr>
+                <td><strong>Streaming</strong></td>
+                <td>Workarounds (SSE, WebSocket, chunked)</td>
+                <td>Native: client, server, and bidirectional streaming</td>
+              </tr>
+              <tr>
+                <td><strong>Browser support</strong></td>
+                <td>Native (fetch, XMLHttpRequest)</td>
+                <td>Requires grpc-web proxy (not native)</td>
+              </tr>
+              <tr>
+                <td><strong>Debugging</strong></td>
+                <td>Easy (curl, browser, Postman)</td>
+                <td>Harder (need grpcurl or Bloom RPC, binary payloads)</td>
+              </tr>
+              <tr>
+                <td><strong>Versioning</strong></td>
+                <td>URL versioning (<code>/v1/</code>, <code>/v2/</code>)</td>
+                <td>Field numbers in proto (backwards-compatible by design)</td>
+              </tr>
+              <tr>
+                <td><strong>Error handling</strong></td>
+                <td>HTTP status codes (200, 404, 500...)</td>
+                <td>gRPC status codes (OK, NOT_FOUND, INTERNAL...)</td>
+              </tr>
+              <tr>
+                <td><strong>Multiplexing</strong></td>
+                <td>
+                  HTTP/1.1: one request per connection. HTTP/2: multiplexed.
+                </td>
+                <td>
+                  Always multiplexed (HTTP/2). Many calls on one connection.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- ===== WHEN TO USE WHAT ===== -->
+          <h3 id="when-to-use">When to Use What</h3>
+
+          <!-- Decision diagram -->
+          <div class="diagram-container">
+            <div class="diagram-title">API Protocol Decision Guide</div>
+            <svg viewBox="0 0 680 350" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="api-dec-arr"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#484f58" />
+                </marker>
+              </defs>
+
+              <!-- Q1 -->
+              <polygon
+                points="340,10 480,50 340,90 200,50"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="340"
+                y="46"
+                class="label-text"
+                fill="#d29922"
+                font-weight="600"
+                font-size="12"
+              >
+                Who is the client?
+              </text>
+              <text x="340" y="62" class="label-small" fill="#d29922">
+                Browser / mobile / external?
+              </text>
+
+              <!-- External path -->
+              <line
+                x1="200"
+                y1="50"
+                x2="110"
+                y2="50"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#api-dec-arr)"
+              />
+              <text x="155" y="42" class="label-small" fill="#8b949e">
+                External
+              </text>
+              <rect
+                x="10"
+                y="30"
+                width="100"
+                height="40"
+                rx="20"
+                fill="rgba(88,166,255,0.2)"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="60"
+                y="55"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="700"
+                font-size="13"
+              >
+                REST
+              </text>
+
+              <!-- Internal path -->
+              <line
+                x1="480"
+                y1="50"
+                x2="540"
+                y2="50"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#api-dec-arr)"
+              />
+              <text x="510" y="42" class="label-small" fill="#8b949e">
+                Internal
+              </text>
+
+              <!-- Q2 -->
+              <polygon
+                points="610,50 680,90 610,130 540,90"
+                fill="rgba(210,153,34,0.15)"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="610"
+                y="86"
+                class="label-text"
+                fill="#d29922"
+                font-weight="600"
+                font-size="11"
+              >
+                Need high
+              </text>
+              <text
+                x="610"
+                y="100"
+                class="label-text"
+                fill="#d29922"
+                font-weight="600"
+                font-size="11"
+              >
+                performance?
+              </text>
+
+              <line
+                x1="610"
+                y1="130"
+                x2="610"
+                y2="165"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#api-dec-arr)"
+              />
+              <text x="625" y="152" class="label-small" fill="#8b949e">
+                Yes
+              </text>
+              <rect
+                x="560"
+                y="168"
+                width="100"
+                height="40"
+                rx="20"
+                fill="rgba(63,185,80,0.2)"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="610"
+                y="193"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="700"
+                font-size="13"
+              >
+                gRPC
+              </text>
+
+              <line
+                x1="540"
+                y1="90"
+                x2="460"
+                y2="130"
+                stroke="#484f58"
+                stroke-width="2"
+                marker-end="url(#api-dec-arr)"
+              />
+              <text x="485" y="118" class="label-small" fill="#8b949e">No</text>
+              <text x="460" y="145" class="label-small" fill="#8b949e">
+                Either works!
+              </text>
+
+              <!-- Use cases below -->
+              <rect
+                x="20"
+                y="140"
+                width="280"
+                height="190"
+                rx="8"
+                fill="#161b22"
+                stroke="#58a6ff"
+                stroke-width="1.5"
+              />
+              <text
+                x="160"
+                y="162"
+                class="label-text"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                Use REST When:
+              </text>
+              <text x="35" y="185" fill="#8b949e" font-size="12">
+                &#8226; Public API for third-party developers
+              </text>
+              <text x="35" y="205" fill="#8b949e" font-size="12">
+                &#8226; Browser or mobile app is the client
+              </text>
+              <text x="35" y="225" fill="#8b949e" font-size="12">
+                &#8226; Need human-readable debugging
+              </text>
+              <text x="35" y="245" fill="#8b949e" font-size="12">
+                &#8226; Simple CRUD operations
+              </text>
+              <text x="35" y="265" fill="#8b949e" font-size="12">
+                &#8226; HTTP caching is important
+              </text>
+              <text x="35" y="285" fill="#8b949e" font-size="12">
+                &#8226; Team is not familiar with protobuf
+              </text>
+              <text
+                x="35"
+                y="310"
+                fill="#58a6ff"
+                font-size="11"
+                font-weight="600"
+              >
+                Examples: Stripe API, GitHub API, Twitter API
+              </text>
+
+              <rect
+                x="380"
+                y="220"
+                width="280"
+                height="110"
+                rx="8"
+                fill="#161b22"
+                stroke="#3fb950"
+                stroke-width="1.5"
+              />
+              <text
+                x="520"
+                y="242"
+                class="label-text"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                Use gRPC When:
+              </text>
+              <text x="395" y="265" fill="#8b949e" font-size="12">
+                &#8226; Service-to-service (microservices)
+              </text>
+              <text x="395" y="285" fill="#8b949e" font-size="12">
+                &#8226; High throughput / low latency needed
+              </text>
+              <text x="395" y="305" fill="#8b949e" font-size="12">
+                &#8226; Bidirectional streaming required
+              </text>
+              <text
+                x="395"
+                y="325"
+                fill="#3fb950"
+                font-size="11"
+                font-weight="600"
+              >
+                Examples: Kubernetes, Netflix, Google
+              </text>
+            </svg>
+          </div>
+
+          <!-- ===== REAL WORLD EXAMPLE ===== -->
+          <h3>Real-World Example: Both Together</h3>
+
+          <p>
+            Most production systems use <strong>both</strong>. Here's a common
+            pattern:
+          </p>
+
+          <div class="diagram-container">
+            <div class="diagram-title">
+              Typical Architecture: REST at the Edge, gRPC Inside
+            </div>
+            <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker
+                  id="arch-arr-b"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#58a6ff" />
+                </marker>
+                <marker
+                  id="arch-arr-g"
+                  viewBox="0 0 10 10"
+                  refX="10"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M0,0 L10,5 L0,10 z" fill="#3fb950" />
+                </marker>
+              </defs>
+
+              <!-- Browser -->
+              <rect
+                x="10"
+                y="70"
+                width="90"
+                height="60"
+                rx="8"
+                fill="#21262d"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="55"
+                y="95"
+                class="label-small"
+                fill="#d29922"
+                font-weight="600"
+              >
+                Browser
+              </text>
+              <text x="55" y="110" class="label-small" fill="#8b949e">
+                Mobile
+              </text>
+
+              <!-- REST arrow -->
+              <line
+                x1="100"
+                y1="100"
+                x2="160"
+                y2="100"
+                stroke="#58a6ff"
+                stroke-width="2.5"
+                marker-end="url(#arch-arr-b)"
+              />
+              <text
+                x="130"
+                y="90"
+                fill="#58a6ff"
+                font-size="10"
+                font-weight="600"
+                text-anchor="middle"
+              >
+                REST
+              </text>
+              <text
+                x="130"
+                y="120"
+                fill="#58a6ff"
+                font-size="9"
+                text-anchor="middle"
+              >
+                JSON
+              </text>
+
+              <!-- API Gateway -->
+              <rect
+                x="163"
+                y="60"
+                width="110"
+                height="80"
+                rx="8"
+                fill="#21262d"
+                stroke="#58a6ff"
+                stroke-width="2"
+              />
+              <text
+                x="218"
+                y="95"
+                class="label-small"
+                fill="#58a6ff"
+                font-weight="600"
+              >
+                API Gateway
+              </text>
+              <text x="218" y="112" class="label-small" fill="#8b949e">
+                (public-facing)
+              </text>
+
+              <!-- gRPC arrows to microservices -->
+              <line
+                x1="273"
+                y1="80"
+                x2="370"
+                y2="40"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#arch-arr-g)"
+              />
+              <line
+                x1="273"
+                y1="100"
+                x2="370"
+                y2="100"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#arch-arr-g)"
+              />
+              <line
+                x1="273"
+                y1="120"
+                x2="370"
+                y2="160"
+                stroke="#3fb950"
+                stroke-width="2"
+                marker-end="url(#arch-arr-g)"
+              />
+              <text
+                x="322"
+                y="65"
+                fill="#3fb950"
+                font-size="9"
+                font-weight="600"
+                text-anchor="middle"
+              >
+                gRPC
+              </text>
+
+              <!-- Microservices -->
+              <rect
+                x="373"
+                y="15"
+                width="110"
+                height="50"
+                rx="8"
+                fill="#21262d"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="428"
+                y="40"
+                class="label-small"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                User Service
+              </text>
+
+              <rect
+                x="373"
+                y="75"
+                width="110"
+                height="50"
+                rx="8"
+                fill="#21262d"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="428"
+                y="100"
+                class="label-small"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                Order Service
+              </text>
+
+              <rect
+                x="373"
+                y="135"
+                width="110"
+                height="50"
+                rx="8"
+                fill="#21262d"
+                stroke="#3fb950"
+                stroke-width="2"
+              />
+              <text
+                x="428"
+                y="160"
+                class="label-small"
+                fill="#3fb950"
+                font-weight="600"
+              >
+                Payment Service
+              </text>
+
+              <!-- Inter-service gRPC -->
+              <line
+                x1="483"
+                y1="40"
+                x2="550"
+                y2="100"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="483"
+                y1="100"
+                x2="550"
+                y2="100"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+              <line
+                x1="483"
+                y1="160"
+                x2="550"
+                y2="100"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+
+              <!-- Database -->
+              <rect
+                x="553"
+                y="75"
+                width="90"
+                height="50"
+                rx="8"
+                fill="#21262d"
+                stroke="#d29922"
+                stroke-width="2"
+              />
+              <text
+                x="598"
+                y="100"
+                class="label-small"
+                fill="#d29922"
+                font-weight="600"
+              >
+                Database
+              </text>
+              <text x="598" y="115" class="label-small" fill="#8b949e">
+                Cache
+              </text>
+
+              <!-- Legend -->
+              <line
+                x1="30"
+                y1="190"
+                x2="65"
+                y2="190"
+                stroke="#58a6ff"
+                stroke-width="2.5"
+              />
+              <text x="70" y="194" fill="#8b949e" font-size="11">
+                REST (JSON, text)
+              </text>
+              <line
+                x1="220"
+                y1="190"
+                x2="255"
+                y2="190"
+                stroke="#3fb950"
+                stroke-width="2.5"
+              />
+              <text x="260" y="194" fill="#8b949e" font-size="11">
+                gRPC (Protobuf, binary)
+              </text>
+              <line
+                x1="420"
+                y1="190"
+                x2="455"
+                y2="190"
+                stroke="#bc8cff"
+                stroke-width="1.5"
+                stroke-dasharray="4,3"
+              />
+              <text x="460" y="194" fill="#8b949e" font-size="11">
+                Inter-service calls
+              </text>
+            </svg>
+          </div>
+
+          <div class="callout callout-success">
+            <div class="callout-title">The Rule of Thumb</div>
+            <p>
+              <strong>REST at the edge, gRPC on the inside.</strong>
+              Expose REST APIs for external consumers (browsers, mobile apps,
+              third-party developers). Use gRPC for internal service-to-service
+              communication where performance matters and you control both ends.
+            </p>
+          </div>
+
+          <!-- ===== STREAMING ===== -->
+          <h3>gRPC's Superpower: Streaming</h3>
+
+          <p>
+            REST is fundamentally request-response: client asks, server answers.
+            gRPC supports four communication patterns:
+          </p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">1</div>
+                <div class="card-title">Unary (like REST)</div>
+              </div>
+              <div class="card-desc">
+                Client sends one request, server sends one response.<br />
+                <code>rpc GetUser(Req) returns (Resp)</code>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">2</div>
+                <div class="card-title">Server Streaming</div>
+              </div>
+              <div class="card-desc">
+                Client sends one request, server sends a stream of responses.<br />
+                <code>rpc ListUsers(Req) returns (stream Resp)</code><br />
+                <em>Use case: real-time feed, log tailing</em>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon orange">3</div>
+                <div class="card-title">Client Streaming</div>
+              </div>
+              <div class="card-desc">
+                Client sends a stream of requests, server sends one response.<br />
+                <code>rpc UploadChunks(stream Chunk) returns (Resp)</code><br />
+                <em>Use case: file upload, batch insert</em>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon purple">4</div>
+                <div class="card-title">Bidirectional Streaming</div>
+              </div>
+              <div class="card-desc">
+                Both sides send streams simultaneously.<br />
+                <code>rpc Chat(stream Msg) returns (stream Msg)</code><br />
+                <em
+                  >Use case: chat, multiplayer games, collaborative editing</em
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Bridge: Communication Patterns</div>
+            <p>
+              <strong>REST (unary)</strong> is like <strong>I2C</strong> —
+              master initiates, slave responds, one exchange at a time.<br />
+              <strong>Server streaming</strong> is like a
+              <strong>UART TX</strong> — you request data and the device
+              continuously sends readings.<br />
+              <strong>Bidirectional streaming</strong> is like
+              <strong>full-duplex SPI</strong> — both sides send and receive
+              simultaneously on separate lines.<br />
+              gRPC over HTTP/2 multiplexing is like a
+              <strong>multi-lane PCIe bus</strong> — multiple independent
+              streams on one physical connection.
+            </p>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================ -->
+          <!-- References -->
+          <!-- ============================================================ -->
+          <h2 id="references">References</h2>
+
+          <h3>Must-Read</h3>
+          <ul>
+            <li>
+              <strong
+                >"Designing Data-Intensive Applications" by Martin
+                Kleppmann</strong
+              >
+              — THE book on distributed systems for practitioners. Read chapters
+              1-9 minimum.
+            </li>
+            <li>
+              <strong>"System Design Interview" by Alex Xu</strong> (Vol 1 &amp;
+              2) — Worked examples of system design problems.
+            </li>
+          </ul>
+
+          <h3>Papers</h3>
+          <ul>
+            <li>
+              <strong>Google MapReduce paper</strong> — Foundation of
+              distributed data processing
+            </li>
+            <li>
+              <strong>Amazon Dynamo paper</strong> — How to build a highly
+              available key-value store
+            </li>
+            <li>
+              <strong>Raft consensus paper</strong> — Understandable consensus
+              (<a href="https://raft.github.io/raft.pdf"
+                >https://raft.github.io/raft.pdf</a
+              >)
+            </li>
+          </ul>
+
+          <h3>Online</h3>
+          <ul>
+            <li>
+              <strong>ByteByteGo</strong> (<a href="https://bytebytego.com/"
+                >bytebytego.com</a
+              >) — Alex Xu's system design visuals
+            </li>
+            <li>
+              <strong>System Design Primer</strong> (GitHub:
+              donnemartin/system-design-primer) — Free, comprehensive
+            </li>
+            <li>
+              <strong>InfoQ architecture talks</strong> — Real-world
+              architecture case studies
+            </li>
+          </ul>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // REST vs gRPC side-by-side animation
+        var c = document.getElementById("api-compare-container");
+        if (!c) return;
+
+        function show(id) {
+          var e = document.getElementById(id);
+          if (e) e.style.display = "";
+        }
+        function hide(id) {
+          var e = document.getElementById(id);
+          if (e) e.style.display = "none";
+        }
+        function hl(id, stroke) {
+          var e = document.getElementById(id);
+          if (e) {
+            e.setAttribute("stroke", stroke);
+            e.setAttribute("stroke-width", "2.5");
+          }
+        }
+        function unhl(id) {
+          var e = document.getElementById(id);
+          if (e) {
+            e.setAttribute("stroke", "#30363d");
+            e.setAttribute("stroke-width", "1.5");
+          }
+        }
+
+        var restSteps = [
+          "rc-step1",
+          "rc-step1-t",
+          "rc-req",
+          "rc-req-t",
+          "rc-step2",
+          "rc-step2-t",
+          "rc-resp",
+          "rc-resp-t",
+          "rc-step3",
+          "rc-step3-t",
+          "rc-payload1",
+          "rc-payload1-t",
+        ];
+        var grpcSteps = [
+          "gc-step1",
+          "gc-step1-t",
+          "gc-req",
+          "gc-req-t",
+          "gc-step2",
+          "gc-step2-t",
+          "gc-resp",
+          "gc-resp-t",
+          "gc-step3",
+          "gc-step3-t",
+          "gc-payload2",
+          "gc-payload2-t",
+        ];
+        var allIds = restSteps.concat(grpcSteps);
+
+        function resetAll() {
+          allIds.forEach(hide);
+          ["rc-client", "rc-server"].forEach(function (id) {
+            unhl(id);
+          });
+          ["gc-client", "gc-server"].forEach(function (id) {
+            unhl(id);
+          });
+        }
+
+        new AlgoAnimation(
+          "api-compare-container",
+          [
+            {
+              description:
+                "Step 1: Client builds the request. REST: manually construct JSON string. gRPC: call a typed method with a message object.",
+              apply: function () {
+                show("rc-step1");
+                show("rc-step1-t");
+                show("gc-step1");
+                show("gc-step1-t");
+                hl("rc-client", "#58a6ff");
+                hl("gc-client", "#3fb950");
+              },
+            },
+            {
+              description:
+                "Step 2: Request sent over the network. REST: HTTP/1.1 text with JSON body (~350 bytes). gRPC: HTTP/2 binary protobuf (~45 bytes).",
+              apply: function () {
+                show("rc-req");
+                show("rc-req-t");
+                show("gc-req");
+                show("gc-req-t");
+                show("rc-payload1");
+                show("rc-payload1-t");
+              },
+            },
+            {
+              description:
+                "Step 3: Server processes and responds. REST: parse JSON, build JSON response. gRPC: deserialize protobuf, serialize response.",
+              apply: function () {
+                show("rc-step2");
+                show("rc-step2-t");
+                show("gc-step2");
+                show("gc-step2-t");
+                hl("rc-server", "#58a6ff");
+                hl("gc-server", "#3fb950");
+              },
+            },
+            {
+              description:
+                "Step 4: Response sent back. REST: JSON text response. gRPC: binary protobuf response (5-10x smaller).",
+              apply: function () {
+                show("rc-resp");
+                show("rc-resp-t");
+                show("gc-resp");
+                show("gc-resp-t");
+                show("gc-payload2");
+                show("gc-payload2-t");
+              },
+            },
+            {
+              description:
+                "Step 5: Client receives. REST: parse JSON into dict/object. gRPC: deserialize into strongly-typed object automatically. Both work, gRPC is faster and type-safe.",
+              apply: function () {
+                show("rc-step3");
+                show("rc-step3-t");
+                show("gc-step3");
+                show("gc-step3-t");
+              },
+            },
+          ],
+          { speed: 2000, onReset: resetAll },
+        );
+      });
+    </script>
+  </body>
+</html>

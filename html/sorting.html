@@ -1,0 +1,2785 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sorting Algorithms — Staff SDE Course</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <!-- ============================================================= -->
+          <!-- PART 1: WHY SORTING MATTERS                                    -->
+          <!-- ============================================================= -->
+          <h1>Sorting Algorithms</h1>
+          <p>
+            Sorting is the most studied problem in computer science. Dozens of
+            algorithms, thousands of papers, and a fundamental truth:
+            <strong>many problems reduce to sorting</strong>. Binary search
+            requires sorted input. Two-pointer techniques need sorted arrays.
+            Merge intervals? Sort by start time first. Sorting is not just an
+            algorithm &mdash; it is a <em>preprocessing step</em> that unlocks
+            other patterns.
+          </p>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Signal Ordering</div>
+            <p>
+              Think of sorting like ordering time-domain samples before an FFT.
+              The raw ADC readings are useless until they are in the right
+              sequence. Similarly, many algorithmic techniques only work after
+              the data is sorted. Sorting is the "anti-aliasing filter" of
+              algorithms &mdash; it removes the disorder so you can extract the
+              signal.
+            </p>
+          </div>
+
+          <h3>Classification of Sorting Algorithms</h3>
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon blue">C</div>
+                <div>
+                  <div class="card-title">Comparison Sorts</div>
+                  <div class="card-desc">
+                    Compare pairs of elements (a &lt; b?)
+                  </div>
+                </div>
+              </div>
+              <p>
+                Bubble, Selection, Insertion, Merge, Quick, Heap. Theoretical
+                lower bound: <code>O(n log n)</code>.
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon green">N</div>
+                <div>
+                  <div class="card-title">Non-Comparison Sorts</div>
+                  <div class="card-desc">Exploit structure of the data</div>
+                </div>
+              </div>
+              <p>
+                Counting Sort, Radix Sort, Bucket Sort. Can beat O(n log n) by
+                not comparing elements directly.
+              </p>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-icon purple">G</div>
+                <div>
+                  <div class="card-title">Graph-Based Ordering</div>
+                  <div class="card-desc">Order by dependencies, not value</div>
+                </div>
+              </div>
+              <p>
+                Topological Sort. Works on partial orders (DAGs) where not every
+                pair of elements is comparable.
+              </p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================= -->
+          <!-- PART 2: COMPARISON SORTS                                       -->
+          <!-- ============================================================= -->
+          <h2 id="comparison-sorts">Part 2: Comparison Sorts</h2>
+          <p>
+            Every comparison-based sort answers the same question repeatedly:
+            <em>"Is element A less than element B?"</em> The
+            information-theoretic lower bound proves that any comparison sort
+            must make at least <code>O(n log n)</code> comparisons in the worst
+            case &mdash; because there are <code>n!</code> possible orderings
+            and each comparison eliminates at most half.
+          </p>
+
+          <!-- ============================================================= -->
+          <!-- 1. BUBBLE SORT                                                 -->
+          <!-- ============================================================= -->
+          <section id="bubble-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    1. Bubble Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Best: <span>O(n)</span></span>
+                    <span class="complexity-item"
+                      >Avg: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Worst: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-red">rarely used</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Bubble Sort"?</div>
+                  <p>
+                    Named because smaller elements "bubble up" to the top
+                    (front) of the list, like air bubbles rising to the surface
+                    of water. Each pass, the largest unsorted element "sinks" to
+                    its correct position at the bottom.
+                  </p>
+                </div>
+
+                <p>
+                  Repeatedly walk through the array, swapping adjacent elements
+                  that are out of order. After each pass, the largest unsorted
+                  element "bubbles" to its correct position at the end. The
+                  simplest sort to understand and implement, but almost never
+                  used in practice due to poor performance.
+                </p>
+
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE Analogy</div>
+                  <p>
+                    Like a bubble level &mdash; the heaviest elements "sink" to
+                    the bottom (end) of the array with each pass, just as a
+                    bubble rises to the top of a fluid because lighter elements
+                    float upward.
+                  </p>
+                </div>
+
+                <h4>Animation: Bubble Sort [5, 3, 8, 4, 2]</h4>
+                <div class="diagram-container" id="anim-bubble">
+                  <div class="diagram-title">
+                    Adjacent swaps bubble the largest element to the end
+                  </div>
+                  <svg id="svg-bubble" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        swapped = <span class="kw">False</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span> - i):
+            <span class="kw">if</span> arr[j] > arr[j + <span class="num">1</span>]:
+                arr[j], arr[j + <span class="num">1</span>] = arr[j + <span class="num">1</span>], arr[j]
+                swapped = <span class="kw">True</span>
+        <span class="kw">if not</span> swapped:
+            <span class="kw">break</span>  <span class="cm"># already sorted</span>
+    <span class="kw">return</span> arr</code></pre>
+
+                <div class="callout callout-info">
+                  <div class="callout-title">When to Use</div>
+                  <p>
+                    Almost never in production. Useful for: teaching, detecting
+                    near-sorted data (with early termination), or when
+                    simplicity is more important than speed on tiny inputs.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- 2. SELECTION SORT                                              -->
+          <!-- ============================================================= -->
+          <section id="selection-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    2. Selection Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Best: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Avg: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Worst: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-orange">simple</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Selection Sort"?</div>
+                  <p>
+                    Named because each pass "selects" the minimum (or maximum)
+                    element from the unsorted portion and places it in position.
+                    You're literally selecting the next element.
+                  </p>
+                </div>
+
+                <p>
+                  Find the minimum element in the unsorted portion, swap it to
+                  the front. Repeat for each position. Always makes exactly
+                  <code>n-1</code> swaps regardless of input &mdash; which is
+                  the minimum number of swaps possible to sort.
+                </p>
+
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE Analogy</div>
+                  <p>
+                    Like scanning a voltage rail with a multimeter &mdash; you
+                    sweep across all test points, find the minimum reading,
+                    record its position, then physically move that component to
+                    the front of your sorted results.
+                  </p>
+                </div>
+
+                <h4>Animation: Selection Sort [64, 25, 12, 22, 11]</h4>
+                <div class="diagram-container" id="anim-selection">
+                  <div class="diagram-title">
+                    Find minimum, swap to front position
+                  </div>
+                  <svg id="svg-selection" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">selection_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        min_idx = i
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i + <span class="num">1</span>, n):
+            <span class="kw">if</span> arr[j] &lt; arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    <span class="kw">return</span> arr</code></pre>
+
+                <div class="callout callout-info">
+                  <div class="callout-title">When to Use</div>
+                  <p>
+                    When the number of swaps matters (e.g., writing to flash
+                    memory where writes are expensive). Not stable, not
+                    adaptive. Otherwise, use insertion sort for small data.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- 3. INSERTION SORT                                              -->
+          <!-- ============================================================= -->
+          <section id="insertion-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    3. Insertion Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item">Best: <span>O(n)</span></span>
+                    <span class="complexity-item"
+                      >Avg: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Worst: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-green">practical</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Insertion Sort"?</div>
+                  <p>
+                    Named because each element is "inserted" into its correct
+                    position within the already-sorted portion. Like inserting a
+                    card into the right spot in a hand of sorted cards.
+                  </p>
+                </div>
+
+                <p>
+                  Build the sorted array one element at a time. Take the next
+                  unsorted element and insert it into its correct position in
+                  the sorted portion by shifting elements right. Excellent for
+                  nearly-sorted data &mdash; runs in <code>O(n)</code> when the
+                  array is almost sorted.
+                  <strong>Stable and in-place.</strong>
+                </p>
+
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE Analogy</div>
+                  <p>
+                    Like inserting components into a sorted bill of materials
+                    &mdash; you take each new component, scan backwards through
+                    the sorted list to find where it belongs (by value or part
+                    number), shift everything down, and insert it. Hand-sorting
+                    resistors into a parts bin works exactly this way.
+                  </p>
+                </div>
+
+                <h4>Animation: Insertion Sort [5, 2, 4, 6, 1, 3]</h4>
+                <div class="diagram-container" id="anim-insertion">
+                  <div class="diagram-title">
+                    Insert each element into its correct position in the sorted
+                    portion
+                  </div>
+                  <svg id="svg-insertion" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">insertion_sort</span>(arr):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="fn">len</span>(arr)):
+        key = arr[i]
+        j = i - <span class="num">1</span>
+        <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> arr[j] > key:
+            arr[j + <span class="num">1</span>] = arr[j]
+            j -= <span class="num">1</span>
+        arr[j + <span class="num">1</span>] = key
+    <span class="kw">return</span> arr</code></pre>
+
+                <div class="callout callout-info">
+                  <div class="callout-title">When to Use</div>
+                  <p>
+                    Small arrays (n &lt; 20&ndash;50), nearly sorted data,
+                    online sorting (streaming input), or as the base case in
+                    hybrid sorts like Timsort. Python's
+                    <code>sorted()</code> uses insertion sort for small runs
+                    internally.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- 4. MERGE SORT                                                  -->
+          <!-- ============================================================= -->
+          <section id="merge-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    4. Merge Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Best: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Avg: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Worst: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">divide &amp; conquer</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Merge Sort"?</div>
+                  <p>
+                    Named because the key operation is "merging" two sorted
+                    halves into one sorted whole. The algorithm divides, then
+                    merges. Created by John von Neumann in 1945.
+                  </p>
+                </div>
+
+                <p>
+                  Divide the array in half recursively until each piece is a
+                  single element (trivially sorted), then merge sorted halves
+                  back together. <strong>Guaranteed O(n log n)</strong>
+                  in all cases. Stable. The gold standard for sorting linked
+                  lists and external data (data too large to fit in memory).
+                </p>
+
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE Analogy</div>
+                  <p>
+                    Like a binary tree of comparators merging sorted streams.
+                    Imagine a tournament bracket where each match (merge step)
+                    combines two sorted sequences into one. Or think of a merge
+                    network in hardware &mdash; each level of the tree has
+                    parallel comparator chains that produce sorted outputs from
+                    sorted inputs.
+                  </p>
+                </div>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">
+                    Key Concept: Divide and Conquer
+                  </div>
+                  <p>
+                    Merge sort is the canonical divide-and-conquer algorithm.
+                    This same strategy underpins binary search, quicksort, FFT
+                    (Cooley-Tukey), Strassen's matrix multiplication, and many
+                    recursive algorithms. Master the pattern here and you will
+                    recognize it everywhere.
+                  </p>
+                </div>
+
+                <h4>Animation: Merge Sort [38, 27, 43, 3, 9, 82, 10]</h4>
+                <div class="diagram-container" id="anim-merge">
+                  <div class="diagram-title">
+                    Divide into halves, then merge sorted halves back together
+                  </div>
+                  <svg id="svg-merge" width="100%" viewBox="0 0 700 340"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>:
+        <span class="kw">return</span> arr
+    mid = <span class="fn">len</span>(arr) // <span class="num">2</span>
+    left = <span class="fn">merge_sort</span>(arr[:mid])
+    right = <span class="fn">merge_sort</span>(arr[mid:])
+    <span class="kw">return</span> <span class="fn">merge</span>(left, right)
+
+<span class="kw">def</span> <span class="fn">merge</span>(a, b):
+    result = []
+    i = j = <span class="num">0</span>
+    <span class="kw">while</span> i &lt; <span class="fn">len</span>(a) <span class="kw">and</span> j &lt; <span class="fn">len</span>(b):
+        <span class="kw">if</span> a[i] <= b[j]:
+            result.append(a[i]); i += <span class="num">1</span>
+        <span class="kw">else</span>:
+            result.append(b[j]); j += <span class="num">1</span>
+    result.extend(a[i:])
+    result.extend(b[j:])
+    <span class="kw">return</span> result</code></pre>
+
+                <div class="callout callout-info">
+                  <div class="callout-title">When to Use</div>
+                  <p>
+                    When you need guaranteed O(n log n), stability, or are
+                    sorting linked lists (where merge sort is in-place!). Also
+                    ideal for external sorting (sorting data that does not fit
+                    in RAM &mdash; merge sorted chunks from disk).
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- 5. QUICK SORT                                                  -->
+          <!-- ============================================================= -->
+          <section id="quick-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    5. Quick Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Best: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Avg: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Worst: <span>O(n&sup2;)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(log n)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-green">most used</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Quick Sort"?</div>
+                  <p>
+                    Named because it's empirically the quickest general-purpose
+                    sorting algorithm in practice (despite O(n&sup2;) worst
+                    case). Tony Hoare invented it in 1959 and named it for its
+                    speed.
+                  </p>
+                </div>
+
+                <p>
+                  Pick a pivot element, partition the array so everything less
+                  goes left and everything greater goes right, then recurse on
+                  both sides. <strong>Fastest in practice</strong>
+                  due to excellent cache locality and low constant factors.
+                  In-place (aside from recursion stack). Not stable.
+                </p>
+
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE Analogy</div>
+                  <p>
+                    Like a comparator that separates signals above and below a
+                    voltage threshold. The pivot is your reference voltage
+                    &mdash; everything below goes to one output rail, everything
+                    above goes to the other. Then you recursively refine each
+                    rail with smaller thresholds until every element is in its
+                    exact position.
+                  </p>
+                </div>
+
+                <h4>Animation: Quick Sort [10, 7, 8, 9, 1, 5]</h4>
+                <div class="diagram-container" id="anim-quick">
+                  <div class="diagram-title">
+                    Pivot selection and Lomuto partitioning
+                  </div>
+                  <svg id="svg-quick" width="100%"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">quick_sort</span>(arr, lo=<span class="num">0</span>, hi=<span class="kw">None</span>):
+    <span class="kw">if</span> hi <span class="kw">is None</span>: hi = <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">if</span> lo &lt; hi:
+        p = <span class="fn">partition</span>(arr, lo, hi)
+        <span class="fn">quick_sort</span>(arr, lo, p - <span class="num">1</span>)
+        <span class="fn">quick_sort</span>(arr, p + <span class="num">1</span>, hi)
+
+<span class="kw">def</span> <span class="fn">partition</span>(arr, lo, hi):
+    pivot = arr[hi]  <span class="cm"># last element as pivot</span>
+    i = lo - <span class="num">1</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(lo, hi):
+        <span class="kw">if</span> arr[j] &lt;= pivot:
+            i += <span class="num">1</span>
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + <span class="num">1</span>], arr[hi] = arr[hi], arr[i + <span class="num">1</span>]
+    <span class="kw">return</span> i + <span class="num">1</span></code></pre>
+
+                <div class="callout callout-warning">
+                  <div class="callout-title">Pitfalls</div>
+                  <ul>
+                    <li>
+                      Worst case O(n&sup2;) on already-sorted data with naive
+                      pivot selection (first or last element)
+                    </li>
+                    <li>
+                      Fix: use random pivot, median-of-three, or use
+                      <code>nth_element</code> / introselect
+                    </li>
+                    <li>Not stable &mdash; equal elements may be reordered</li>
+                    <li>
+                      Stack overflow on deeply nested recursion &mdash; use
+                      tail-call optimization or iterative version
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============================================================= -->
+          <!-- 6. HEAP SORT                                                   -->
+          <!-- ============================================================= -->
+          <section id="heap-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    6. Heap Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Best: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Avg: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Worst: <span>O(n log n)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(1)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-blue">guaranteed</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Heap Sort"?</div>
+                  <p>
+                    Named because it uses a "heap" data structure (a complete
+                    binary tree with heap property) to sort. The heap gives you
+                    the max/min efficiently, and you repeatedly extract it.
+                  </p>
+                </div>
+
+                <p>
+                  Build a max-heap from the array (O(n)), then repeatedly
+                  extract the maximum and place it at the end. Guaranteed O(n
+                  log n) and in-place, but not stable and has poor cache
+                  locality compared to quicksort. The bridge to the
+                  <strong>heap/priority queue</strong>
+                  data structure.
+                </p>
+
+                <div class="callout callout-ee">
+                  <div class="callout-title">EE Analogy</div>
+                  <p>
+                    Like a priority decoder &mdash; the highest priority element
+                    always comes out first. A max-heap is a hardware priority
+                    queue: the root always holds the maximum, and when you
+                    remove it, the structure reorganizes itself in O(log n)
+                    time. Think of it as a binary tree where every parent node
+                    has a higher voltage than its children.
+                  </p>
+                </div>
+
+                <h4>Animation: Heap Sort [4, 10, 3, 5, 1]</h4>
+                <div class="diagram-container" id="anim-heap">
+                  <div class="diagram-title">
+                    Build max-heap, then extract max repeatedly
+                  </div>
+                  <svg id="svg-heap" width="100%" viewBox="0 0 600 320"></svg>
+                  <div class="anim-controls"></div>
+                  <div class="anim-description">
+                    Press Play or Next to begin.
+                  </div>
+                </div>
+
+                <h4>Code Template</h4>
+                <pre><code><span class="kw">def</span> <span class="fn">heap_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="cm"># Build max-heap (heapify from last parent down)</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n // <span class="num">2</span> - <span class="num">1</span>, -<span class="num">1</span>, -<span class="num">1</span>):
+        <span class="fn">sift_down</span>(arr, n, i)
+    <span class="cm"># Extract max, place at end, re-heapify</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span>, <span class="num">0</span>, -<span class="num">1</span>):
+        arr[<span class="num">0</span>], arr[i] = arr[i], arr[<span class="num">0</span>]
+        <span class="fn">sift_down</span>(arr, i, <span class="num">0</span>)
+
+<span class="kw">def</span> <span class="fn">sift_down</span>(arr, size, root):
+    largest = root
+    left = <span class="num">2</span> * root + <span class="num">1</span>
+    right = <span class="num">2</span> * root + <span class="num">2</span>
+    <span class="kw">if</span> left &lt; size <span class="kw">and</span> arr[left] > arr[largest]:
+        largest = left
+    <span class="kw">if</span> right &lt; size <span class="kw">and</span> arr[right] > arr[largest]:
+        largest = right
+    <span class="kw">if</span> largest != root:
+        arr[root], arr[largest] = arr[largest], arr[root]
+        <span class="fn">sift_down</span>(arr, size, largest)</code></pre>
+
+                <div class="callout callout-info">
+                  <div class="callout-title">When to Use</div>
+                  <p>
+                    When you need guaranteed O(n log n) in-place and do not care
+                    about stability. Also useful when you only need the k
+                    largest/smallest elements (partial sort with a heap is O(n +
+                    k log n)). The heap data structure itself is essential for
+                    Dijkstra, Prim's MST, and priority scheduling.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ============================================================= -->
+          <!-- PART 3: NON-COMPARISON SORTS                                   -->
+          <!-- ============================================================= -->
+          <h2 id="non-comparison-sorts">Part 3: Non-Comparison Sorts</h2>
+          <p>
+            These algorithms break the O(n log n) barrier by
+            <strong>not comparing elements at all</strong>. Instead, they
+            exploit structural properties of the data (integer values, digit
+            representation, bounded range). They achieve O(n) or O(nk) time, but
+            with restrictions on input types.
+          </p>
+
+          <section id="counting-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    7. Counting Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(n + k)</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(k)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">O(n)</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Counting Sort"?</div>
+                  <p>
+                    Named because it works by "counting" how many times each
+                    value appears. It counts occurrences, then uses the counts
+                    to place elements. Only works for integer keys in a known
+                    range.
+                  </p>
+                </div>
+
+                <p>
+                  Count the frequency of each value, then reconstruct the sorted
+                  output from the frequency table. Works only for integers in a
+                  bounded range <code>[0, k)</code>. Stable (when implemented
+                  correctly with prefix sums).
+                </p>
+
+                <h4>Diagram: Counting Sort [4, 2, 2, 8, 3, 3, 1]</h4>
+                <div class="diagram-container" id="anim-counting">
+                  <div class="diagram-title">
+                    Count frequencies, then reconstruct
+                  </div>
+                  <svg
+                    id="svg-counting"
+                    width="100%"
+                    viewBox="0 0 650 200"
+                  ></svg>
+                </div>
+
+                <pre><code><span class="kw">def</span> <span class="fn">counting_sort</span>(arr, max_val):
+    count = [<span class="num">0</span>] * (max_val + <span class="num">1</span>)
+    <span class="kw">for</span> x <span class="kw">in</span> arr:
+        count[x] += <span class="num">1</span>
+    result = []
+    <span class="kw">for</span> val, freq <span class="kw">in</span> <span class="fn">enumerate</span>(count):
+        result.extend([val] * freq)
+    <span class="kw">return</span> result</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section id="radix-sort">
+            <div class="pattern-card">
+              <div class="pattern-card-header">
+                <div>
+                  <h2 style="margin: 0; border: none; padding: 0">
+                    8. Radix Sort
+                  </h2>
+                  <div class="complexity">
+                    <span class="complexity-item"
+                      >Time: <span>O(d &middot; (n+k))</span></span
+                    >
+                    <span class="complexity-item"
+                      >Space: <span>O(n + k)</span></span
+                    >
+                  </div>
+                </div>
+                <span class="badge badge-purple">O(n)</span>
+              </div>
+              <div class="pattern-card-body">
+                <div class="callout callout-info">
+                  <div class="callout-title">Why "Radix Sort"?</div>
+                  <p>
+                    "Radix" = base (from Latin "radix" = root). It sorts by
+                    processing one digit (of the number's radix/base) at a time.
+                    In base-10, radix=10. Named because it operates
+                    digit-by-digit in the number's radix.
+                  </p>
+                </div>
+
+                <p>
+                  Sort integers digit by digit, from least significant to most
+                  significant (LSD) or vice versa (MSD). Uses a stable sort
+                  (typically counting sort) as a subroutine for each digit.
+                  <code>d</code> = number of digits, <code>k</code> = base
+                  (e.g., 10).
+                </p>
+
+                <h4>Diagram: Radix Sort [170, 45, 75, 90, 802, 24, 2, 66]</h4>
+                <div class="diagram-container" id="anim-radix">
+                  <div class="diagram-title">
+                    Sort by ones, then tens, then hundreds
+                  </div>
+                  <svg id="svg-radix" width="100%" viewBox="0 0 700 200"></svg>
+                </div>
+
+                <pre><code><span class="kw">def</span> <span class="fn">radix_sort</span>(arr):
+    max_val = <span class="fn">max</span>(arr)
+    exp = <span class="num">1</span>
+    <span class="kw">while</span> max_val // exp > <span class="num">0</span>:
+        <span class="fn">counting_sort_by_digit</span>(arr, exp)
+        exp *= <span class="num">10</span>
+    <span class="kw">return</span> arr</code></pre>
+
+                <div class="callout callout-info">
+                  <div class="callout-title">
+                    When to Use Non-Comparison Sorts
+                  </div>
+                  <p>
+                    When values are integers in a small range (counting sort),
+                    or when sorting fixed-width integers/strings (radix sort).
+                    Common in systems programming: sorting IP addresses,
+                    fixed-length record keys, or pixel values.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr />
+
+          <!-- ============================================================= -->
+          <!-- PART 4: THE BIG PICTURE COMPARISON TABLE                       -->
+          <!-- ============================================================= -->
+          <h2 id="comparison-table">Part 4: The Big Picture</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Best</th>
+                <th>Average</th>
+                <th>Worst</th>
+                <th>Space</th>
+                <th>Stable</th>
+                <th>In-Place</th>
+                <th>When to Use</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bubble</strong></td>
+                <td>O(n)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(1)</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Teaching only</td>
+              </tr>
+              <tr>
+                <td><strong>Selection</strong></td>
+                <td>O(n&sup2;)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(1)</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>Min swaps needed</td>
+              </tr>
+              <tr>
+                <td><strong>Insertion</strong></td>
+                <td>O(n)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(1)</td>
+                <td>Yes</td>
+                <td>Yes</td>
+                <td>Small/nearly sorted</td>
+              </tr>
+              <tr>
+                <td><strong>Merge</strong></td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(n)</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td>Guaranteed, stable, external</td>
+              </tr>
+              <tr>
+                <td><strong>Quick</strong></td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(n&sup2;)</td>
+                <td>O(log n)</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>General purpose (fastest avg)</td>
+              </tr>
+              <tr>
+                <td><strong>Heap</strong></td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(n log n)</td>
+                <td>O(1)</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>Guaranteed + in-place</td>
+              </tr>
+              <tr>
+                <td><strong>Counting</strong></td>
+                <td>O(n+k)</td>
+                <td>O(n+k)</td>
+                <td>O(n+k)</td>
+                <td>O(k)</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td>Small integer range</td>
+              </tr>
+              <tr>
+                <td><strong>Radix</strong></td>
+                <td>O(dn)</td>
+                <td>O(dn)</td>
+                <td>O(dn)</td>
+                <td>O(n+k)</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td>Fixed-width integers</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Interview Cheat Sheet</div>
+            <ul>
+              <li>
+                Default choice: mention quicksort (or "use the language's
+                built-in sort", which is Timsort in Python/Java)
+              </li>
+              <li>Need stability? Merge sort or Timsort</li>
+              <li>Need guaranteed worst case + in-place? Heap sort</li>
+              <li>Small data or nearly sorted? Insertion sort</li>
+              <li>Integers in bounded range? Counting/radix sort</li>
+            </ul>
+          </div>
+
+          <hr />
+
+          <!-- ============================================================= -->
+          <!-- PART 5: WHY TOPOLOGICAL SORT IS SPECIAL                        -->
+          <!-- ============================================================= -->
+          <h2 id="topological-sort">
+            Part 5: Why Topological Sort is Fundamentally Different
+          </h2>
+
+          <p>
+            Every sorting algorithm above works on
+            <strong>total orders</strong>: given any two elements, you can
+            always determine which comes first. The integers 3, 7, and 1 have a
+            definite ordering (1 &lt; 3 &lt; 7). But what about tasks with
+            dependencies?
+          </p>
+
+          <div class="card" style="border-color: var(--accent-purple)">
+            <h4>Total Order vs. Partial Order</h4>
+            <ul>
+              <li>
+                <strong>Total order:</strong> Every pair of elements is
+                comparable. "Is 5 &lt; 8?" always has an answer. Regular sorting
+                operates here.
+              </li>
+              <li>
+                <strong>Partial order:</strong> Some pairs are comparable (A
+                must come before C) but others are not (A and B are independent
+                &mdash; either order is valid).
+                <em>Topological sort operates here.</em>
+              </li>
+            </ul>
+          </div>
+
+          <div class="callout callout-ee">
+            <div class="callout-title">EE Analogy: Gate Firing Order</div>
+            <p>
+              In a combinational logic circuit, some gates
+              <strong>must</strong> fire before others because their outputs
+              feed into other gates' inputs. But independent gates &mdash; those
+              on separate signal paths &mdash; can fire in any order.
+              Topological sort gives you a valid "firing sequence" that respects
+              all dependencies. The circuit's netlist is a DAG (directed acyclic
+              graph), and topological sort linearizes it.
+            </p>
+            <p>
+              <strong>Key insight:</strong> If your "circuit" has a cycle, it is
+              not combinational logic &mdash; it is sequential logic with
+              latches or flip-flops. In graph terms, a cycle means no valid
+              topological ordering exists. This is exactly deadlock detection!
+            </p>
+          </div>
+
+          <h3>Real-World Examples of Topological Sort</h3>
+          <ul>
+            <li>
+              <strong>Build systems</strong> &mdash; Makefile dependencies:
+              compile <code>utils.o</code> before <code>main.o</code>
+            </li>
+            <li>
+              <strong>Course prerequisites</strong> &mdash; take "Data
+              Structures" before "Algorithms"
+            </li>
+            <li>
+              <strong>Task scheduling</strong> &mdash; dependencies between
+              tasks in a project plan
+            </li>
+            <li>
+              <strong>Package installation</strong> &mdash; install dependency
+              packages before the packages that depend on them
+            </li>
+            <li>
+              <strong>Spreadsheet evaluation</strong> &mdash; cell A1 depends on
+              B2 and C3; evaluate B2 and C3 first
+            </li>
+          </ul>
+
+          <h3>Kahn's Algorithm (BFS-Based Topological Sort)</h3>
+          <p>
+            The most intuitive approach: repeatedly find nodes with no incoming
+            edges (in-degree 0), add them to the result, and remove their
+            outgoing edges. If all nodes are processed, the result is a valid
+            topological ordering. If some nodes remain, a cycle exists.
+          </p>
+
+          <h4>Animation: Kahn's Algorithm on a DAG</h4>
+          <div class="diagram-container" id="anim-topo">
+            <div class="diagram-title">
+              DAG: A&rarr;C, B&rarr;C, B&rarr;D, C&rarr;E, D&rarr;E, E&rarr;F
+              &mdash; Kahn's BFS
+            </div>
+            <svg id="svg-topo" width="100%" viewBox="0 0 620 350"></svg>
+            <div class="anim-controls"></div>
+            <div class="anim-description">Press Play or Next to begin.</div>
+          </div>
+
+          <h4>Code: Kahn's Algorithm</h4>
+          <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">topological_sort_kahn</span>(num_nodes, edges):
+    <span class="cm"># Build adjacency list and in-degree count</span>
+    adj = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(num_nodes)]
+    in_degree = [<span class="num">0</span>] * num_nodes
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        adj[u].append(v)
+        in_degree[v] += <span class="num">1</span>
+
+    <span class="cm"># Start with all nodes that have no prerequisites</span>
+    queue = <span class="fn">deque</span>(i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(num_nodes) <span class="kw">if</span> in_degree[i] == <span class="num">0</span>)
+    result = []
+
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        result.append(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> adj[node]:
+            in_degree[neighbor] -= <span class="num">1</span>
+            <span class="kw">if</span> in_degree[neighbor] == <span class="num">0</span>:
+                queue.append(neighbor)
+
+    <span class="kw">if</span> <span class="fn">len</span>(result) != num_nodes:
+        <span class="kw">raise</span> <span class="ty">ValueError</span>(<span class="str">"Cycle detected! No valid ordering."</span>)
+    <span class="kw">return</span> result</code></pre>
+
+          <h3>DFS-Based Topological Sort</h3>
+          <p>
+            An alternative approach: run DFS on every unvisited node, and when a
+            node finishes (all descendants visited), push it onto a stack. The
+            stack, read top-to-bottom, is a valid topological order. This is the
+            <strong>post-order reversal</strong> method.
+          </p>
+
+          <pre><code><span class="kw">def</span> <span class="fn">topological_sort_dfs</span>(num_nodes, edges):
+    adj = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(num_nodes)]
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        adj[u].append(v)
+
+    WHITE, GRAY, BLACK = <span class="num">0</span>, <span class="num">1</span>, <span class="num">2</span>
+    color = [WHITE] * num_nodes
+    order = []
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(u):
+        color[u] = GRAY  <span class="cm"># currently exploring</span>
+        <span class="kw">for</span> v <span class="kw">in</span> adj[u]:
+            <span class="kw">if</span> color[v] == GRAY:
+                <span class="kw">raise</span> <span class="ty">ValueError</span>(<span class="str">"Cycle detected!"</span>)
+            <span class="kw">if</span> color[v] == WHITE:
+                <span class="fn">dfs</span>(v)
+        color[u] = BLACK  <span class="cm"># fully explored</span>
+        order.append(u)
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(num_nodes):
+        <span class="kw">if</span> color[i] == WHITE:
+            <span class="fn">dfs</span>(i)
+
+    <span class="kw">return</span> order[::-<span class="num">1</span>]  <span class="cm"># reverse post-order</span></code></pre>
+
+          <div class="callout callout-danger">
+            <div class="callout-title">
+              Cycle Detection = Deadlock Detection
+            </div>
+            <p>
+              If Kahn's algorithm finishes with fewer nodes than the graph has,
+              a cycle exists &mdash; no valid ordering is possible. In the DFS
+              approach, encountering a GRAY node (one currently on the recursion
+              stack) means you have found a back edge, proving a cycle.
+            </p>
+            <p>
+              <strong>EE connection:</strong> This is exactly like detecting
+              feedback loops in combinational logic. A combinational circuit
+              MUST be a DAG. If the dependency graph has a cycle, you have
+              unintentional sequential logic (a latch) &mdash; which is a
+              serious design bug. In software, this manifests as deadlocks in
+              lock ordering, circular imports, or infinite build loops.
+            </p>
+          </div>
+
+          <h3>Kahn's vs. DFS Comparison</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Kahn's (BFS)</th>
+                <th>DFS Post-Order</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Approach</td>
+                <td>Iterative, uses queue</td>
+                <td>Recursive (or explicit stack)</td>
+              </tr>
+              <tr>
+                <td>Cycle detection</td>
+                <td>result.length &lt; num_nodes</td>
+                <td>Back edge (GRAY &rarr; GRAY)</td>
+              </tr>
+              <tr>
+                <td>Output order</td>
+                <td>Direct topological order</td>
+                <td>Reverse of finish order</td>
+              </tr>
+              <tr>
+                <td>Parallelism</td>
+                <td>
+                  Naturally identifies parallelizable groups (same BFS level =
+                  independent)
+                </td>
+                <td>Less obvious parallel structure</td>
+              </tr>
+              <tr>
+                <td>Best for</td>
+                <td>Task scheduling, build systems</td>
+                <td>Course scheduling, dependency resolution</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr />
+
+          <!-- ============================================================= -->
+          <!-- PART 6: FROM SORTING TO PROBLEM SOLVING                        -->
+          <!-- ============================================================= -->
+          <h2 id="problem-solving">Part 6: From Sorting to Problem Solving</h2>
+
+          <div class="callout callout-success">
+            <div class="callout-title">Sorting as a Preprocessing Step</div>
+            <p>
+              Sorting is often not the end goal &mdash; it is the first step
+              that enables a faster algorithm. Spending O(n log n) to sort can
+              save you from O(n&sup2;) brute force on the actual problem.
+            </p>
+          </div>
+
+          <h4>Quick Reference: Sort First, Then...</h4>
+          <table>
+            <thead>
+              <tr>
+                <th>After Sorting, Use...</th>
+                <th>For Problems Like...</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Binary Search</strong></td>
+                <td>Finding a value, closest element, insertion point</td>
+              </tr>
+              <tr>
+                <td><strong>Two Pointers</strong></td>
+                <td>Two-sum, three-sum, pair with target difference</td>
+              </tr>
+              <tr>
+                <td><strong>Greedy (sweep)</strong></td>
+                <td>Merge intervals, meeting rooms, job scheduling</td>
+              </tr>
+              <tr>
+                <td><strong>Sliding Window</strong></td>
+                <td>K closest elements, median in sorted stream</td>
+              </tr>
+              <tr>
+                <td><strong>Deduplication</strong></td>
+                <td>Remove duplicates, find unique elements</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card-grid">
+            <a href="patterns.html" class="card" style="text-decoration: none">
+              <div class="card-header">
+                <div class="card-icon blue">P</div>
+                <div>
+                  <div class="card-title">Algorithm Patterns</div>
+                  <div class="card-desc">16 core patterns with animations</div>
+                </div>
+              </div>
+            </a>
+            <a
+              href="decision_tree.html"
+              class="card"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon green">D</div>
+                <div>
+                  <div class="card-title">Decision Tree</div>
+                  <div class="card-desc">Which pattern to use when</div>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="footer">Staff SDE Mastery Course</div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
+    <script src="js/nav.js"></script>
+    <script src="js/animations.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // ===================================================================
+        // BUBBLE SORT ANIMATION — [5, 3, 8, 4, 2]
+        // ===================================================================
+        (function () {
+          var vals = [5, 3, 8, 4, 2];
+          var layout = buildArraySVG("svg-bubble", vals, {
+            cellWidth: 54,
+            startX: 40,
+            startY: 45,
+          });
+
+          // Precompute bubble sort steps
+          // Each step: { compare: [i,j], swap: bool, desc, vals_after }
+          var steps = [];
+          var a = vals.slice();
+
+          // Pass 1: bubble largest (8) to end
+          steps.push({
+            type: "compare",
+            i: 0,
+            j: 1,
+            a: a.slice(),
+            desc: "Pass 1: Compare 5 and 3. Since 5 > 3, swap them.",
+          });
+          a = [3, 5, 8, 4, 2];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [],
+            desc: "After swap: [3, 5, 8, 4, 2]",
+          });
+
+          steps.push({
+            type: "compare",
+            i: 1,
+            j: 2,
+            a: a.slice(),
+            desc: "Compare 5 and 8. Since 5 < 8, no swap needed.",
+          });
+
+          steps.push({
+            type: "compare",
+            i: 2,
+            j: 3,
+            a: a.slice(),
+            desc: "Compare 8 and 4. Since 8 > 4, swap them.",
+          });
+          a = [3, 5, 4, 8, 2];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [],
+            desc: "After swap: [3, 5, 4, 8, 2]",
+          });
+
+          steps.push({
+            type: "compare",
+            i: 3,
+            j: 4,
+            a: a.slice(),
+            desc: "Compare 8 and 2. Since 8 > 2, swap them.",
+          });
+          a = [3, 5, 4, 2, 8];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [4],
+            desc: "Pass 1 done. 8 is in its final position. [3, 5, 4, 2, | 8]",
+          });
+
+          // Pass 2: bubble 5 to position 3
+          steps.push({
+            type: "compare",
+            i: 0,
+            j: 1,
+            a: a.slice(),
+            desc: "Pass 2: Compare 3 and 5. No swap.",
+          });
+          steps.push({
+            type: "compare",
+            i: 1,
+            j: 2,
+            a: a.slice(),
+            desc: "Compare 5 and 4. Since 5 > 4, swap.",
+          });
+          a = [3, 4, 5, 2, 8];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [4],
+            desc: "After swap: [3, 4, 5, 2, | 8]",
+          });
+
+          steps.push({
+            type: "compare",
+            i: 2,
+            j: 3,
+            a: a.slice(),
+            desc: "Compare 5 and 2. Since 5 > 2, swap.",
+          });
+          a = [3, 4, 2, 5, 8];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [3, 4],
+            desc: "Pass 2 done. 5 in final position. [3, 4, 2, | 5, 8]",
+          });
+
+          // Pass 3
+          steps.push({
+            type: "compare",
+            i: 0,
+            j: 1,
+            a: a.slice(),
+            desc: "Pass 3: Compare 3 and 4. No swap.",
+          });
+          steps.push({
+            type: "compare",
+            i: 1,
+            j: 2,
+            a: a.slice(),
+            desc: "Compare 4 and 2. Since 4 > 2, swap.",
+          });
+          a = [3, 2, 4, 5, 8];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [2, 3, 4],
+            desc: "Pass 3 done. 4 in final position. [3, 2, | 4, 5, 8]",
+          });
+
+          // Pass 4
+          steps.push({
+            type: "compare",
+            i: 0,
+            j: 1,
+            a: a.slice(),
+            desc: "Pass 4: Compare 3 and 2. Since 3 > 2, swap.",
+          });
+          a = [2, 3, 4, 5, 8];
+          steps.push({
+            type: "result",
+            a: a.slice(),
+            sorted: [0, 1, 2, 3, 4],
+            desc: "Sorted! [2, 3, 4, 5, 8]",
+          });
+
+          var animSteps = steps.map(function (s) {
+            return {
+              description: s.desc,
+              apply: function () {
+                // Update values
+                for (var k = 0; k < 5; k++) {
+                  setText("svg-bubble-val-" + k, s.a[k]);
+                  setClass("svg-bubble-cell-" + k, "array-cell");
+                }
+                if (s.type === "compare") {
+                  setClass("svg-bubble-cell-" + s.i, "array-cell-active");
+                  setClass("svg-bubble-cell-" + s.j, "array-cell-active");
+                }
+                if (s.type === "result" && s.sorted) {
+                  s.sorted.forEach(function (idx) {
+                    setClass("svg-bubble-cell-" + idx, "array-cell-result");
+                  });
+                }
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-bubble", animSteps, {
+            speed: 900,
+            onReset: function () {
+              buildArraySVG("svg-bubble", [5, 3, 8, 4, 2], {
+                cellWidth: 54,
+                startX: 40,
+                startY: 45,
+              });
+            },
+          });
+        })();
+
+        // ===================================================================
+        // SELECTION SORT ANIMATION — [64, 25, 12, 22, 11]
+        // ===================================================================
+        (function () {
+          var vals = [64, 25, 12, 22, 11];
+          var layout = buildArraySVG("svg-selection", vals, {
+            cellWidth: 54,
+            startX: 40,
+            startY: 45,
+          });
+
+          var steps = [];
+          // Pass 1: find min (11 at index 4), swap with index 0
+          steps.push({
+            a: [64, 25, 12, 22, 11],
+            highlight: [1, 2, 3, 4],
+            current: 4,
+            pos: 0,
+            desc: "Pass 1: Scan entire array for minimum. Found 11 at index 4.",
+          });
+          steps.push({
+            a: [11, 25, 12, 22, 64],
+            highlight: [],
+            current: -1,
+            pos: 0,
+            sorted: [0],
+            desc: "Swap 64 and 11. Position 0 is now final: [11, 25, 12, 22, 64]",
+          });
+          // Pass 2: find min in [25,12,22,64] => 12 at index 2
+          steps.push({
+            a: [11, 25, 12, 22, 64],
+            highlight: [2, 3, 4],
+            current: 2,
+            pos: 1,
+            sorted: [0],
+            desc: "Pass 2: Scan from index 1. Found min 12 at index 2.",
+          });
+          steps.push({
+            a: [11, 12, 25, 22, 64],
+            highlight: [],
+            current: -1,
+            pos: 1,
+            sorted: [0, 1],
+            desc: "Swap 25 and 12. Positions 0-1 final: [11, 12, 25, 22, 64]",
+          });
+          // Pass 3: find min in [25,22,64] => 22 at index 3
+          steps.push({
+            a: [11, 12, 25, 22, 64],
+            highlight: [3, 4],
+            current: 3,
+            pos: 2,
+            sorted: [0, 1],
+            desc: "Pass 3: Scan from index 2. Found min 22 at index 3.",
+          });
+          steps.push({
+            a: [11, 12, 22, 25, 64],
+            highlight: [],
+            current: -1,
+            pos: 2,
+            sorted: [0, 1, 2],
+            desc: "Swap 25 and 22. Positions 0-2 final: [11, 12, 22, 25, 64]",
+          });
+          // Pass 4: find min in [25,64] => 25 at index 3 (already in place)
+          steps.push({
+            a: [11, 12, 22, 25, 64],
+            highlight: [4],
+            current: 3,
+            pos: 3,
+            sorted: [0, 1, 2],
+            desc: "Pass 4: Scan from index 3. Min is 25 already at index 3. No swap needed.",
+          });
+          steps.push({
+            a: [11, 12, 22, 25, 64],
+            highlight: [],
+            current: -1,
+            pos: -1,
+            sorted: [0, 1, 2, 3, 4],
+            desc: "Sorted! [11, 12, 22, 25, 64]",
+          });
+
+          var animSteps = steps.map(function (s) {
+            return {
+              description: s.desc,
+              apply: function () {
+                for (var k = 0; k < 5; k++) {
+                  setText("svg-selection-val-" + k, s.a[k]);
+                  setClass("svg-selection-cell-" + k, "array-cell");
+                }
+                if (s.sorted)
+                  s.sorted.forEach(function (i) {
+                    setClass("svg-selection-cell-" + i, "array-cell-result");
+                  });
+                if (s.highlight)
+                  s.highlight.forEach(function (i) {
+                    setClass("svg-selection-cell-" + i, "array-cell-window");
+                  });
+                if (s.current >= 0)
+                  setClass(
+                    "svg-selection-cell-" + s.current,
+                    "array-cell-active",
+                  );
+                if (s.pos >= 0 && (!s.sorted || s.sorted.indexOf(s.pos) === -1))
+                  setClass("svg-selection-cell-" + s.pos, "array-cell-pointer");
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-selection", animSteps, {
+            speed: 1000,
+            onReset: function () {
+              buildArraySVG("svg-selection", [64, 25, 12, 22, 11], {
+                cellWidth: 54,
+                startX: 40,
+                startY: 45,
+              });
+            },
+          });
+        })();
+
+        // ===================================================================
+        // INSERTION SORT ANIMATION — [5, 2, 4, 6, 1, 3]
+        // ===================================================================
+        (function () {
+          var vals = [5, 2, 4, 6, 1, 3];
+          var layout = buildArraySVG("svg-insertion", vals, {
+            cellWidth: 54,
+            startX: 30,
+            startY: 45,
+          });
+
+          var steps = [
+            {
+              a: [5, 2, 4, 6, 1, 3],
+              sorted: [0],
+              key: 1,
+              desc: "Start: first element [5] is trivially sorted. Key = 2 (index 1).",
+            },
+            {
+              a: [2, 5, 4, 6, 1, 3],
+              sorted: [0, 1],
+              key: 2,
+              desc: "Insert 2 before 5. Sorted portion: [2, 5]",
+            },
+            {
+              a: [2, 5, 4, 6, 1, 3],
+              sorted: [0, 1],
+              key: 2,
+              active: 2,
+              desc: "Key = 4 (index 2). Compare with 5: 4 < 5, shift 5 right.",
+            },
+            {
+              a: [2, 4, 5, 6, 1, 3],
+              sorted: [0, 1, 2],
+              key: -1,
+              desc: "Insert 4 after 2. Sorted: [2, 4, 5]",
+            },
+            {
+              a: [2, 4, 5, 6, 1, 3],
+              sorted: [0, 1, 2],
+              key: -1,
+              active: 3,
+              desc: "Key = 6 (index 3). Compare with 5: 6 > 5, already in place.",
+            },
+            {
+              a: [2, 4, 5, 6, 1, 3],
+              sorted: [0, 1, 2, 3],
+              key: -1,
+              desc: "Sorted: [2, 4, 5, 6]",
+            },
+            {
+              a: [2, 4, 5, 6, 1, 3],
+              sorted: [0, 1, 2, 3],
+              key: -1,
+              active: 4,
+              desc: "Key = 1 (index 4). Shift 6, 5, 4, 2 all right. Insert 1 at front.",
+            },
+            {
+              a: [1, 2, 4, 5, 6, 3],
+              sorted: [0, 1, 2, 3, 4],
+              key: -1,
+              desc: "Insert 1 at position 0. Sorted: [1, 2, 4, 5, 6]",
+            },
+            {
+              a: [1, 2, 4, 5, 6, 3],
+              sorted: [0, 1, 2, 3, 4],
+              key: -1,
+              active: 5,
+              desc: "Key = 3 (index 5). Compare with 6, 5, 4: all > 3. Insert after 2.",
+            },
+            {
+              a: [1, 2, 3, 4, 5, 6],
+              sorted: [0, 1, 2, 3, 4, 5],
+              key: -1,
+              desc: "Sorted! [1, 2, 3, 4, 5, 6]",
+            },
+          ];
+
+          var animSteps = steps.map(function (s) {
+            return {
+              description: s.desc,
+              apply: function () {
+                for (var k = 0; k < 6; k++) {
+                  setText("svg-insertion-val-" + k, s.a[k]);
+                  setClass("svg-insertion-cell-" + k, "array-cell");
+                }
+                if (s.sorted)
+                  s.sorted.forEach(function (i) {
+                    setClass("svg-insertion-cell-" + i, "array-cell-result");
+                  });
+                if (s.active >= 0)
+                  setClass(
+                    "svg-insertion-cell-" + s.active,
+                    "array-cell-active",
+                  );
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-insertion", animSteps, {
+            speed: 1000,
+            onReset: function () {
+              buildArraySVG("svg-insertion", [5, 2, 4, 6, 1, 3], {
+                cellWidth: 54,
+                startX: 30,
+                startY: 45,
+              });
+            },
+          });
+        })();
+
+        // ===================================================================
+        // MERGE SORT ANIMATION — [38, 27, 43, 3, 9, 82, 10]
+        // Uses manual SVG for tree-like divide/merge visualization
+        // ===================================================================
+        (function () {
+          var svg = document.getElementById("svg-merge");
+          if (!svg) return;
+
+          function drawMergeState(stepData) {
+            var html = "";
+            var cellW = 42,
+              cellH = 34,
+              gap = 3;
+            stepData.rows.forEach(function (row) {
+              row.groups.forEach(function (group) {
+                var startX = group.x;
+                group.vals.forEach(function (v, i) {
+                  var x = startX + i * (cellW + gap);
+                  var cls = group.cls || "array-cell";
+                  html +=
+                    '<rect class="' +
+                    cls +
+                    '" x="' +
+                    x +
+                    '" y="' +
+                    row.y +
+                    '" width="' +
+                    cellW +
+                    '" height="' +
+                    cellH +
+                    '" rx="4"/>';
+                  html +=
+                    '<text class="array-value" x="' +
+                    (x + cellW / 2) +
+                    '" y="' +
+                    (row.y + cellH / 2) +
+                    '">' +
+                    v +
+                    "</text>";
+                });
+              });
+            });
+            if (stepData.labels) {
+              stepData.labels.forEach(function (lb) {
+                html +=
+                  '<text class="label-small" x="' +
+                  lb.x +
+                  '" y="' +
+                  lb.y +
+                  '" text-anchor="' +
+                  (lb.anchor || "middle") +
+                  '" fill="' +
+                  (lb.color || "#8b949e") +
+                  '">' +
+                  lb.text +
+                  "</text>";
+              });
+            }
+            svg.innerHTML = html;
+          }
+
+          var steps = [
+            {
+              rows: [
+                {
+                  y: 20,
+                  groups: [
+                    {
+                      x: 185,
+                      vals: [38, 27, 43, 3, 9, 82, 10],
+                      cls: "array-cell",
+                    },
+                  ],
+                },
+              ],
+              labels: [{ x: 350, y: 12, text: "Original Array" }],
+            },
+            {
+              rows: [
+                {
+                  y: 20,
+                  groups: [
+                    {
+                      x: 185,
+                      vals: [38, 27, 43, 3, 9, 82, 10],
+                      cls: "array-cell",
+                    },
+                  ],
+                },
+                {
+                  y: 80,
+                  groups: [
+                    { x: 120, vals: [38, 27, 43, 3], cls: "array-cell-active" },
+                    { x: 360, vals: [9, 82, 10], cls: "array-cell-pointer" },
+                  ],
+                },
+              ],
+              labels: [{ x: 350, y: 72, text: "Divide" }],
+            },
+            {
+              rows: [
+                {
+                  y: 20,
+                  groups: [
+                    {
+                      x: 185,
+                      vals: [38, 27, 43, 3, 9, 82, 10],
+                      cls: "array-cell",
+                    },
+                  ],
+                },
+                {
+                  y: 80,
+                  groups: [
+                    { x: 120, vals: [38, 27, 43, 3], cls: "array-cell-active" },
+                    { x: 360, vals: [9, 82, 10], cls: "array-cell-pointer" },
+                  ],
+                },
+                {
+                  y: 140,
+                  groups: [
+                    { x: 75, vals: [38, 27], cls: "array-cell-active" },
+                    { x: 210, vals: [43, 3], cls: "array-cell-active" },
+                    { x: 340, vals: [9, 82], cls: "array-cell-pointer" },
+                    { x: 440, vals: [10], cls: "array-cell-pointer" },
+                  ],
+                },
+              ],
+              labels: [{ x: 350, y: 132, text: "Divide again" }],
+            },
+            {
+              rows: [
+                {
+                  y: 20,
+                  groups: [
+                    {
+                      x: 185,
+                      vals: [38, 27, 43, 3, 9, 82, 10],
+                      cls: "array-cell",
+                    },
+                  ],
+                },
+                {
+                  y: 80,
+                  groups: [
+                    { x: 120, vals: [38, 27, 43, 3], cls: "array-cell-active" },
+                    { x: 360, vals: [9, 82, 10], cls: "array-cell-pointer" },
+                  ],
+                },
+                {
+                  y: 140,
+                  groups: [
+                    { x: 75, vals: [38, 27], cls: "array-cell-active" },
+                    { x: 210, vals: [43, 3], cls: "array-cell-active" },
+                    { x: 340, vals: [9, 82], cls: "array-cell-pointer" },
+                    { x: 440, vals: [10], cls: "array-cell-pointer" },
+                  ],
+                },
+                {
+                  y: 200,
+                  groups: [
+                    { x: 55, vals: [38], cls: "array-cell-window" },
+                    { x: 120, vals: [27], cls: "array-cell-window" },
+                    { x: 195, vals: [43], cls: "array-cell-window" },
+                    { x: 255, vals: [3], cls: "array-cell-window" },
+                    { x: 325, vals: [9], cls: "array-cell-window" },
+                    { x: 390, vals: [82], cls: "array-cell-window" },
+                    { x: 455, vals: [10], cls: "array-cell-window" },
+                  ],
+                },
+              ],
+              labels: [
+                { x: 350, y: 192, text: "Individual elements (base case)" },
+              ],
+            },
+            {
+              rows: [
+                {
+                  y: 200,
+                  groups: [
+                    { x: 55, vals: [38], cls: "array-cell-window" },
+                    { x: 120, vals: [27], cls: "array-cell-window" },
+                    { x: 195, vals: [43], cls: "array-cell-window" },
+                    { x: 255, vals: [3], cls: "array-cell-window" },
+                    { x: 325, vals: [9], cls: "array-cell-window" },
+                    { x: 390, vals: [82], cls: "array-cell-window" },
+                    { x: 455, vals: [10], cls: "array-cell-window" },
+                  ],
+                },
+                {
+                  y: 260,
+                  groups: [
+                    { x: 75, vals: [27, 38], cls: "array-cell-active" },
+                    { x: 210, vals: [3, 43], cls: "array-cell-active" },
+                    { x: 340, vals: [9, 82], cls: "array-cell-pointer" },
+                    { x: 440, vals: [10], cls: "array-cell-pointer" },
+                  ],
+                },
+              ],
+              labels: [
+                { x: 350, y: 192, text: "Base cases" },
+                { x: 350, y: 252, text: "Merge pairs", color: "#58a6ff" },
+              ],
+            },
+            {
+              rows: [
+                {
+                  y: 260,
+                  groups: [
+                    { x: 75, vals: [27, 38], cls: "array-cell-active" },
+                    { x: 210, vals: [3, 43], cls: "array-cell-active" },
+                    { x: 340, vals: [9, 82], cls: "array-cell-pointer" },
+                    { x: 440, vals: [10], cls: "array-cell-pointer" },
+                  ],
+                },
+                {
+                  y: 300,
+                  groups: [
+                    { x: 105, vals: [3, 27, 38, 43], cls: "array-cell-window" },
+                    { x: 345, vals: [9, 10, 82], cls: "array-cell-window" },
+                  ],
+                },
+              ],
+              labels: [
+                { x: 350, y: 252, text: "Merged pairs" },
+                { x: 350, y: 292, text: "Merge halves", color: "#3fb950" },
+              ],
+            },
+            {
+              rows: [
+                {
+                  y: 300,
+                  groups: [
+                    {
+                      x: 170,
+                      vals: [3, 9, 10, 27, 38, 43, 82],
+                      cls: "array-cell-result",
+                    },
+                  ],
+                },
+              ],
+              labels: [
+                {
+                  x: 350,
+                  y: 292,
+                  text: "Final merge — sorted!",
+                  color: "#3fb950",
+                },
+              ],
+            },
+          ];
+
+          var animSteps = steps.map(function (s, idx) {
+            return {
+              description: [
+                "Original array: [38, 27, 43, 3, 9, 82, 10]",
+                "Divide into two halves: [38,27,43,3] and [9,82,10]",
+                "Divide each half again into pairs",
+                "Keep dividing until single elements (base case — trivially sorted)",
+                "Merge adjacent singles into sorted pairs: [27,38], [3,43], [9,82], [10]",
+                "Merge sorted pairs into sorted quads: [3,27,38,43] and [9,10,82]",
+                "Final merge: [3, 9, 10, 27, 38, 43, 82] — sorted!",
+              ][idx],
+              apply: function () {
+                drawMergeState(s);
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-merge", animSteps, {
+            speed: 1200,
+            onReset: function () {
+              drawMergeState(steps[0]);
+            },
+          });
+          drawMergeState(steps[0]);
+        })();
+
+        // ===================================================================
+        // QUICK SORT ANIMATION — [10, 7, 8, 9, 1, 5]
+        // ===================================================================
+        (function () {
+          var vals = [10, 7, 8, 9, 1, 5];
+          var layout = buildArraySVG("svg-quick", vals, {
+            cellWidth: 54,
+            startX: 30,
+            startY: 45,
+          });
+
+          var steps = [
+            {
+              a: [10, 7, 8, 9, 1, 5],
+              pivot: 5,
+              highlight: [],
+              i: -1,
+              j: 0,
+              desc: "Pivot = 5 (last element). i = -1, j scans from left.",
+            },
+            {
+              a: [10, 7, 8, 9, 1, 5],
+              pivot: 5,
+              highlight: [0],
+              i: -1,
+              j: 0,
+              desc: "j=0: arr[0]=10 > 5. No action, j moves on.",
+            },
+            {
+              a: [10, 7, 8, 9, 1, 5],
+              pivot: 5,
+              highlight: [1],
+              i: -1,
+              j: 1,
+              desc: "j=1: arr[1]=7 > 5. No action.",
+            },
+            {
+              a: [10, 7, 8, 9, 1, 5],
+              pivot: 5,
+              highlight: [2],
+              i: -1,
+              j: 2,
+              desc: "j=2: arr[2]=8 > 5. No action.",
+            },
+            {
+              a: [10, 7, 8, 9, 1, 5],
+              pivot: 5,
+              highlight: [3],
+              i: -1,
+              j: 3,
+              desc: "j=3: arr[3]=9 > 5. No action.",
+            },
+            {
+              a: [1, 7, 8, 9, 10, 5],
+              pivot: 5,
+              highlight: [4],
+              i: 0,
+              j: 4,
+              desc: "j=4: arr[4]=1 <= 5. Increment i to 0, swap arr[0] and arr[4]. [1,7,8,9,10,5]",
+            },
+            {
+              a: [1, 5, 8, 9, 10, 7],
+              pivot: -1,
+              highlight: [],
+              i: -1,
+              j: -1,
+              sorted: [1],
+              desc: "Place pivot: swap arr[i+1]=arr[1] with pivot arr[5]. Pivot 5 is now at index 1 (final position).",
+            },
+            {
+              a: [1, 5, 7, 8, 9, 10],
+              pivot: -1,
+              highlight: [],
+              i: -1,
+              j: -1,
+              sorted: [0, 1, 2, 3, 4, 5],
+              desc: "Recurse on left [1] and right [8,9,10,7]. After all recursion: [1, 5, 7, 8, 9, 10]. Sorted!",
+            },
+          ];
+
+          var animSteps = steps.map(function (s) {
+            return {
+              description: s.desc,
+              apply: function () {
+                for (var k = 0; k < 6; k++) {
+                  setText("svg-quick-val-" + k, s.a[k]);
+                  setClass("svg-quick-cell-" + k, "array-cell");
+                }
+                if (s.pivot >= 0) {
+                  // Highlight pivot (last element position)
+                  var pivotIdx = s.a.indexOf(s.pivot);
+                  if (pivotIdx === -1) pivotIdx = 5;
+                  setClass("svg-quick-cell-" + 5, "array-cell-pointer");
+                }
+                if (s.highlight)
+                  s.highlight.forEach(function (i) {
+                    setClass("svg-quick-cell-" + i, "array-cell-active");
+                  });
+                if (s.sorted)
+                  s.sorted.forEach(function (i) {
+                    setClass("svg-quick-cell-" + i, "array-cell-result");
+                  });
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-quick", animSteps, {
+            speed: 1000,
+            onReset: function () {
+              buildArraySVG("svg-quick", [10, 7, 8, 9, 1, 5], {
+                cellWidth: 54,
+                startX: 30,
+                startY: 45,
+              });
+            },
+          });
+        })();
+
+        // ===================================================================
+        // HEAP SORT ANIMATION — [4, 10, 3, 5, 1]
+        // Uses manual SVG for tree + array dual view
+        // ===================================================================
+        (function () {
+          var svg = document.getElementById("svg-heap");
+          if (!svg) return;
+
+          // Tree positions for a 5-element heap
+          var treePos = [
+            { x: 300, y: 45 }, // 0 (root)
+            { x: 170, y: 120 }, // 1 (left child)
+            { x: 430, y: 120 }, // 2 (right child)
+            { x: 100, y: 195 }, // 3 (left-left)
+            { x: 240, y: 195 }, // 4 (left-right)
+          ];
+          var r = 22;
+
+          function drawHeapState(vals, heapSize, highlight, sorted, desc) {
+            var html = "";
+            // Draw edges
+            var edges = [
+              [0, 1],
+              [0, 2],
+              [1, 3],
+              [1, 4],
+            ];
+            edges.forEach(function (e) {
+              if (e[1] < heapSize) {
+                var p = treePos[e[0]],
+                  c = treePos[e[1]];
+                html +=
+                  '<line class="edge" x1="' +
+                  p.x +
+                  '" y1="' +
+                  (p.y + r) +
+                  '" x2="' +
+                  c.x +
+                  '" y2="' +
+                  (c.y - r) +
+                  '"/>';
+              }
+            });
+            // Draw tree nodes
+            for (var i = 0; i < vals.length; i++) {
+              var p = treePos[i];
+              var cls = "node-fill node-stroke";
+              if (highlight && highlight.indexOf(i) >= 0) cls = "node-current";
+              if (sorted && sorted.indexOf(i) >= 0) cls = "node-visited";
+              if (i >= heapSize) cls = "node-visited";
+              html +=
+                '<circle class="' +
+                cls +
+                '" cx="' +
+                p.x +
+                '" cy="' +
+                p.y +
+                '" r="' +
+                r +
+                '"/>';
+              html +=
+                '<text class="label-text" x="' +
+                p.x +
+                '" y="' +
+                p.y +
+                '">' +
+                vals[i] +
+                "</text>";
+            }
+            // Array view at bottom
+            var cellW = 48,
+              gap = 4,
+              startX = 155,
+              arrY = 270;
+            for (var i = 0; i < vals.length; i++) {
+              var x = startX + i * (cellW + gap);
+              var acls = "array-cell";
+              if (highlight && highlight.indexOf(i) >= 0)
+                acls = "array-cell-active";
+              if (sorted && sorted.indexOf(i) >= 0) acls = "array-cell-result";
+              if (i >= heapSize) acls = "array-cell-result";
+              html +=
+                '<rect class="' +
+                acls +
+                '" x="' +
+                x +
+                '" y="' +
+                arrY +
+                '" width="' +
+                cellW +
+                '" height="36" rx="4"/>';
+              html +=
+                '<text class="array-value" x="' +
+                (x + cellW / 2) +
+                '" y="' +
+                (arrY + 18) +
+                '">' +
+                vals[i] +
+                "</text>";
+              html +=
+                '<text class="array-index" x="' +
+                (x + cellW / 2) +
+                '" y="' +
+                (arrY - 8) +
+                '">' +
+                i +
+                "</text>";
+            }
+            html +=
+              '<text class="label-small" x="' +
+              startX +
+              '" y="' +
+              (arrY + 52) +
+              '" text-anchor="start">Array representation</text>';
+            svg.innerHTML = html;
+          }
+
+          var steps = [
+            {
+              vals: [4, 10, 3, 5, 1],
+              hs: 5,
+              hl: null,
+              so: null,
+              desc: "Initial array [4, 10, 3, 5, 1] shown as a binary tree.",
+            },
+            {
+              vals: [4, 10, 3, 5, 1],
+              hs: 5,
+              hl: [1, 0],
+              so: null,
+              desc: "Build max-heap: sift down from last parent. Node 10 > parent 4? 10 is larger, swap.",
+            },
+            {
+              vals: [10, 4, 3, 5, 1],
+              hs: 5,
+              hl: [0],
+              so: null,
+              desc: "After swap: [10, 4, 3, 5, 1]. Sift down node at index 1: 4 vs children 5,1. Swap 4 and 5.",
+            },
+            {
+              vals: [10, 5, 3, 4, 1],
+              hs: 5,
+              hl: null,
+              so: null,
+              desc: "Max-heap built: [10, 5, 3, 4, 1]. Root (10) is the maximum.",
+            },
+            {
+              vals: [1, 5, 3, 4, 10],
+              hs: 4,
+              hl: [0],
+              so: [4],
+              desc: "Extract max: swap root 10 with last element 1. Heap size = 4. Sift down 1.",
+            },
+            {
+              vals: [5, 4, 3, 1, 10],
+              hs: 4,
+              hl: null,
+              so: [4],
+              desc: "After sift: [5, 4, 3, 1, | 10]. New max-heap of size 4.",
+            },
+            {
+              vals: [1, 4, 3, 5, 10],
+              hs: 3,
+              hl: [0],
+              so: [3, 4],
+              desc: "Extract 5: swap with last in heap. Sift down 1. Result: [4,1,3, | 5,10].",
+            },
+            {
+              vals: [4, 1, 3, 5, 10],
+              hs: 3,
+              hl: null,
+              so: [3, 4],
+              desc: "Heap of size 3: [4, 1, 3]. Extract 4 next.",
+            },
+            {
+              vals: [3, 1, 4, 5, 10],
+              hs: 2,
+              hl: null,
+              so: [2, 3, 4],
+              desc: "Extract 4. Heap: [3, 1]. Extract 3.",
+            },
+            {
+              vals: [1, 3, 4, 5, 10],
+              hs: 1,
+              hl: null,
+              so: [1, 2, 3, 4],
+              desc: "Extract 3. One element left: [1]. Done!",
+            },
+            {
+              vals: [1, 3, 4, 5, 10],
+              hs: 0,
+              hl: null,
+              so: [0, 1, 2, 3, 4],
+              desc: "Sorted! [1, 3, 4, 5, 10]",
+            },
+          ];
+
+          var animSteps = steps.map(function (s) {
+            return {
+              description: s.desc,
+              apply: function () {
+                drawHeapState(s.vals, s.hs, s.hl, s.so);
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-heap", animSteps, {
+            speed: 1100,
+            onReset: function () {
+              drawHeapState([4, 10, 3, 5, 1], 5, null, null);
+            },
+          });
+          drawHeapState([4, 10, 3, 5, 1], 5, null, null);
+        })();
+
+        // ===================================================================
+        // COUNTING SORT STATIC DIAGRAM — [4, 2, 2, 8, 3, 3, 1]
+        // ===================================================================
+        (function () {
+          var svg = document.getElementById("svg-counting");
+          if (!svg) return;
+          var html = "";
+          var cellW = 38,
+            cellH = 34,
+            gap = 3;
+
+          // Input array
+          var input = [4, 2, 2, 8, 3, 3, 1];
+          html += '<text class="label-small" x="10" y="20">Input:</text>';
+          input.forEach(function (v, i) {
+            var x = 70 + i * (cellW + gap);
+            html +=
+              '<rect class="array-cell" x="' +
+              x +
+              '" y="10" width="' +
+              cellW +
+              '" height="' +
+              cellH +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (10 + cellH / 2) +
+              '">' +
+              v +
+              "</text>";
+          });
+
+          // Count array (indices 0-8)
+          var counts = [0, 1, 2, 1, 1, 0, 0, 0, 1];
+          html += '<text class="label-small" x="10" y="75">Count:</text>';
+          counts.forEach(function (c, i) {
+            var x = 70 + i * (cellW + gap);
+            var cls = c > 0 ? "array-cell-active" : "array-cell";
+            html +=
+              '<rect class="' +
+              cls +
+              '" x="' +
+              x +
+              '" y="62" width="' +
+              cellW +
+              '" height="' +
+              cellH +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (62 + cellH / 2) +
+              '">' +
+              c +
+              "</text>";
+            html +=
+              '<text class="array-index" x="' +
+              (x + cellW / 2) +
+              '" y="58">' +
+              i +
+              "</text>";
+          });
+
+          // Output
+          var output = [1, 2, 2, 3, 3, 4, 8];
+          html += '<text class="label-small" x="10" y="130">Output:</text>';
+          output.forEach(function (v, i) {
+            var x = 70 + i * (cellW + gap);
+            html +=
+              '<rect class="array-cell-result" x="' +
+              x +
+              '" y="118" width="' +
+              cellW +
+              '" height="' +
+              cellH +
+              '" rx="4"/>';
+            html +=
+              '<text class="array-value" x="' +
+              (x + cellW / 2) +
+              '" y="' +
+              (118 + cellH / 2) +
+              '">' +
+              v +
+              "</text>";
+          });
+
+          // Arrows
+          html +=
+            '<text class="label-small" x="350" y="55" fill="#58a6ff">count frequencies</text>';
+          html +=
+            '<text class="label-small" x="350" y="112" fill="#3fb950">reconstruct</text>';
+
+          svg.innerHTML = html;
+        })();
+
+        // ===================================================================
+        // RADIX SORT STATIC DIAGRAM — [170, 45, 75, 90, 802, 24, 2, 66]
+        // ===================================================================
+        (function () {
+          var svg = document.getElementById("svg-radix");
+          if (!svg) return;
+          var html = "";
+          var cellW = 42,
+            cellH = 30,
+            gap = 3;
+
+          var rows = [
+            {
+              label: "Original:",
+              vals: [170, 45, 75, 90, 802, 24, 2, 66],
+              cls: "array-cell",
+            },
+            {
+              label: "By ones:",
+              vals: [170, 90, 802, 2, 24, 45, 75, 66],
+              cls: "array-cell-active",
+            },
+            {
+              label: "By tens:",
+              vals: [802, 2, 24, 45, 66, 170, 75, 90],
+              cls: "array-cell-pointer",
+            },
+            {
+              label: "By 100s:",
+              vals: [2, 24, 45, 66, 75, 90, 170, 802],
+              cls: "array-cell-result",
+            },
+          ];
+
+          rows.forEach(function (row, ri) {
+            var y = 10 + ri * (cellH + 14);
+            html +=
+              '<text class="label-small" x="10" y="' +
+              (y + cellH / 2 + 2) +
+              '" text-anchor="start">' +
+              row.label +
+              "</text>";
+            row.vals.forEach(function (v, i) {
+              var x = 90 + i * (cellW + gap);
+              html +=
+                '<rect class="' +
+                row.cls +
+                '" x="' +
+                x +
+                '" y="' +
+                y +
+                '" width="' +
+                cellW +
+                '" height="' +
+                cellH +
+                '" rx="4"/>';
+              html +=
+                '<text class="array-value" style="font-size:12px" x="' +
+                (x + cellW / 2) +
+                '" y="' +
+                (y + cellH / 2) +
+                '">' +
+                v +
+                "</text>";
+            });
+          });
+
+          svg.innerHTML = html;
+        })();
+
+        // ===================================================================
+        // TOPOLOGICAL SORT ANIMATION — Kahn's Algorithm
+        // DAG: A->C, B->C, B->D, C->E, D->E, E->F
+        // Nodes: A=0, B=1, C=2, D=3, E=4, F=5
+        // ===================================================================
+        (function () {
+          var svg = document.getElementById("svg-topo");
+          if (!svg) return;
+
+          var labels = ["A", "B", "C", "D", "E", "F"];
+          var positions = [
+            { x: 100, y: 60 }, // A
+            { x: 100, y: 200 }, // B
+            { x: 260, y: 60 }, // C
+            { x: 260, y: 200 }, // D
+            { x: 420, y: 130 }, // E
+            { x: 560, y: 130 }, // F
+          ];
+          var edges = [
+            [0, 2], // A->C
+            [1, 2], // B->C
+            [1, 3], // B->D
+            [2, 4], // C->E
+            [3, 4], // D->E
+            [4, 5], // E->F
+          ];
+          var r = 24;
+
+          function drawTopoState(
+            nodeStates,
+            edgeStates,
+            inDegrees,
+            result,
+            stepLabel,
+          ) {
+            var html = "";
+            // Defs for arrows
+            html += "<defs>";
+            html +=
+              '<marker id="topo-arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#484f58"/></marker>';
+            html +=
+              '<marker id="topo-arrow-done" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3fb950"/></marker>';
+            html +=
+              '<marker id="topo-arrow-removing" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f85149"/></marker>';
+            html += "</defs>";
+
+            // Draw edges
+            edges.forEach(function (e, i) {
+              var from = positions[e[0]],
+                to = positions[e[1]];
+              var dx = to.x - from.x,
+                dy = to.y - from.y;
+              var dist = Math.sqrt(dx * dx + dy * dy);
+              var sx = from.x + (dx / dist) * r,
+                sy = from.y + (dy / dist) * r;
+              var ex = to.x - (dx / dist) * r,
+                ey = to.y - (dy / dist) * r;
+              var state = edgeStates[i];
+              var cls = "edge",
+                marker = "url(#topo-arrow)";
+              if (state === "done") {
+                cls = "edge-path";
+                marker = "url(#topo-arrow-done)";
+              } else if (state === "removing") {
+                cls = "edge";
+                marker = "url(#topo-arrow-removing)";
+                html +=
+                  '<line class="edge" x1="' +
+                  sx +
+                  '" y1="' +
+                  sy +
+                  '" x2="' +
+                  ex +
+                  '" y2="' +
+                  ey +
+                  '" marker-end="' +
+                  marker +
+                  '" stroke="#f85149" stroke-dasharray="5,5" stroke-width="2"/>';
+                return;
+              } else if (state === "removed") {
+                return;
+              }
+              html +=
+                '<line class="' +
+                cls +
+                '" x1="' +
+                sx +
+                '" y1="' +
+                sy +
+                '" x2="' +
+                ex +
+                '" y2="' +
+                ey +
+                '" marker-end="' +
+                marker +
+                '"/>';
+            });
+
+            // Draw nodes
+            positions.forEach(function (p, i) {
+              var state = nodeStates[i];
+              var cls = "node-fill node-stroke";
+              if (state === "ready") cls = "node-current";
+              else if (state === "processing") cls = "node-active";
+              else if (state === "done") cls = "node-visited";
+              html +=
+                '<circle class="' +
+                cls +
+                '" cx="' +
+                p.x +
+                '" cy="' +
+                p.y +
+                '" r="' +
+                r +
+                '"/>';
+              html +=
+                '<text class="label-text" x="' +
+                p.x +
+                '" y="' +
+                p.y +
+                '">' +
+                labels[i] +
+                "</text>";
+            });
+
+            // In-degree display
+            html +=
+              '<text class="label-small" x="30" y="290" text-anchor="start" fill="#8b949e">In-degrees:</text>';
+            labels.forEach(function (l, i) {
+              var x = 130 + i * 65;
+              var col = inDegrees[i] === 0 ? "#3fb950" : "#d29922";
+              if (nodeStates[i] === "done") col = "#6e7681";
+              html +=
+                '<text class="label-small" x="' +
+                x +
+                '" y="290" fill="' +
+                col +
+                '">' +
+                l +
+                ":" +
+                inDegrees[i] +
+                "</text>";
+            });
+
+            // Result display
+            html +=
+              '<text class="label-small" x="30" y="320" text-anchor="start" fill="#8b949e">Result: [' +
+              result.join(", ") +
+              "]</text>";
+
+            // Step label
+            if (stepLabel) {
+              html +=
+                '<text class="label-small" x="520" y="290" text-anchor="end" fill="#58a6ff">' +
+                stepLabel +
+                "</text>";
+            }
+
+            svg.innerHTML = html;
+          }
+
+          // Initial in-degrees: A:0, B:0, C:2, D:1, E:2, F:1
+          var animData = [
+            {
+              ns: ["", "", "", "", "", ""],
+              es: ["", "", "", "", "", ""],
+              deg: [0, 0, 2, 1, 2, 1],
+              res: [],
+              label: "Initial",
+              desc: "DAG with 6 nodes. In-degrees: A:0, B:0, C:2, D:1, E:2, F:1. Nodes A and B have in-degree 0.",
+            },
+            {
+              ns: ["ready", "ready", "", "", "", ""],
+              es: ["", "", "", "", "", ""],
+              deg: [0, 0, 2, 1, 2, 1],
+              res: [],
+              label: "Find in-degree 0",
+              desc: "Kahn step 1: Find all nodes with in-degree 0. A and B are ready (no prerequisites).",
+            },
+            {
+              ns: ["processing", "ready", "", "", "", ""],
+              es: ["removing", "", "", "", "", ""],
+              deg: [0, 0, 2, 1, 2, 1],
+              res: [],
+              label: "Process A",
+              desc: "Process A: add to result. Remove edge A->C. C in-degree drops from 2 to 1.",
+            },
+            {
+              ns: ["done", "ready", "", "", "", ""],
+              es: ["removed", "", "", "", "", ""],
+              deg: [0, 0, 1, 1, 2, 1],
+              res: ["A"],
+              label: "A done",
+              desc: "A is done. Result: [A]. Now process B.",
+            },
+            {
+              ns: ["done", "processing", "", "", "", ""],
+              es: ["removed", "removing", "removing", "", "", ""],
+              deg: [0, 0, 1, 1, 2, 1],
+              res: ["A"],
+              label: "Process B",
+              desc: "Process B: remove edges B->C and B->D. C: 1->0, D: 1->0. Both become ready!",
+            },
+            {
+              ns: ["done", "done", "ready", "ready", "", ""],
+              es: ["removed", "removed", "removed", "", "", ""],
+              deg: [0, 0, 0, 0, 2, 1],
+              res: ["A", "B"],
+              label: "B done",
+              desc: "B done. Result: [A, B]. C and D now have in-degree 0 — both are ready.",
+            },
+            {
+              ns: ["done", "done", "processing", "ready", "", ""],
+              es: ["removed", "removed", "removed", "removing", "", ""],
+              deg: [0, 0, 0, 0, 2, 1],
+              res: ["A", "B"],
+              label: "Process C",
+              desc: "Process C: remove edge C->E. E in-degree drops from 2 to 1.",
+            },
+            {
+              ns: ["done", "done", "done", "ready", "", ""],
+              es: ["removed", "removed", "removed", "removed", "", ""],
+              deg: [0, 0, 0, 0, 1, 1],
+              res: ["A", "B", "C"],
+              label: "C done",
+              desc: "C done. Result: [A, B, C]. Process D next.",
+            },
+            {
+              ns: ["done", "done", "done", "processing", "", ""],
+              es: ["removed", "removed", "removed", "removed", "removing", ""],
+              deg: [0, 0, 0, 0, 1, 1],
+              res: ["A", "B", "C"],
+              label: "Process D",
+              desc: "Process D: remove edge D->E. E in-degree drops from 1 to 0. E becomes ready!",
+            },
+            {
+              ns: ["done", "done", "done", "done", "ready", ""],
+              es: ["removed", "removed", "removed", "removed", "removed", ""],
+              deg: [0, 0, 0, 0, 0, 1],
+              res: ["A", "B", "C", "D"],
+              label: "D done",
+              desc: "D done. Result: [A, B, C, D]. E now has in-degree 0.",
+            },
+            {
+              ns: ["done", "done", "done", "done", "processing", ""],
+              es: [
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+                "removing",
+              ],
+              deg: [0, 0, 0, 0, 0, 1],
+              res: ["A", "B", "C", "D"],
+              label: "Process E",
+              desc: "Process E: remove edge E->F. F in-degree drops from 1 to 0.",
+            },
+            {
+              ns: ["done", "done", "done", "done", "done", "ready"],
+              es: [
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+              ],
+              deg: [0, 0, 0, 0, 0, 0],
+              res: ["A", "B", "C", "D", "E"],
+              label: "E done",
+              desc: "E done. Result: [A, B, C, D, E]. F is the last node with in-degree 0.",
+            },
+            {
+              ns: ["done", "done", "done", "done", "done", "done"],
+              es: [
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+                "removed",
+              ],
+              deg: [0, 0, 0, 0, 0, 0],
+              res: ["A", "B", "C", "D", "E", "F"],
+              label: "Complete!",
+              desc: "F done. All 6 nodes processed. Valid topological order: [A, B, C, D, E, F]. No cycle!",
+            },
+          ];
+
+          var animSteps = animData.map(function (d) {
+            return {
+              description: d.desc,
+              apply: function () {
+                drawTopoState(d.ns, d.es, d.deg, d.res, d.label);
+              },
+            };
+          });
+
+          new AlgoAnimation("anim-topo", animSteps, {
+            speed: 1100,
+            onReset: function () {
+              drawTopoState(
+                ["", "", "", "", "", ""],
+                ["", "", "", "", "", ""],
+                [0, 0, 2, 1, 2, 1],
+                [],
+                "Initial",
+              );
+            },
+          });
+
+          // Draw initial state
+          drawTopoState(
+            ["", "", "", "", "", ""],
+            ["", "", "", "", "", ""],
+            [0, 0, 2, 1, 2, 1],
+            [],
+            "Initial",
+          );
+        })();
+      });
+    </script>
+  </body>
+</html>
