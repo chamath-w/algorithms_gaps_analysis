@@ -2299,3 +2299,405 @@ svg .pointer-label {
     break-inside: avoid;
   }
 }
+
+/* ===== Implementation Memory Games ===== */
+.ig-shell {
+  margin: 1.5rem 0 2rem;
+}
+.ig-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+.ig-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ig-mode-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+}
+.ig-mode-btn.active,
+.ig-mode-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-cyan);
+  background: rgba(57, 210, 192, 0.08);
+}
+.ig-stats {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.ig-map-section {
+  margin-bottom: 1.75rem;
+}
+.ig-map-section h3 {
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+}
+.ig-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.55rem;
+}
+.ig-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  text-align: left;
+  padding: 0.7rem 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+  min-height: 4.2rem;
+  transition: border-color var(--transition), transform 0.15s ease;
+}
+.ig-tile:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-1px);
+}
+.ig-tile-name {
+  font-size: 0.88rem;
+  line-height: 1.3;
+}
+.ig-tile-m {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.ig-m0 {
+  opacity: 0.75;
+}
+.ig-m1 {
+  border-color: #484f58;
+}
+.ig-m2 {
+  border-color: var(--accent-orange);
+}
+.ig-m3 {
+  border-color: var(--accent-blue);
+}
+.ig-m4 {
+  border-color: var(--accent-cyan);
+}
+.ig-m5 {
+  border-color: var(--accent-green);
+  box-shadow: inset 0 0 0 1px rgba(63, 185, 80, 0.35);
+}
+.ig-drill-head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+.ig-back {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+  flex-shrink: 0;
+}
+.ig-mantra {
+  color: var(--accent-cyan);
+  font-style: italic;
+  margin: 0.25rem 0;
+}
+.ig-meta,
+.ig-muted,
+.ig-hint {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+.ig-game-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+.ig-game-pick button {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+}
+.ig-game-pick button:hover:not(:disabled) {
+  border-color: var(--accent-blue);
+}
+.ig-game-pick button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.ig-when {
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+.ig-when ul {
+  margin: 0.35rem 0 0 1.1rem;
+}
+.ig-card {
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.15rem 1.25rem;
+}
+.ig-primary {
+  background: linear-gradient(135deg, var(--accent-blue), #1f6feb);
+  border: none;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+.ig-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+.ig-actions button:not(.ig-primary),
+.ig-type-tools button {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+}
+.ig-input,
+.ig-editor {
+  width: 100%;
+  margin-top: 0.5rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  resize: vertical;
+}
+.ig-code {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  overflow-x: auto;
+  font-size: 0.82rem;
+  margin: 0.5rem 0;
+}
+.ig-code.buggy {
+  border-color: var(--accent-orange);
+}
+.ig-ok {
+  color: var(--accent-green);
+}
+.ig-bad {
+  color: var(--accent-red);
+}
+.ig-cloze {
+  list-style: decimal;
+  margin: 0.75rem 0 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.ig-cloze .ig-prompt {
+  display: block;
+  margin-bottom: 0.35rem;
+  white-space: pre-wrap;
+  font-size: 0.82rem;
+}
+.ig-cloze input {
+  width: 100%;
+  max-width: 36rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--accent-cyan);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.55rem;
+  font-family: var(--font-mono);
+}
+.ig-scramble {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.ig-scramble li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.ig-scramble li.selected {
+  border-color: var(--accent-cyan);
+}
+.ig-scramble code {
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  flex: 1;
+}
+.ig-sc-btns {
+  display: flex;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.ig-sc-btns button {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.ig-diff {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  max-height: 22rem;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.ig-diff-row {
+  padding: 0.15rem 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+.ig-diff-row.ok {
+  background: rgba(63, 185, 80, 0.08);
+}
+.ig-diff-row.bad {
+  background: rgba(248, 81, 73, 0.1);
+}
+.ig-diff-row.miss {
+  background: rgba(210, 153, 34, 0.1);
+}
+.ig-diff-tag {
+  width: 1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.ig-peek {
+  position: absolute;
+  inset: 0.5rem;
+  background: rgba(13, 17, 23, 0.96);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius);
+  padding: 1rem;
+  overflow: auto;
+  z-index: 5;
+  font-size: 0.8rem;
+}
+.ig-type-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+.ig-toggle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+.ig-free {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+.ig-free label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.ig-free select {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+  min-width: 14rem;
+}
+.ig-workout-banner {
+  margin-bottom: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(88, 166, 255, 0.1);
+  border-left: 3px solid var(--accent-blue);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.ig-done {
+  margin-top: 1rem;
+}
+.ig-reveal {
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+.ig-help-note {
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  margin: 0.25rem 0 1.25rem;
+  padding-left: 0.85rem;
+  border-left: 3px solid var(--accent-cyan);
+}
+.ig-howto {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(57, 210, 192, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.ig-howto strong {
+  color: var(--text-primary);
+}
+.ig-howto a {
+  color: var(--accent-blue);
+}

@@ -68,19 +68,21 @@ HTML (`html/`): static multi-page textbook (~30 catalog pages). Key JS:
 - `js/animations.js` — `AlgoAnimation` + SVG helpers
 - `js/practice-arena.js` + `js/arena-coach.js` — Practice Arena (Pyodide, micro-drills, text coach, deliberate/skeleton/interview modes)
 - `js/algo-memory-data.js` + `js/algo-memory.js` + `js/algo-memory-movies.js` — Memory Lab catalog + **movie per pattern**
+- `js/impl-templates.js` + `js/impl-games.js` — Implementation Memory Games (idiomatic type/scramble/cloze/bug drills); regenerate templates with `python scripts/export_impl_templates.py`
 - `js/nav.js` / `offline-manifest.json` / `sw.js` — nav + flight cache
 
-Health check: `python scripts/scan_course.py` (links, stale counts, movie coverage).
+Health check: `python scripts/scan_course.py` (links, stale counts, movie coverage, impl-game templates).
 
 ## Key Design Decisions
 
 - **Pattern recognition is separate from coding ability.** The trainer tests classification without requiring code. This mirrors interview reality: most failures come from not recognizing the pattern, not from inability to code it once identified.
+- **Idiomatic base before adaptation.** Implementation Games burn the theoretically clean template into long-term memory; Practice Arena trains adjusting that base to the exact problem.
 - **Patterns link to problems.** Each problem in `problems.py` has `tags` that map to pattern IDs in `patterns.py`. Each pattern has `canonical_problems` linking back.
 - **Multiple valid answers.** The trainer accepts `secondary_patterns` as correct (e.g., trapping rain water can be two pointers, monotonic stack, or DP). The runner has special validators for problems like topological sort that have multiple valid outputs.
 
 ## Adding Content
 
-**New algorithm pattern:** Add a `Pattern(...)` to `PATTERNS` in `patterns.py`, a Practice Arena generator in `html/js/practice-arena.js`, a trainer scenario in `trainer.py`, a movie in `html/js/algo-memory-movies.js`, and regenerate `html/js/algo-memory-data.js` (see `scripts/` / `patterns.py` export).
+**New algorithm pattern:** Add a `Pattern(...)` to `PATTERNS` in `patterns.py`, a Practice Arena generator in `html/js/practice-arena.js`, a trainer scenario in `trainer.py`, a movie in `html/js/algo-memory-movies.js`, regenerate `html/js/algo-memory-data.js`, and run `python scripts/export_impl_templates.py` (add a bug card / mantra override in that script if needed).
 
 **New systems pattern:** Add to `ENGINEERING_PATTERNS` in `patterns.py` and a section in `html/engineering_patterns.html`.
 

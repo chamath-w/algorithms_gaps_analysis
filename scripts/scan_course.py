@@ -89,6 +89,18 @@ def main() -> None:
     for pid in sorted(movie_ids - pattern_ids):
         issues.append(f"Orphan movie id: {pid}")
 
+    impl_path = HTML / "js" / "impl-templates.js"
+    if not impl_path.exists():
+        issues.append("Missing html/js/impl-templates.js — run scripts/export_impl_templates.py")
+    else:
+        impl_txt = impl_path.read_text(encoding="utf-8")
+        # crude extract of item ids
+        impl_ids = set(re.findall(r'"id":\s*"([a-z0-9_]+)"', impl_txt))
+        for pid in sorted(pattern_ids - impl_ids):
+            issues.append(f"Missing impl-game template: {pid}")
+        if "games.html" not in html_files:
+            issues.append("Missing games.html")
+
     if issues:
         print(f"\n{len(issues)} issue(s):")
         for i in issues:

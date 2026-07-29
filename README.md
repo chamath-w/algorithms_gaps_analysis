@@ -83,6 +83,7 @@ Useful links once the server is running:
 | Home | http://127.0.0.1:8765/index.html |
 | Full catalog | http://127.0.0.1:8765/catalog.html |
 | Algorithm Memory Lab | http://127.0.0.1:8765/algo_memory.html |
+| Implementation Games | http://127.0.0.1:8765/games.html |
 | Practice Arena | http://127.0.0.1:8765/practice.html |
 | Patterns (21) | http://127.0.0.1:8765/patterns.html |
 | Engineering Patterns | http://127.0.0.1:8765/engineering_patterns.html |
@@ -124,13 +125,15 @@ Cross-machine tip: developing on Windows and flying with a Mac is fine. Copy or 
 | HTML textbook | Full catalog tracks (discrete math → staff) + daily plan |
 | Practice Arena | Pyodide Python, micro-drills, text coach, deliberate streaks |
 | Algorithm Memory Lab | SRS + full catalog skeletons + Play/Next movie per pattern |
+| Implementation Games | Idiomatic template drills (type / scramble / cloze / bug hunt) for 21 patterns + core/eng idioms |
 
 ## Daily workflow
 
 1. **Algorithm Memory Lab** — SRS flashcards, pick a pattern, play its movie, recite the skeleton.
-2. **Practice Arena** — micro-drill → code → **Run tests** (Ctrl/Cmd+Enter). Read the text coach + expected/got diff.
-3. Study a track from the **catalog** (discrete math, theory, architecture, systems, security, staff, etc.).
-4. Optional CLI (stdlib only):
+2. **Implementation Games** — lock the idiomatic base (Daily Workout or one pattern to 5/5).
+3. **Practice Arena** — micro-drill → code → **Run tests** (Ctrl/Cmd+Enter). Adjust the base you just recalled; read the text coach + expected/got diff.
+4. Study a track from the **catalog** (discrete math, theory, architecture, systems, security, staff, etc.).
+5. Optional CLI (stdlib only):
 
 ```bash
 # Windows: python …   |   macOS: python3 …

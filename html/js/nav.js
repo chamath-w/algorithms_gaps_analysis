@@ -17,6 +17,7 @@ function renderNav() {
 
       <div class="nav-section">Interactive Practice</div>
       <a class="nav-link" href="algo_memory.html">Algorithm Memory Lab</a>
+      <a class="nav-link" href="games.html">Implementation Games</a>
       <a class="nav-link" href="practice.html">Practice Arena</a>
       <a class="nav-link" href="decision_tree.html">Decision Tree</a>
 

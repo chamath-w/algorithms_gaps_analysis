@@ -72,11 +72,13 @@ This file captures full project context for continuity across sessions and machi
 4. EE analogies throughout; etymology callouts on many pages
 5. No pip/npm runtime deps for the course itself
 6. Practice Arena: text coach (no speech); optional tiny Web Audio blips
+7. Implementation Games: burn idiomatic bases into LTM before Arena adaptation
 
 ## Daily Recommended Loop
 
 1. Algorithm Memory Lab (SRS + catalog movie + skeleton)
-2. Practice Arena (micro-drill → code → Run → coach/diff)
+2. Implementation Games (idiomatic type / scramble / cloze / bug hunt → mastery 5/5)
+3. Practice Arena (micro-drill → code → Run → coach/diff)
 3. One catalog track lesson
 4. Optional CLI: `--train`, `--drill`, `--quiz`
 

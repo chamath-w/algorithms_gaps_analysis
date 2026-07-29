@@ -6,6 +6,7 @@
     "catalog.html",
     "progress.html",
     "algo_memory.html",
+    "games.html",
     "practice.html",
     "decision_tree.html",
     "mental_models.html",
@@ -41,6 +42,8 @@
     "js/algo-memory-data.js",
     "js/algo-memory-movies.js",
     "js/algo-memory.js",
+    "js/impl-templates.js",
+    "js/impl-games.js",
     "js/offline-pack.js",
     "offline-manifest.json",
     "sw.js"

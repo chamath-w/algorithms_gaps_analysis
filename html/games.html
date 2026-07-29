@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Implementation Memory Games — Offline Course</title>
+    <link rel="stylesheet" href="css/style.css?v=17" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <div class="layout">
+      <aside class="sidebar"></aside>
+      <main class="main-content">
+        <div class="content-wrapper">
+          <h1>Implementation Memory Games</h1>
+          <p>
+            Burn the <strong>idiomatic, theoretically clean implementation</strong>
+            of each pattern into long-term memory. Once that base is automatic,
+            you adjust it for the exact problem — you do not invent under pressure.
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">How this differs from Practice Arena</div>
+            <p>
+              Arena trains <em>adapting</em> a pattern to a novel problem.
+              These games train <em>recalling the perfect base</em> until typing
+              it is muscle memory. Sequence: Memory Lab movie →
+              <strong>these games</strong> → Practice Arena.
+            </p>
+          </div>
+
+          <h2 id="how-to-play">How to play</h2>
+
+          <h3>Choose a mode</h3>
+          <ul>
+            <li>
+              <strong>Mastery Map</strong> — tiles for all 21 patterns plus core
+              sorting / engineering idioms. Color = mastery 0–5. Click a tile,
+              then pick a game from the ladder.
+            </li>
+            <li>
+              <strong>Daily Workout</strong> — auto-picks your 3 weakest templates
+              and runs Cloze → Line order → Type from blank. No choices; just play.
+            </li>
+            <li>
+              <strong>Free Play</strong> — pick any template and any game from the
+              dropdowns, then Start.
+            </li>
+          </ul>
+
+          <h3>Game 1 — Mantra recite</h3>
+          <ol>
+            <li>Read the pattern name (cover the mantra if it was visible).</li>
+            <li>Say the one-sentence idiom aloud, then type it in the box.</li>
+            <li>Click <em>Check</em>. Keyword overlap is enough (you don’t need
+              a perfect quote).</li>
+            <li>Use <em>Show mantra</em> only after you’ve attempted once.</li>
+          </ol>
+          <p class="ig-help-note">
+            Goal: the trigger phrase (“expand right, shrink left…”) fires
+            instantly when you see the pattern name.
+          </p>
+
+          <h3>Game 2 — Cloze (key lines)</h3>
+          <ol>
+            <li>Each prompt is a code line with <code>___</code> where a critical
+              fragment belongs (conditions, mid formula, heap ops, etc.).</li>
+            <li>Type the missing fragment exactly (spacing mostly ignored).</li>
+            <li>Click <em>Grade</em>. You need about 80% of blanks correct.</li>
+            <li>Wrong answers reveal the canonical fragment under the form.</li>
+          </ol>
+          <p class="ig-help-note">
+            Goal: the “dangerous” tokens are automatic — off-by-ones live here.
+          </p>
+
+          <h3>Game 3 — Line order</h3>
+          <ol>
+            <li>You see the idiomatic lines shuffled.</li>
+            <li>Click one line, then click another to swap them; or use ↑ / ↓.</li>
+            <li>Restore the true top-to-bottom sequence of the canonical drill.</li>
+            <li>Click <em>Check order</em>. Only a perfect sequence counts.</li>
+          </ol>
+          <p class="ig-help-note">
+            Goal: muscle memory of <em>what comes before what</em> (mark visited
+            before enqueue, save <code>nxt</code> before rewire, …).
+          </p>
+
+          <h3>Game 4 — Type from blank</h3>
+          <ol>
+            <li>Clear the editor. Recite the mantra once.</li>
+            <li>Type the full idiomatic implementation from memory.
+              Comments/docstrings are optional and ignored in grading.</li>
+            <li>Optional aids: <em>Hint: first lines</em>, <em>Show triggers</em>,
+              or <em>Peek 3s</em> (flashes the canonical code briefly).</li>
+            <li>Click <em>Compare to canonical</em>. Structural match ≥85%
+              passes; ≥98% is needed (with a bug hunt) for mastery 5/5.</li>
+            <li>Read the line diff: ✓ match, ≠ your line, → expected line.</li>
+            <li><em>Reveal + reset</em> shows the answer — then clear and type
+              again without looking.</li>
+          </ol>
+          <p class="ig-help-note">
+            Goal: the clean base is typeable under interview pressure. Arena
+            work is then “tweak this,” not “invent this.”
+          </p>
+
+          <h3>Game 5 — Bug hunt</h3>
+          <ol>
+            <li>Read the <em>buggy</em> near-miss (classic pitfall for that pattern).</li>
+            <li>Find the mistake mentally, then type the corrected idiomatic
+              version in the editor.</li>
+            <li>Click <em>Check fix</em> (≥80% structural match to the fix).</li>
+            <li>Stuck? <em>Show explanation</em> names the pitfall and shows the
+              clean code — then retry from blank next session.</li>
+          </ol>
+          <p class="ig-help-note">
+            Goal: you recognize the failure mode before you ship it.
+          </p>
+
+          <h3>Mastery scoring</h3>
+          <ul>
+            <li>1 — mantra or cloze started</li>
+            <li>2 — cloze solid</li>
+            <li>3 — line order perfect</li>
+            <li>4 — type ≥85% (and ≥98% keeps you at 4 until bug hunt)</li>
+            <li>5 — type ≥98% <em>and</em> a clean bug hunt</li>
+          </ul>
+          <p>
+            Progress is stored in browser <code>localStorage</code> (offline).
+            Failed type drills can drop mastery by one — stay honest.
+          </p>
+
+          <div data-impl-games></div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Daily rule</div>
+            <p>
+              Run <em>Daily Workout</em> (3 weak templates) or lock one pattern
+              to 5/5. Then solve 1–2 problems in the
+              <a href="practice.html">Practice Arena</a> by <em>adjusting</em>
+              the base you just recalled — never starting from a blank mental model.
+            </p>
+          </div>
+
+          <p>
+            <a href="algo_memory.html">Algorithm Memory Lab →</a> ·
+            <a href="patterns.html">Pattern catalog →</a> ·
+            <a href="practice.html">Practice Arena →</a>
+          </p>
+        </div>
+      </main>
+    </div>
+    <script src="js/nav.js"></script>
+    <script src="js/impl-templates.js?v=17"></script>
+    <script src="js/impl-games.js?v=17"></script>
+  </body>
+</html>
