@@ -21,11 +21,11 @@ class AlgoAnimation {
     if (!controls) return;
 
     controls.innerHTML = `
-      <button class="anim-btn" data-action="reset" title="Reset">&#8634; Reset</button>
-      <button class="anim-btn" data-action="prev" title="Previous">&larr; Prev</button>
-      <button class="anim-btn primary" data-action="play" title="Play/Pause">&#9654; Play</button>
-      <button class="anim-btn" data-action="next" title="Next">Next &rarr;</button>
-      <span class="anim-step-info">0 / ${this.steps.length}</span>
+      <button class="anim-btn" data-action="reset" title="Reset" aria-label="Reset animation">&#8634; Reset</button>
+      <button class="anim-btn" data-action="prev" title="Previous" aria-label="Previous step">&larr; Prev</button>
+      <button class="anim-btn primary" data-action="play" title="Play/Pause" aria-label="Play animation">&#9654; Play</button>
+      <button class="anim-btn" data-action="next" title="Next" aria-label="Next step">Next &rarr;</button>
+      <span class="anim-step-info" aria-live="polite">0 / ${this.steps.length}</span>
     `;
 
     controls.addEventListener("click", (e) => {
@@ -60,6 +60,10 @@ class AlgoAnimation {
       this.playBtn.innerHTML = this.playing
         ? "&#9646;&#9646; Pause"
         : "&#9654; Play";
+      this.playBtn.setAttribute(
+        "aria-label",
+        this.playing ? "Pause animation" : "Play animation",
+      );
     }
   }
 

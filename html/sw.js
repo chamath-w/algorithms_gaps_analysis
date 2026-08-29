@@ -1,5 +1,5 @@
 /* Offline course service worker — cache-first for packaged assets. */
-const CACHE = "cs-swe-course-v12";
+const CACHE = "cs-swe-course-v13";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

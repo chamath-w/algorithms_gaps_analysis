@@ -84,6 +84,7 @@ body {
   color: var(--text-primary);
   line-height: 1.7;
   min-height: 100vh;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   touch-action: manipulation;
   -webkit-tap-highlight-color: rgba(232, 168, 56, 0.15);
@@ -218,6 +219,7 @@ body {
   }
   .sidebar.open {
     transform: translateX(0);
+    overscroll-behavior: contain;
   }
   .sidebar-backdrop {
     display: none;
@@ -1305,8 +1307,12 @@ svg .pointer-label {
   outline: none;
 }
 
-.search-box input::placeholder {
-  color: var(--text-muted);
+.search-box input:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+.search-box:focus-within {
+  border-color: var(--signal);
 }
 
 /* ===== INTERACTIVE COURSE (quiz / SRS / practice / tutor) ===== */
