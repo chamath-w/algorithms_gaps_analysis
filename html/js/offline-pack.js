@@ -2,8 +2,18 @@
  * Flight prep: cache all course assets + optionally write a folder to local disk.
  */
 (function () {
-  const CACHE_NAME = "cs-swe-course-v2";
   const READY_KEY = "cs_course_offline_ready_v1";
+
+  function isIOS() {
+    return (
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+    );
+  }
+
+  function originHint() {
+    return location.origin + location.pathname.replace(/[^/]*$/, "");
+  }
 
   function $(sel, root) {
     return (root || document).querySelector(sel);
@@ -46,8 +56,8 @@
     return !!reg;
   }
 
-  async function fetchAndCache(urls, ui) {
-    const cache = await caches.open(CACHE_NAME);
+  async function fetchAndCache(urls, cacheName, ui) {
+    const cache = await caches.open(cacheName);
     let done = 0;
     let bytes = 0;
     const failed = [];
@@ -208,8 +218,9 @@
 
     try {
       const manifest = await loadManifest();
+      const cacheName = manifest.cacheName || "cs-swe-course-v14";
       const urls = allUrls(manifest);
-      addLog(ui, `Manifest: ${urls.length} files to fetch`, "");
+      addLog(ui, `Manifest: ${urls.length} files · cache ${cacheName}`, "");
 
       setProgress(ui, 2, "Registering service worker...");
       try {
@@ -225,7 +236,11 @@
         addLog(ui, "Service worker: " + (err.message || err), "bad");
       }
 
-      const cacheResult = await fetchAndCache(urls, ui);
+      const cacheResult = await fetchAndCache(urls, cacheName, ui);
+
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: "SKIP_WAITING" });
+      }
       let diskResult = null;
 
       if (toDisk) {
@@ -258,9 +273,11 @@
           : "STATUS: INCOMPLETE — see failures below",
         "",
         "Before boarding:",
-        "1. Keep this origin bookmarked (http://127.0.0.1:8765/) OR serve the saved folder.",
-        "2. Prefer repo: python scripts/serve_course.py",
-        "3. If Pyodide files failed: python scripts/vendor_pyodide.py while online, then re-run this.",
+        "1. Re-open this same URL from Safari or your Home Screen shortcut:",
+        "   " + originHint(),
+        "2. On iPhone: Share → Add to Home Screen after caching (best offline persistence).",
+        "3. Local dev alternative: python scripts/serve_course.py",
+        "4. If Pyodide files failed: re-run while online (GitHub Pages bundles vendor/).",
         "",
       ];
       if (cacheResult.failed.length) {
@@ -307,18 +324,22 @@
         ? "<strong>Ready for flight.</strong> Browser cache is loaded" +
           (diskResult
             ? " and a folder copy was written to disk."
-            : ". Use <em>Save pack to disk</em> for a portable folder copy.") +
+            : ". On iPhone, use the same GitHub Pages URL or Home Screen shortcut while offline.") +
+          (isIOS()
+            ? " <em>Tip:</em> Add to Home Screen for reliable offline access in Safari."
+            : "") +
           " A checklist <code>course-offline-ready.txt</code> was downloaded."
         : "<strong>Incomplete.</strong> " +
           cacheResult.failed.length +
-          " file(s) failed. If Pyodide is missing, run <code>python scripts/vendor_pyodide.py</code> then try again.";
+          " file(s) failed. Stay online and tap <em>Cache everything</em> again.";
     } catch (err) {
       setProgress(ui, 0, "Failed");
       addLog(ui, String(err.message || err), "bad");
       ui.result.hidden = false;
       ui.result.className = "quiz-feedback bad";
       ui.result.innerHTML =
-        "<strong>Prepare failed.</strong> Open this page via <code>python scripts/serve_course.py</code> (not file://).";
+        "<strong>Prepare failed.</strong> Open over HTTPS (GitHub Pages) or " +
+        "<code>python scripts/serve_course.py</code> — not <code>file://</code>.";
     } finally {
       ui.btnCache.disabled = false;
       ui.btnDisk.disabled = false;
@@ -361,13 +382,20 @@
         <div class="callout callout-info" style="margin-top:1rem">
           <div class="callout-title">What this does</div>
           <p>
-            <strong>Cache everything</strong> stores all assets in this browser
-            (Cache API + service worker) so
-            <code>http://127.0.0.1:8765/</code> works offline after
+            <strong>Cache everything</strong> stores all pages, scripts, stylesheets,
+            and Pyodide (~15&nbsp;MB) in this browser. Works on
+            <strong>GitHub Pages</strong> and local
             <code>python scripts/serve_course.py</code>.
-            <strong>Save pack to disk</strong> (Chrome/Edge) writes
-            <code>cs-swe-course-offline/</code> into a folder you choose — a
-            portable copy you can verify before boarding.
+          </p>
+          <p>
+            <strong>iPhone:</strong> run this while online on Wi‑Fi (can take a few
+            minutes). Then <strong>Share → Add to Home Screen</strong> and open
+            Practice Arena from that icon offline. Safari may purge cache under storage
+            pressure — re-cache before long trips.
+          </p>
+          <p>
+            <strong>Save pack to disk</strong> (Chrome/Edge desktop only) writes
+            <code>cs-swe-course-offline/</code> to a folder you choose.
           </p>
         </div>
       </div>
@@ -388,12 +416,13 @@
     ui.btnCache.addEventListener("click", () => prepare(ui, { toDisk: false }));
     ui.btnDisk.addEventListener("click", () => prepare(ui, { toDisk: true }));
 
-    if (!window.showDirectoryPicker) {
+    if (!window.showDirectoryPicker || isIOS()) {
+      ui.btnDisk.disabled = true;
       ui.btnDisk.title =
-        "Folder save needs Chrome or Edge. Cache button still works.";
+        "Folder save needs Chrome/Edge on desktop. On iPhone, use Cache everything + Add to Home Screen.";
     }
   }
 
   document.addEventListener("DOMContentLoaded", mount);
-  window.OfflinePack = { prepare: mount, CACHE_NAME };
+  window.OfflinePack = { prepare: mount, isIOS };
 })();

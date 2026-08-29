@@ -1,6 +1,7 @@
 {
   "version": 1,
   "name": "CS/SWE Offline Course Pack",
+  "cacheName": "cs-swe-course-v14",
   "pages": [
     "404.html",
     "index.html",
