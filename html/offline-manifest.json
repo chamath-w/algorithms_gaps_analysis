@@ -7,6 +7,7 @@
     "index.html",
     "catalog.html",
     "progress.html",
+    "analytics.html",
     "algo_memory.html",
     "games.html",
     "practice.html",
@@ -37,6 +38,8 @@
   "assets": [
     "css/style.css",
     "js/nav.js",
+    "js/analytics.js",
+    "js/decision-tree.js",
     "js/animations.js",
     "js/course.js",
     "js/practice-arena.js",
@@ -48,6 +51,7 @@
     "js/impl-templates.js",
     "js/impl-games.js",
     "js/offline-pack.js",
+    "data/site-analytics.json",
     "offline-manifest.json",
     "sw.js"
   ],

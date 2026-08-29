@@ -782,11 +782,13 @@
     const uid = "anim-mem-" + patternId + "-" + Math.random().toString(36).slice(2, 7);
     host.innerHTML = `
       <h4>Movie — burn the loop</h4>
-      <div class="diagram-container" id="${uid}">
+      <div class="diagram-container diagram-layout-stack" id="${uid}">
         <div class="diagram-title">${esc(movie.title)}</div>
-        <svg id="${uid}-svg" width="100%" height="160" viewBox="0 0 560 150"></svg>
-        <div class="anim-description">Press Play or Next.</div>
+        <div class="arena-worked-svg-wrap">
+          <svg id="${uid}-svg" width="100%" height="160" viewBox="0 0 560 150" role="img" aria-label="Pattern animation"></svg>
+        </div>
         <div class="anim-controls"></div>
+        <div class="anim-description">Press Play or Next.</div>
       </div>
     `;
     const svg = host.querySelector(`#${uid}-svg`);

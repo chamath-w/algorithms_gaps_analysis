@@ -2016,6 +2016,142 @@ def _arena_repl_exec(src: str):
 
   /* ---------- Worked-example movies (sync to current problem) ---------- */
 
+  const animUtils = () => window.AlgoAnimUtils || {};
+
+  function parseLinesToVars(lines) {
+    const vars = {};
+    (lines || []).forEach((line) => {
+      const trimmed = String(line || "").trim();
+      if (!trimmed) return;
+      const m = trimmed.match(/^([A-Za-z_][\w]*)\s*[:=]\s*(.+)$/);
+      if (m) vars[m[1]] = m[2].trim();
+    });
+    return vars;
+  }
+
+  function parseNoteToVars(note) {
+    const vars = {};
+    if (!note) return vars;
+    String(note).replace(/([A-Za-z_][\w]*)\s*=\s*(\{[^}]*\}|\[[^\]]*\]|[^,\s;]+)/g, (_, k, v) => {
+      vars[k] = v.trim();
+    });
+    if (Object.keys(vars).length === 0) vars.note = note;
+    return vars;
+  }
+
+  function frameToVars(frame, movie, opts) {
+    opts = opts || {};
+    if (frame && frame.vars) return { ...frame.vars };
+    const vars = {};
+    if (frame && frame.state) {
+      Object.assign(vars, frame.state.pointers || {});
+      Object.assign(vars, parseNoteToVars(frame.state.note));
+    }
+    if (frame && frame.lines) Object.assign(vars, parseLinesToVars(frame.lines));
+    if (frame && frame.description) {
+      Object.assign(vars, (animUtils().extractVarsFromDescription || (() => ({})))(frame.description));
+    }
+    if (opts.initial && movie) {
+      if (movie.initial && movie.initial.pointers) Object.assign(vars, movie.initial.pointers);
+      if (movie.initial && movie.initial.note) Object.assign(vars, parseNoteToVars(movie.initial.note));
+      if (movie.initialLines) Object.assign(vars, parseLinesToVars(movie.initialLines));
+    }
+    return vars;
+  }
+
+  function workedExampleShell(title, subtitle) {
+    return `
+      <h2 id="arena-worked-heading">${escapeHtml(title)}</h2>
+      <p class="text-muted arena-worked-lead">
+        Step through the same sample as test #1 — watch the animation and read the variable history table as each step adds a row.
+      </p>
+      <div class="diagram-container diagram-layout-stack" id="anim-arena-worked">
+        <div class="diagram-title" id="arena-worked-sub">${escapeHtml(subtitle || "")}</div>
+        <div class="arena-worked-svg-wrap">
+          <svg id="svg-arena-worked" width="100%" height="160" viewBox="0 0 560 150" role="img" aria-label="Algorithm animation"></svg>
+        </div>
+        <div class="anim-controls"></div>
+        <div class="anim-description">Press Play or Next.</div>
+      </div>
+      <div class="arena-pattern-movie" id="arena-pattern-movie"></div>
+    `;
+  }
+
+  function mountPatternMovieWithVars(host, patternId) {
+    if (!host) return;
+    const Movies = window.AlgoMemoryMovies;
+    const movie = Movies && Movies.MOVIES && Movies.MOVIES[patternId];
+    if (!movie || typeof AlgoAnimation !== "function") {
+      host.innerHTML = "";
+      host.hidden = true;
+      return;
+    }
+    host.hidden = false;
+    const uid = "anim-arena-pattern-" + patternId;
+    host.innerHTML = `
+      <h3 class="arena-pattern-movie-title">Pattern animation — ${escapeHtml(movie.title)}</h3>
+      <p class="text-muted">Canonical walkthrough for this pattern (independent of the random sample above).</p>
+      <div class="diagram-container diagram-layout-stack" id="${uid}">
+        <div class="diagram-title">${escapeHtml(movie.title)}</div>
+        <div class="arena-worked-svg-wrap">
+          <svg id="${uid}-svg" width="100%" height="160" viewBox="0 0 560 150" role="img" aria-label="Pattern animation"></svg>
+        </div>
+        <div class="anim-controls"></div>
+        <div class="anim-description">Press Play or Next.</div>
+      </div>
+    `;
+    const svg = host.querySelector(`#${uid}-svg`);
+    const built = movie.build(svg);
+    built.onReset();
+    const extract = animUtils().extractVarsFromDescription || (() => ({}));
+    const steps = built.steps.map((step) => ({
+      description: step.description,
+      vars: step.vars ? { ...step.vars } : extract(step.description),
+      apply: step.apply,
+    }));
+    new AlgoAnimation(uid, steps, { onReset: built.onReset });
+  }
+
+  function mountWorkedAnimation(host, movie) {
+    const svg = host.querySelector("#svg-arena-worked");
+    const frames = movie.frames || [];
+    const steps = [];
+
+    if (movie.painter === "array") {
+      const baseVals = movie.values || [];
+      const paint = (state, values) => {
+        paintArrayFrame(svg, values || baseVals, state || {});
+      };
+      paint(movie.initial, baseVals);
+      frames.forEach((f) => {
+        steps.push({
+          description: f.description,
+          vars: frameToVars(f, movie),
+          apply: () => paint(f.state, f.values || baseVals),
+        });
+      });
+      if (typeof AlgoAnimation === "function") {
+        new AlgoAnimation("anim-arena-worked", steps, {
+          onReset: () => paint(movie.initial, baseVals),
+        });
+      }
+    } else {
+      paintTextBoard(svg, movie.initialLines || ["Press Next."]);
+      frames.forEach((f) => {
+        steps.push({
+          description: f.description,
+          vars: frameToVars(f, movie),
+          apply: () => paintTextBoard(svg, f.lines || [f.description]),
+        });
+      });
+      if (typeof AlgoAnimation === "function") {
+        new AlgoAnimation("anim-arena-worked", steps, {
+          onReset: () => paintTextBoard(svg, movie.initialLines || ["Press Next."]),
+        });
+      }
+    }
+  }
+
   function paintArrayFrame(svg, values, opts) {
     if (!svg) return;
     opts = opts || {};
@@ -2950,6 +3086,7 @@ def _arena_repl_exec(src: str):
         },
       ],
       painter: "text",
+      _fallback: true,
     };
   }
 
@@ -2957,53 +3094,9 @@ def _arena_repl_exec(src: str):
     if (!host) return;
     const movie = buildWorkedMovie(problem);
     const title = movieTitle(problem);
-    host.innerHTML = `
-      <h2 id="arena-worked-heading">${escapeHtml(title)}</h2>
-      <p class="text-muted" style="margin-top:-0.5rem">
-        Step through the same sample as test #1 above — burn the algorithm into memory before/while coding.
-      </p>
-      <div class="diagram-container" id="anim-arena-worked">
-        <div class="diagram-title" id="arena-worked-sub">${escapeHtml(movie.subtitle || "")}</div>
-        <svg id="svg-arena-worked" width="100%" height="150" viewBox="0 0 560 150"></svg>
-        <div class="anim-description">Press Play or Next.</div>
-        <div class="anim-controls"></div>
-      </div>
-    `;
-    const svg = host.querySelector("#svg-arena-worked");
-    const frames = movie.frames || [];
-    const steps = [];
-
-    if (movie.painter === "array") {
-      const baseVals = movie.values || [];
-      const paint = (state, values) => {
-        paintArrayFrame(svg, values || baseVals, state || {});
-      };
-      paint(movie.initial, baseVals);
-      frames.forEach((f) => {
-        steps.push({
-          description: f.description,
-          apply: () => paint(f.state, f.values || baseVals),
-        });
-      });
-      if (typeof AlgoAnimation === "function") {
-        new AlgoAnimation("anim-arena-worked", steps, {
-          onReset: () => paint(movie.initial, baseVals),
-        });
-      }
-    } else {
-      paintTextBoard(svg, movie.initialLines || ["Press Next."]);
-      frames.forEach((f) => {
-        steps.push({
-          description: f.description,
-          apply: () => paintTextBoard(svg, f.lines || [f.description]),
-        });
-      });
-      if (typeof AlgoAnimation === "function") {
-        new AlgoAnimation("anim-arena-worked", steps, {
-          onReset: () => paintTextBoard(svg, movie.initialLines || ["Press Next."]),
-        });
-      }
-    }
+    host.innerHTML = workedExampleShell(title, movie.subtitle || "");
+    mountWorkedAnimation(host, movie);
+    mountPatternMovieWithVars(host.querySelector("#arena-pattern-movie"), problem.pattern);
   }
 
   function mountCodingArena(root) {
@@ -3016,7 +3109,7 @@ def _arena_repl_exec(src: str):
     let problem = generateCodingProblem(seed, patternFilter || null);
     let hintIdx = 0;
     let codingUnlocked = false;
-    let skeletonMode = true;
+    let skeletonMode = false;
     let skeletonIdx = 0;
     let deliberateOn = true;
     let soundOn = false;
@@ -3049,7 +3142,7 @@ def _arena_repl_exec(src: str):
                 <input type="checkbox" id="arena-deliberate" checked /> Deliberate
               </label>
               <label class="arena-toggle" title="Ghost skeleton + Tab reveals next model line">
-                <input type="checkbox" id="arena-skeleton" checked /> Skeleton
+                <input type="checkbox" id="arena-skeleton" /> Skeleton
               </label>
               <label class="arena-toggle" title="Soft pass/fail blip (no files)">
                 <input type="checkbox" id="arena-sound" /> Sound
@@ -3149,47 +3242,47 @@ def _arena_repl_exec(src: str):
                   <pre class="arena-ghost" id="arena-ghost" aria-hidden="true"></pre>
                   <textarea id="arena-editor" class="arena-editor" spellcheck="false" autocomplete="off" wrap="soft"></textarea>
                 </div>
-                <div class="arena-inline-actions">
+                <div class="arena-inline-actions arena-solution-inline-actions">
                   <button type="button" class="anim-btn primary" id="arena-run-inline">Run tests</button>
                   <button type="button" class="anim-btn" id="arena-hint-inline">Hint</button>
                   <button type="button" class="anim-btn" id="arena-reset-inline">Reset code</button>
                 </div>
                 <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter run · Tab = next skeleton line (when Skeleton on)</div>
-
-                <section class="arena-repl-card" id="arena-repl-card">
-                  <div class="arena-repl-head">
-                    <div>
-                      <div class="arena-editor-label arena-repl-label">Python REPL</div>
-                      <p class="arena-repl-blurb">Scratchpad — prototype here, then copy into the solution.</p>
-                    </div>
-                    <div class="arena-repl-actions arena-repl-actions-desktop">
-                      <button type="button" class="anim-btn" id="repl-run">Run</button>
-                      <button type="button" class="anim-btn" id="repl-clear">Clear output</button>
-                      <button type="button" class="anim-btn" id="repl-reset-ns">Reset REPL</button>
-                      <button type="button" class="anim-btn primary" id="repl-copy">Copy to solution</button>
-                    </div>
-                  </div>
-                  <div class="arena-repl-split">
-                    <div class="arena-repl-pane arena-repl-pane-editor">
-                      <div class="arena-repl-pane-label">Editor</div>
-                      <div class="code-with-lines">
-                        <pre class="code-gutter" id="repl-gutter" aria-hidden="true">1</pre>
-                        <textarea id="repl-input" class="arena-repl-input" spellcheck="false" autocomplete="off" wrap="soft" placeholder="# try ideas here"></textarea>
-                      </div>
-                      <div class="arena-inline-actions">
-                        <button type="button" class="anim-btn primary" id="repl-run-inline">Run</button>
-                        <button type="button" class="anim-btn" id="repl-copy-inline">Copy to solution</button>
-                      </div>
-                    </div>
-                    <div class="arena-repl-pane arena-repl-pane-term">
-                      <div class="arena-repl-pane-label">Terminal</div>
-                      <pre class="arena-repl-out" id="repl-out">Waiting for Python runtime...</pre>
-                    </div>
-                  </div>
-                  <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter to run · Up/Down history</div>
-                </section>
               </section>
             </div>
+
+            <section class="arena-repl-card" id="arena-repl-card">
+              <div class="arena-repl-head">
+                <div>
+                  <div class="arena-editor-label arena-repl-label">Python REPL</div>
+                  <p class="arena-repl-blurb">Scratchpad — prototype here, then copy into the solution.</p>
+                </div>
+                <div class="arena-repl-actions arena-repl-actions-desktop">
+                  <button type="button" class="anim-btn" id="repl-run">Run</button>
+                  <button type="button" class="anim-btn" id="repl-clear">Clear output</button>
+                  <button type="button" class="anim-btn" id="repl-reset-ns">Reset REPL</button>
+                  <button type="button" class="anim-btn primary" id="repl-copy">Copy to solution</button>
+                </div>
+              </div>
+              <div class="arena-repl-split">
+                <div class="arena-repl-pane arena-repl-pane-editor">
+                  <div class="arena-repl-pane-label">Editor</div>
+                  <div class="code-with-lines">
+                    <pre class="code-gutter" id="repl-gutter" aria-hidden="true">1</pre>
+                    <textarea id="repl-input" class="arena-repl-input" spellcheck="false" autocomplete="off" wrap="soft" placeholder="# try ideas here"></textarea>
+                  </div>
+                  <div class="arena-inline-actions arena-repl-inline-actions">
+                    <button type="button" class="anim-btn primary" id="repl-run-inline">Run</button>
+                    <button type="button" class="anim-btn" id="repl-copy-inline">Copy to solution</button>
+                  </div>
+                </div>
+                <div class="arena-repl-pane arena-repl-pane-term">
+                  <div class="arena-repl-pane-label">Terminal</div>
+                  <pre class="arena-repl-out" id="repl-out">Waiting for Python runtime...</pre>
+                </div>
+              </div>
+              <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter to run · Up/Down history</div>
+            </section>
             <section class="arena-worked" id="arena-worked"></section>
             <section class="arena-compare" id="arena-compare" hidden></section>
             <section class="arena-results" id="arena-results" hidden></section>

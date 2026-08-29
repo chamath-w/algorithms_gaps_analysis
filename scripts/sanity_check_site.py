@@ -25,7 +25,6 @@ PAGES_WITH_ANIM = {
     "algo_memory.html",
     "practice.html",
     "progress.html",
-    "decision_tree.html",
     "mental_models.html",
     "memory_palace.html",
     "readings.html",

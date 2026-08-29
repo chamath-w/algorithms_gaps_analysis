@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#070a0f" />
+    <title>Course Analytics — Signal Trace</title>
+    <link rel="stylesheet" href="css/style.css?v=30" />
+  </head>
+  <body>
+    <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="course-sidebar">
+      <span aria-hidden="true">&#9776;</span>
+    </button>
+    <div class="layout">
+      <aside class="sidebar" id="course-sidebar" aria-label="Course navigation"></aside>
+      <main class="main-content" id="main-content">
+        <div class="content-wrapper">
+          <p class="hero-eyebrow">Usage</p>
+          <h1>Course Analytics</h1>
+          <p class="text-muted">
+            Total views, regional breakdown (from browser timezone), and views over time.
+            Local server visits aggregate into <code>data/site-analytics.json</code>; static
+            hosting shows your browser history plus any committed aggregate file.
+          </p>
+          <div id="analytics-dashboard" class="analytics-dashboard" aria-live="polite">
+            <p class="text-muted">Loading analytics…</p>
+          </div>
+          <div class="footer">
+            <a href="index.html">← Back to course home</a>
+          </div>
+        </div>
+      </main>
+    </div>
+    <button class="scroll-top" aria-label="Scroll to top">
+      <span aria-hidden="true">&uarr;</span>
+    </button>
+    <script src="js/nav.js?v=30"></script>
+    <script src="js/animations.js?v=28"></script>
+  </body>
+</html>

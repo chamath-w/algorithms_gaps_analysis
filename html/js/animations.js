@@ -3,17 +3,242 @@
  * Step-through animations for algorithm visualizations.
  */
 
+const VAR_KEY_ORDER = [
+  "i",
+  "j",
+  "k",
+  "L",
+  "R",
+  "lo",
+  "hi",
+  "mid",
+  "left",
+  "right",
+  "pivot",
+  "min",
+  "max",
+  "sum",
+  "best",
+  "target",
+  "queue",
+  "stack",
+  "seen",
+  "visited",
+  "heap",
+  "array",
+  "note",
+  "step",
+];
+
+function formatVarValue(v) {
+  if (v === undefined) return "—";
+  if (v === null) return "null";
+  if (typeof v === "number" && !Number.isFinite(v)) return String(v);
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v);
+}
+
+function extractVarsFromDescription(desc) {
+  const vars = {};
+  if (!desc) return vars;
+  const set = (k, v) => {
+    const key = k.toLowerCase();
+    if (vars[key] === undefined) vars[key] = v.trim();
+  };
+  desc.replace(
+    /([A-Za-z_][\w]*)\s*=\s*(\{[^}]*\}|\[[^\]]*\]|[^;,→.]+)/g,
+    (_, k, v) => set(k, v),
+  );
+  desc.replace(/Queue:\s*(\[[^\]]*\])/gi, (_, v) => set("queue", v));
+  desc.replace(/Stack:\s*(\[[^\]]*\])/gi, (_, v) => set("stack", v));
+  desc.replace(/Level\s+(\d+)/gi, (_, v) => set("level", v));
+  desc.replace(/Sum\s*=\s*([^;.]+)/i, (_, v) => set("sum", v));
+  desc.replace(/Best\s*=\s*([^;.!]+)/i, (_, v) => set("best", v));
+  if (Object.keys(vars).length === 0) vars.note = desc;
+  return vars;
+}
+
+function extractStepVars(step) {
+  if (!step) return {};
+  if (step.vars && typeof step.vars === "object") return { ...step.vars };
+  const fromDesc = extractVarsFromDescription(step.description);
+  if (Object.keys(fromDesc).length > 1 || (fromDesc.note && !fromDesc.note.includes("Step"))) {
+    return fromDesc;
+  }
+  const inferred = {};
+  [
+    "i",
+    "j",
+    "k",
+    "L",
+    "R",
+    "lo",
+    "hi",
+    "mid",
+    "left",
+    "right",
+    "pivot",
+    "min",
+    "max",
+    "sum",
+    "best",
+    "target",
+    "n",
+    "m",
+  ].forEach((k) => {
+    if (step[k] !== undefined) inferred[k] = step[k];
+  });
+  if (step.a) inferred.array = JSON.stringify(step.a);
+  if (Object.keys(inferred).length) return inferred;
+  return fromDesc;
+}
+
+function sortVarKeys(keys) {
+  const seen = new Set(keys);
+  const ordered = VAR_KEY_ORDER.filter((k) => seen.has(k));
+  keys.forEach((k) => {
+    if (!ordered.includes(k)) ordered.push(k);
+  });
+  return ordered;
+}
+
+function escapeVarHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+class AnimVarHistory {
+  constructor(container) {
+    this.container = container;
+    this.rows = [];
+    this.keyOrder = [];
+    this._ensureHost();
+  }
+
+  _ensureHost() {
+    let host = this.container.querySelector(".anim-var-history");
+    if (host) {
+      this.scrollEl = host.querySelector(".anim-var-history-scroll");
+      this.table = host.querySelector(".anim-var-history-table");
+      this.thead = this.table.querySelector("thead tr");
+      this.tbody = this.table.querySelector("tbody");
+      return;
+    }
+    host = document.createElement("div");
+    host.className = "anim-var-history";
+    const anchor =
+      this.container.querySelector(".anim-description") ||
+      this.container.querySelector(".anim-controls");
+    if (anchor) anchor.insertAdjacentElement("afterend", host);
+    else this.container.appendChild(host);
+    host.innerHTML = `
+      <div class="anim-var-history-label">Variable history</div>
+      <div class="anim-var-history-scroll" tabindex="0" aria-label="Variable values at each step">
+        <table class="anim-var-history-table">
+          <thead><tr><th scope="col">Step</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="anim-var-empty">Press Next to record the first step.</p>
+    `;
+    this.scrollEl = host.querySelector(".anim-var-history-scroll");
+    this.table = host.querySelector(".anim-var-history-table");
+    this.thead = this.table.querySelector("thead tr");
+    this.tbody = this.table.querySelector("tbody");
+    this.emptyEl = host.querySelector(".anim-var-empty");
+  }
+
+  reset() {
+    this.rows = [];
+    this.keyOrder = [];
+    this._render(-1);
+  }
+
+  advanceTo(stepIndex, vars) {
+    while (this.rows.length > stepIndex) this.rows.pop();
+    if (this.rows.length === stepIndex) {
+      this.rows.push({ step: stepIndex + 1, vars: { ...vars } });
+      Object.keys(vars).forEach((k) => {
+        if (!this.keyOrder.includes(k)) this.keyOrder.push(k);
+      });
+    } else if (this.rows.length === stepIndex + 1) {
+      this.rows[stepIndex].vars = { ...vars };
+      Object.keys(vars).forEach((k) => {
+        if (!this.keyOrder.includes(k)) this.keyOrder.push(k);
+      });
+    }
+    this._render(stepIndex);
+  }
+
+  rebuildThrough(steps, lastIndex, extractFn) {
+    this.reset();
+    for (let i = 0; i <= lastIndex; i++) {
+      this.advanceTo(i, extractFn(steps[i]));
+    }
+  }
+
+  _render(activeIndex) {
+    const keys = sortVarKeys(this.keyOrder);
+    const hasRows = this.rows.length > 0;
+    if (this.emptyEl) this.emptyEl.hidden = hasRows;
+    if (this.table) this.table.hidden = !hasRows;
+    if (!hasRows) return;
+
+    this.thead.innerHTML =
+      `<th scope="col">Step</th>` +
+      keys.map((k) => `<th scope="col">${escapeVarHtml(k)}</th>`).join("");
+
+    this.tbody.innerHTML = this.rows
+      .map((row, idx) => {
+        const active = idx === activeIndex;
+        const cells = keys
+          .map((k) => {
+            const val = formatVarValue(row.vars[k]);
+            const prev =
+              idx > 0 ? formatVarValue(this.rows[idx - 1].vars[k]) : null;
+            const changed = prev !== null && prev !== val;
+            return `<td class="${changed ? "anim-var-changed-cell" : ""}">${escapeVarHtml(val)}</td>`;
+          })
+          .join("");
+        return `<tr class="${active ? "anim-var-history-active" : ""}"><th scope="row">${row.step}</th>${cells}</tr>`;
+      })
+      .join("");
+
+    if (this.scrollEl) {
+      requestAnimationFrame(() => {
+        this.scrollEl.scrollTop = this.scrollEl.scrollHeight;
+      });
+    }
+  }
+}
+
 class AlgoAnimation {
   constructor(containerId, steps, options = {}) {
     this.container = document.getElementById(containerId);
     if (!this.container) return;
-    this.steps = steps; // Array of { apply: fn, description: string }
+    this.steps = steps; // Array of { apply: fn, description: string, vars?: object }
     this.currentStep = -1;
     this.playing = false;
     this.speed = options.speed || 800;
     this.timer = null;
     this.onReset = options.onReset || null;
+    this.onStep = options.onStep || null;
+    this.varHistoryEnabled = options.varHistory !== false;
+    if (this.varHistoryEnabled) {
+      this.varHistory = new AnimVarHistory(this.container);
+    }
     this._buildControls();
+  }
+
+  _syncVarHistory(stepIndex) {
+    if (!this.varHistory) return;
+    if (stepIndex < 0) {
+      this.varHistory.reset();
+      return;
+    }
+    this.varHistory.advanceTo(stepIndex, extractStepVars(this.steps[stepIndex]));
   }
 
   _buildControls() {
@@ -74,18 +299,26 @@ class AlgoAnimation {
     }
     this.currentStep++;
     this.steps[this.currentStep].apply();
+    this._syncVarHistory(this.currentStep);
+    if (this.onStep) this.onStep(this.currentStep, this.steps[this.currentStep]);
     this._updateUI();
     return true;
   }
 
   prev() {
     if (this.currentStep <= 0) return;
-    this.reset(false);
+    this.stop();
+    if (this.onReset) this.onReset();
     const target = this.currentStep - 1;
+    this.currentStep = -1;
     for (let i = 0; i <= target; i++) {
       this.currentStep = i;
       this.steps[i].apply();
     }
+    if (this.varHistory) {
+      this.varHistory.rebuildThrough(this.steps, target, extractStepVars);
+    }
+    if (this.onStep) this.onStep(this.currentStep, this.steps[this.currentStep]);
     this._updateUI();
   }
 
@@ -93,6 +326,8 @@ class AlgoAnimation {
     this.stop();
     this.currentStep = -1;
     if (this.onReset) this.onReset();
+    this._syncVarHistory(-1);
+    if (this.onStep) this.onStep(-1, null);
     if (updateUI) this._updateUI();
   }
 
@@ -419,6 +654,13 @@ function initScrollTop() {
 }
 
 /* ===== Init ===== */
+
+window.AlgoAnimUtils = {
+  formatVarValue,
+  extractVarsFromDescription,
+  extractStepVars,
+  AnimVarHistory,
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   initTabs();

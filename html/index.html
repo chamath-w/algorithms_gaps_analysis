@@ -13,7 +13,7 @@
       content="black-translucent"
     />
     <title>Staff SDE Course — Algorithm Gaps Analysis</title>
-    <link rel="stylesheet" href="css/style.css?v=20" />
+    <link rel="stylesheet" href="css/style.css?v=30" />
   </head>
   <body>
     <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="course-sidebar">
@@ -22,8 +22,8 @@
     <div class="layout">
       <aside class="sidebar" id="course-sidebar" aria-label="Course navigation"></aside>
       <main class="main-content" id="main-content">
-        <div class="content-wrapper">
-          <div class="hero">
+        <div class="content-wrapper home-page">
+          <header class="hero home-hero">
             <div class="hero-signal-bg" aria-hidden="true">
               <svg viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
                 <path
@@ -44,278 +44,117 @@
             </div>
 
             <p class="hero-eyebrow">Offline · EE → Staff SDE</p>
-            <h1>Trace the Pattern. Ship the Code.</h1>
+            <h1>Trace the pattern. Ship the code.</h1>
             <p class="tagline">
-              An interactive undergrad-shaped textbook plus staff path —
-              animations, SRS algorithm memory, coached practice, and a local
-              tutor. Built for an EE-background engineer. Works on long flights
-              and on your iPhone.
+              Recognize the move, lock the template, adapt under pressure — an
+              interactive textbook with coached practice, SRS memory, and a full
+              undergrad-plus-staff catalog. Works on your iPhone and on long flights.
             </p>
-
-            <div class="hero-pipeline" role="list" aria-label="Learning path">
-              <div class="pipeline-node" role="listitem">
-                <div class="pipeline-dot">01</div>
-                <div class="pipeline-label">Recognize pattern</div>
-              </div>
-              <div class="pipeline-node" role="listitem">
-                <div class="pipeline-dot">02</div>
-                <div class="pipeline-label">Lock template</div>
-              </div>
-              <div class="pipeline-node" role="listitem">
-                <div class="pipeline-dot">03</div>
-                <div class="pipeline-label">Adapt &amp; code</div>
-              </div>
-              <div class="pipeline-node" role="listitem">
-                <div class="pipeline-dot">04</div>
-                <div class="pipeline-label">Clean solve</div>
-              </div>
-            </div>
 
             <div class="hero-cta-row">
-              <a class="btn-primary" href="practice.html">Start Coached Practice</a>
-              <a class="btn-secondary" href="games.html">Implementation Games</a>
+              <a class="btn-primary" href="practice.html">Start coached practice</a>
+              <a class="btn-secondary" href="catalog.html">Browse full catalog</a>
             </div>
+          </header>
 
-            <div class="hero-stats">
-              <div class="stat animate-in">
-                <div class="stat-number">13</div>
-                <div class="stat-label">Course Tracks</div>
-              </div>
-              <div class="stat animate-in">
-                <div class="stat-number">21</div>
-                <div class="stat-label">Algorithm Patterns</div>
-              </div>
-              <div class="stat animate-in">
-                <div class="stat-number">∞</div>
-                <div class="stat-label">Generated Drills</div>
-              </div>
-              <div class="stat animate-in">
-                <div class="stat-number">72</div>
-                <div class="stat-label">Day Plan</div>
-              </div>
+          <section class="home-loop" aria-labelledby="home-loop-heading">
+            <div class="home-section-head">
+              <h2 id="home-loop-heading">Daily practice loop</h2>
+              <p class="home-section-lead">
+                Four tools in order — the same sequence the nav sidebar uses.
+              </p>
             </div>
-          </div>
+            <ol class="home-loop-steps">
+              <li class="home-loop-step">
+                <a href="decision_tree.html" class="home-loop-card">
+                  <span class="home-loop-phase">Classify</span>
+                  <span class="home-loop-title">Decision Tree</span>
+                  <span class="home-loop-desc">Given the problem statement, which pattern applies?</span>
+                </a>
+              </li>
+              <li class="home-loop-step">
+                <a href="algo_memory.html" class="home-loop-card">
+                  <span class="home-loop-phase">Memorize</span>
+                  <span class="home-loop-title">Memory Lab</span>
+                  <span class="home-loop-desc">SRS flashcards and step-through movies for all 21 patterns.</span>
+                </a>
+              </li>
+              <li class="home-loop-step">
+                <a href="games.html" class="home-loop-card">
+                  <span class="home-loop-phase">Burn template</span>
+                  <span class="home-loop-title">Implementation Games</span>
+                  <span class="home-loop-desc">Type, scramble, and bug-hunt idiomatic Python templates.</span>
+                </a>
+              </li>
+              <li class="home-loop-step">
+                <a href="practice.html" class="home-loop-card home-loop-card-primary">
+                  <span class="home-loop-phase">Adapt &amp; code</span>
+                  <span class="home-loop-title">Practice Arena</span>
+                  <span class="home-loop-desc">Coached session: plan gate, in-browser Python, 2 clean solves per pattern.</span>
+                </a>
+              </li>
+            </ol>
+          </section>
 
-          <div class="callout callout-success">
-            <div class="callout-title">Start here</div>
-            <p>
-              Open the <a href="catalog.html">Full Catalog</a>, then the
-              <a href="algo_memory.html">Algorithm Memory Lab</a> (SRS +
-              movies), lock templates in
-              <a href="games.html">Implementation Games</a>, and adapt them in
-              <a href="practice.html">Practice Arena</a> or
-              <code>python main.py --drill</code>.
-            </p>
-            <p>
-              <strong>On iPhone:</strong>
-              <a href="practice.html">Practice Arena</a> works in Safari over
-              HTTPS — use
-              <em>Share → Add to Home Screen</em> for quick access.
-            </p>
-          </div>
+          <section class="home-mastery" aria-labelledby="home-mastery-heading">
+            <h2 id="home-mastery-heading">How mastery layers stack</h2>
+            <div class="home-mastery-grid">
+              <article class="home-mastery-card">
+                <h3>Recognition</h3>
+                <p>Classify before you code — decision tree plus <code>python main.py --train</code>.</p>
+              </article>
+              <article class="home-mastery-card">
+                <h3>Implementation</h3>
+                <p>Lock idiomatic templates via Memory Lab and Implementation Games.</p>
+              </article>
+              <article class="home-mastery-card">
+                <h3>Adaptation</h3>
+                <p>Practice Arena and CLI drills (<code>--drill</code>) under coaching pressure.</p>
+              </article>
+            </div>
+          </section>
+
+          <section class="home-catalog-teaser" aria-labelledby="home-catalog-heading">
+            <div class="home-section-head">
+              <h2 id="home-catalog-heading">Reference library</h2>
+              <p class="home-section-lead">
+                Textbook tracks for theory, systems, and staff skills — one catalog, no duplicate nav.
+              </p>
+            </div>
+            <div class="home-catalog-chips">
+              <a class="home-chip" href="patterns.html">21 Patterns</a>
+              <a class="home-chip" href="systems_design.html">Systems Design</a>
+              <a class="home-chip" href="mental_models.html">Mental Models</a>
+              <a class="home-chip" href="staff_level.html">Staff Skills</a>
+              <a class="home-chip" href="three_month_plan.html">72-Day Plan</a>
+              <a class="home-chip home-chip-more" href="catalog.html">All 13 tracks →</a>
+            </div>
+          </section>
 
           <div data-flight-prep></div>
 
-          <h2>Course Modules</h2>
+          <details class="home-cli">
+            <summary>CLI quick reference</summary>
+            <pre><code><span class="cm"># Practice &amp; progress</span>
+python main.py --drill --pattern bfs
+python main.py --train
+python main.py --progress
 
-          <div class="card-grid">
-            <a
-              href="catalog.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon cyan">&#9776;</div>
-                <div class="card-title">Full Catalog</div>
-              </div>
-              <div class="card-desc">
-                Undergrad-shaped navigator: discrete math, theory, architecture,
-                compilers, security, plus the staff track.
-              </div>
-            </a>
-
-            <a
-              href="algo_memory.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon purple">&#9733;</div>
-                <div class="card-title">Algorithm Memory Lab</div>
-              </div>
-              <div class="card-desc">
-                Spaced-repetition flashcards, skeletons, and animated movies —
-                built for algorithms that refuse to stick.
-              </div>
-            </a>
-
-            <a
-              href="games.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon orange">&#9823;</div>
-                <div class="card-title">Implementation Games</div>
-              </div>
-              <div class="card-desc">
-                Type, scramble, cloze, and bug-hunt drills for all 21 patterns —
-                burn idiomatic templates into long-term memory.
-              </div>
-            </a>
-
-            <a
-              href="practice.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon green">&#9881;</div>
-                <div class="card-title">Practice Arena</div>
-              </div>
-              <div class="card-desc">
-                Coached session: plan gate, in-browser Python, escalating hints,
-                and a 2-clean-solves mastery bar per pattern.
-              </div>
-            </a>
-
-            <a
-              href="patterns.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon blue">&#9670;</div>
-                <div class="card-title">Algorithm Patterns</div>
-              </div>
-              <div class="card-desc">
-                All 21 patterns with recognition cues, templates, complexity,
-                and canonical problems.
-              </div>
-            </a>
-
-            <a
-              href="decision_tree.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon pink">&#9672;</div>
-                <div class="card-title">Decision Tree</div>
-              </div>
-              <div class="card-desc">
-                Interactive flowchart: given a problem description, which pattern
-                applies?
-              </div>
-            </a>
-
-            <a
-              href="mental_models.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon purple">&#9889;</div>
-                <div class="card-title">Mental Models</div>
-              </div>
-              <div class="card-desc">
-                Six shifts from EE to SDE thinking — deterministic vs eventual,
-                composition, failure as normal.
-              </div>
-            </a>
-
-            <a
-              href="systems_design.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon cyan">&#9632;</div>
-                <div class="card-title">Systems Design</div>
-              </div>
-              <div class="card-desc">
-                Building blocks, CAP, consistency, nine practice problems from
-                beginner to staff level.
-              </div>
-            </a>
-
-            <a
-              href="staff_level.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon orange">&#9733;</div>
-                <div class="card-title">Staff-Level Skills</div>
-              </div>
-              <div class="card-desc">
-                RFCs, technical decisions, cross-team influence, mentoring,
-                observability, incident response.
-              </div>
-            </a>
-
-            <a
-              href="three_month_plan.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon green">&#128197;</div>
-                <div class="card-title">3-Month Plan</div>
-              </div>
-              <div class="card-desc">
-                Week-by-week study plan with two capstone projects and
-                milestones.
-              </div>
-            </a>
-          </div>
-
-          <h2>How This Course Works</h2>
-
-          <div class="callout callout-info">
-            <div class="callout-title">Three layers of mastery</div>
-            <p>
-              <strong>1. Pattern recognition</strong> — classify problems without
-              coding (<a href="decision_tree.html">decision tree</a>,
-              <code>python main.py --train</code>).
-            </p>
-            <p>
-              <strong>2. Implementation memory</strong> — burn idiomatic
-              templates (<a href="games.html">Implementation Games</a>,
-              <a href="algo_memory.html">Memory Lab</a>).
-            </p>
-            <p>
-              <strong>3. Adaptation under pressure</strong> — coached coding in
-              <a href="practice.html">Practice Arena</a> or CLI drills
-              (<code>python main.py --drill</code>).
-            </p>
-          </div>
-
-          <h2>CLI Quick Reference</h2>
-
-          <pre><code><span class="cm"># Offline course</span>
-python main.py --catalog --verbose             <span class="cm"># Full track catalog</span>
-python main.py --quiz --topic dsa              <span class="cm"># Quiz + tutor on miss</span>
-python main.py --drill --pattern bfs           <span class="cm"># Generate a problem</span>
-python main.py --drill-check gen_bfs_123       <span class="cm"># Grade it</span>
-python main.py --tutor --topic dp --wrong "..." --right "..."
-python main.py --progress                      <span class="cm"># SRS / lesson progress</span>
-
-<span class="cm"># Pattern study</span>
-python main.py --patterns                      <span class="cm"># All 21 patterns</span>
-python main.py --pattern sliding_window        <span class="cm"># Deep dive</span>
-python main.py --decision-tree                 <span class="cm"># Selection flowchart</span>
-python main.py --train                         <span class="cm"># Classification trainer</span>
-
-<span class="cm"># Coding assessment bank</span>
-python main.py --list                          <span class="cm"># List all problems</span>
-python main.py --generate                      <span class="cm"># Create templates</span>
-python main.py --run dp_01                     <span class="cm"># Test one solution</span>
-python main.py --report                        <span class="cm"># Full gap analysis</span></code></pre>
+<span class="cm"># Catalog &amp; assessment</span>
+python main.py --catalog --verbose
+python main.py --report</code></pre>
+          </details>
 
           <div class="footer">
-            Offline CS/SWE Course &mdash; Python 3.12+ stdlib + static HTML. No
-            network required.
+            Offline CS/SWE course — Python 3.12+ stdlib + static HTML.
+            <div id="analytics-footer" class="analytics-footer-wrap" aria-live="polite"></div>
+            <p class="home-footer-links">
+              <a href="analytics.html">Analytics</a>
+              ·
+              <a href="progress.html">Progress</a>
+              ·
+              <a href="practice.html">Practice Arena</a>
+            </p>
           </div>
         </div>
       </main>
@@ -324,8 +163,8 @@ python main.py --report                        <span class="cm"># Full gap analy
     <button class="scroll-top" aria-label="Scroll to top">
       <span aria-hidden="true">&uarr;</span>
     </button>
-    <script src="js/nav.js?v=20"></script>
-    <script src="js/animations.js?v=20"></script>
+    <script src="js/nav.js?v=30"></script>
+    <script src="js/animations.js?v=28"></script>
     <script src="js/offline-pack.js"></script>
   </body>
 </html>
