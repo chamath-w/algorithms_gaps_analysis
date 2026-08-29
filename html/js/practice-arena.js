@@ -3115,39 +3115,6 @@ def _arena_repl_exec(src: str):
             <pre class="arena-model-answer-code" id="arena-model-answer-code"></pre>
           </div>
 
-          <section class="arena-repl-card" id="arena-repl-card">
-            <div class="arena-repl-head">
-              <div>
-                <div class="arena-editor-label" style="border:none;padding:0">Python REPL</div>
-                <p class="arena-repl-blurb">Scratchpad — prototype here, then copy into the solution.</p>
-              </div>
-              <div class="arena-repl-actions">
-                <button type="button" class="anim-btn" id="repl-run">Run</button>
-                <button type="button" class="anim-btn" id="repl-clear">Clear output</button>
-                <button type="button" class="anim-btn" id="repl-reset-ns">Reset REPL</button>
-                <button type="button" class="anim-btn primary" id="repl-copy">Copy to solution</button>
-              </div>
-            </div>
-            <div class="arena-repl-split">
-              <div class="arena-repl-pane arena-repl-pane-editor">
-                <div class="arena-repl-pane-label">Editor</div>
-                <div class="code-with-lines">
-                  <pre class="code-gutter" id="repl-gutter" aria-hidden="true">1</pre>
-                  <textarea id="repl-input" class="arena-repl-input" spellcheck="false" autocomplete="off" wrap="soft" placeholder="# try ideas here"></textarea>
-                </div>
-                <div class="arena-inline-actions">
-                  <button type="button" class="anim-btn primary" id="repl-run-inline">Run</button>
-                  <button type="button" class="anim-btn" id="repl-copy-inline">Copy to solution</button>
-                </div>
-              </div>
-              <div class="arena-repl-pane arena-repl-pane-term">
-                <div class="arena-repl-pane-label">Terminal</div>
-                <pre class="arena-repl-out" id="repl-out">Waiting for Python runtime...</pre>
-              </div>
-            </div>
-            <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter to run · Up/Down history</div>
-          </section>
-
           <aside class="arena-coach" id="arena-coach" aria-label="Text coach">
             <div class="arena-coach-head">
               <strong>Coach</strong>
@@ -3188,6 +3155,39 @@ def _arena_repl_exec(src: str):
                   <button type="button" class="anim-btn" id="arena-reset-inline">Reset code</button>
                 </div>
                 <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter run · Tab = next skeleton line (when Skeleton on)</div>
+
+                <section class="arena-repl-card" id="arena-repl-card">
+                  <div class="arena-repl-head">
+                    <div>
+                      <div class="arena-editor-label arena-repl-label">Python REPL</div>
+                      <p class="arena-repl-blurb">Scratchpad — prototype here, then copy into the solution.</p>
+                    </div>
+                    <div class="arena-repl-actions arena-repl-actions-desktop">
+                      <button type="button" class="anim-btn" id="repl-run">Run</button>
+                      <button type="button" class="anim-btn" id="repl-clear">Clear output</button>
+                      <button type="button" class="anim-btn" id="repl-reset-ns">Reset REPL</button>
+                      <button type="button" class="anim-btn primary" id="repl-copy">Copy to solution</button>
+                    </div>
+                  </div>
+                  <div class="arena-repl-split">
+                    <div class="arena-repl-pane arena-repl-pane-editor">
+                      <div class="arena-repl-pane-label">Editor</div>
+                      <div class="code-with-lines">
+                        <pre class="code-gutter" id="repl-gutter" aria-hidden="true">1</pre>
+                        <textarea id="repl-input" class="arena-repl-input" spellcheck="false" autocomplete="off" wrap="soft" placeholder="# try ideas here"></textarea>
+                      </div>
+                      <div class="arena-inline-actions">
+                        <button type="button" class="anim-btn primary" id="repl-run-inline">Run</button>
+                        <button type="button" class="anim-btn" id="repl-copy-inline">Copy to solution</button>
+                      </div>
+                    </div>
+                    <div class="arena-repl-pane arena-repl-pane-term">
+                      <div class="arena-repl-pane-label">Terminal</div>
+                      <pre class="arena-repl-out" id="repl-out">Waiting for Python runtime...</pre>
+                    </div>
+                  </div>
+                  <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter to run · Up/Down history</div>
+                </section>
               </section>
             </div>
             <section class="arena-worked" id="arena-worked"></section>
