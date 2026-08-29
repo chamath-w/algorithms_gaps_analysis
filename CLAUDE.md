@@ -45,7 +45,7 @@ python scripts/serve_course.py          # http://127.0.0.1:8765/
 python scripts/vendor_pyodide.py        # once, for offline Pyodide under html/vendor/
 ```
 
-Practice Arena (`/practice.html`) runs full CPython in the browser via Pyodide — write Python, Run tests, tutor on failure.
+Practice Arena (`/practice.html`) runs full CPython in the browser via Pyodide. It opens as a **coached session** by default: puzzle → plan gate (approach + time/space complexity) → code → gap diagnosis → escalating coaching (diagnose-yourself → hint → micro-lesson → guided repair), repeating until each target pattern reaches **2 clean solves in a row** (first Run passes, no hints or reveals). Uncheck *Coached* in the toolbar for free play.
 
 ## Architecture
 
@@ -67,6 +67,7 @@ HTML (`html/`): static multi-page textbook (~30 catalog pages). Key JS:
 - `js/course.js` — quizzes, SRS flashcards, browser progress (`localStorage`)
 - `js/animations.js` — `AlgoAnimation` + SVG helpers
 - `js/practice-arena.js` + `js/arena-coach.js` — Practice Arena (Pyodide, micro-drills, text coach, deliberate/skeleton/interview modes)
+- `js/arena-session.js` — **Coached session** layered on the Arena: pattern targets, Socratic plan gate (approach + complexity before the editor unlocks), 4-level escalating coaching, clean-solve mastery bar, gap report. Per-pattern teaching content lives in its `KB` table.
 - `js/algo-memory-data.js` + `js/algo-memory.js` + `js/algo-memory-movies.js` — Memory Lab catalog + **movie per pattern**
 - `js/impl-templates.js` + `js/impl-games.js` — Implementation Memory Games (idiomatic type/scramble/cloze/bug drills); regenerate templates with `python scripts/export_impl_templates.py`
 - `js/nav.js` / `offline-manifest.json` / `sw.js` — nav + flight cache
@@ -77,12 +78,13 @@ Health check: `python scripts/scan_course.py` (links, stale counts, movie covera
 
 - **Pattern recognition is separate from coding ability.** The trainer tests classification without requiring code. This mirrors interview reality: most failures come from not recognizing the pattern, not from inability to code it once identified.
 - **Idiomatic base before adaptation.** Implementation Games burn the theoretically clean template into long-term memory; Practice Arena trains adjusting that base to the exact problem.
+- **Coaching escalates, it does not lead.** The first failed attempt gets a question, not an answer — finding your own bug is the skill. Hints, micro-lessons, then the model answer only arrive as attempts stack up, and any aid used disqualifies the solve from the clean-solve bar.
 - **Patterns link to problems.** Each problem in `problems.py` has `tags` that map to pattern IDs in `patterns.py`. Each pattern has `canonical_problems` linking back.
 - **Multiple valid answers.** The trainer accepts `secondary_patterns` as correct (e.g., trapping rain water can be two pointers, monotonic stack, or DP). The runner has special validators for problems like topological sort that have multiple valid outputs.
 
 ## Adding Content
 
-**New algorithm pattern:** Add a `Pattern(...)` to `PATTERNS` in `patterns.py`, a Practice Arena generator in `html/js/practice-arena.js`, a trainer scenario in `trainer.py`, a movie in `html/js/algo-memory-movies.js`, regenerate `html/js/algo-memory-data.js`, and run `python scripts/export_impl_templates.py` (add a bug card / mantra override in that script if needed).
+**New algorithm pattern:** Add a `Pattern(...)` to `PATTERNS` in `patterns.py`, a Practice Arena generator in `html/js/practice-arena.js`, a trainer scenario in `trainer.py`, a movie in `html/js/algo-memory-movies.js`, a `KB` entry in `html/js/arena-session.js` (plan, keywords, invariant, probe, lesson, time/space + distractors), regenerate `html/js/algo-memory-data.js`, and run `python scripts/export_impl_templates.py` (add a bug card / mantra override in that script if needed).
 
 **New systems pattern:** Add to `ENGINEERING_PATTERNS` in `patterns.py` and a section in `html/engineering_patterns.html`.
 

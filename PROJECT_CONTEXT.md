@@ -73,12 +73,13 @@ This file captures full project context for continuity across sessions and machi
 5. No pip/npm runtime deps for the course itself
 6. Practice Arena: text coach (no speech); optional tiny Web Audio blips
 7. Implementation Games: burn idiomatic bases into LTM before Arena adaptation
+8. Coached session: escalate coaching (question → hint → lesson → repair); any aid used disqualifies a clean solve
 
 ## Daily Recommended Loop
 
 1. Algorithm Memory Lab (SRS + catalog movie + skeleton)
 2. Implementation Games (idiomatic type / scramble / cloze / bug hunt → mastery 5/5)
-3. Practice Arena (micro-drill → code → Run → coach/diff)
+3. Practice Arena — coached session (plan gate → code → Run → gap diagnosis → escalating coaching → clean-solve bar → report)
 3. One catalog track lesson
 4. Optional CLI: `--train`, `--drill`, `--quiz`
 

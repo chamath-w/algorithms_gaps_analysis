@@ -2701,3 +2701,398 @@ svg .pointer-label {
 .ig-howto a {
   color: var(--accent-blue);
 }
+
+/* ===== Coached Session (Practice Arena) ===== */
+.sess-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-cyan);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 1.1rem;
+  margin: 1rem;
+}
+.sess-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.sess-title {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.sess-title code {
+  color: var(--accent-cyan);
+}
+.sess-sub {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  margin-top: 0.15rem;
+}
+.sess-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.sess-size {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+.sess-size select {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.3rem 0.45rem;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.sess-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.75rem;
+}
+.sess-chip {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+}
+.sess-chip b {
+  color: var(--text-primary);
+}
+.sess-chip.active {
+  border-color: var(--accent-cyan);
+  color: var(--text-primary);
+}
+.sess-chip.done {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+.sess-chip.done b {
+  color: var(--accent-green);
+}
+.sess-bar {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* --- plan gate --- */
+.sess-gate {
+  margin: 1rem;
+}
+.sess-gate-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent-purple);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem 1.25rem;
+}
+.sess-gate-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-purple);
+  border: 1px solid var(--accent-purple);
+  border-radius: 999px;
+  padding: 0.12rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.sess-field {
+  display: block;
+  margin: 1rem 0 0.25rem;
+}
+.sess-field > span {
+  display: block;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 0.4rem;
+}
+.sess-field textarea {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.7rem;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+.sess-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.sess-choice {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.83rem;
+}
+.sess-choice:hover {
+  border-color: var(--accent-blue);
+}
+.sess-choice.picked {
+  border-color: var(--accent-blue);
+  background: rgba(88, 166, 255, 0.12);
+}
+.sess-choice.ok {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+.sess-choice.bad {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+.sess-gate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.sess-plan-fb {
+  margin-top: 1rem;
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+}
+.sess-plan-fb.good {
+  border-color: var(--accent-green);
+  background: rgba(63, 185, 80, 0.07);
+}
+.sess-plan-fb.warn {
+  border-color: var(--accent-orange);
+  background: rgba(210, 153, 34, 0.07);
+}
+.sess-plan-verdict {
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+.sess-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 0.85rem;
+}
+.sess-plan-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+.sess-plan-steps {
+  margin: 0 0 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.sess-invariant {
+  color: var(--accent-cyan);
+  font-size: 0.9rem;
+  border-left: 3px solid var(--accent-cyan);
+  padding-left: 0.7rem;
+  margin: 0.4rem 0 0.8rem;
+}
+.sess-tick {
+  color: var(--accent-green);
+  font-size: 0.82rem;
+  margin-left: 0.4rem;
+}
+
+/* --- escalating teach panel --- */
+.sess-teach-slot {
+  margin-top: 1rem;
+}
+.sess-teach {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent-blue);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  padding: 1rem 1.15rem 1.15rem;
+}
+.sess-teach.sess-level-1 {
+  border-left-color: var(--accent-cyan);
+}
+.sess-teach.sess-level-2 {
+  border-left-color: var(--accent-blue);
+}
+.sess-teach.sess-level-3 {
+  border-left-color: var(--accent-orange);
+}
+.sess-teach.sess-level-4 {
+  border-left-color: var(--accent-red);
+}
+.sess-teach-badge {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.sess-teach h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1.02rem;
+}
+.sess-teach-body {
+  margin: 0 0 0.6rem 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+.sess-teach-body li {
+  margin-bottom: 0.3rem;
+}
+.sess-teach-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0.5rem 0 0.3rem;
+}
+
+/* --- session report --- */
+.sess-report-slot {
+  margin: 1rem;
+}
+.sess-report {
+  background: var(--bg-secondary);
+  border: 1px solid var(--accent-cyan);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.25rem;
+}
+.sess-report h3 {
+  margin: 0 0 0.85rem;
+}
+.sess-report-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.sess-report-stats div {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.7rem;
+  text-align: center;
+}
+.sess-report-stats b {
+  display: block;
+  font-size: 1.35rem;
+  color: var(--accent-cyan);
+  font-family: var(--font-mono);
+}
+.sess-report-stats span {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+.sess-report-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0.85rem 0 0.35rem;
+}
+.sess-gap-list {
+  margin: 0 0 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+/* ===== Mobile / iPhone — Practice Arena priority ===== */
+@media (max-width: 768px) {
+  .arena-page .content-wrapper {
+    padding: 1.25rem 0.85rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .arena-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.75rem;
+  }
+
+  .arena-toolbar-actions {
+    gap: 0.45rem;
+  }
+
+  .arena-toolbar-actions .anim-btn,
+  .arena-micro-choice,
+  .sess-choice,
+  .sess-panel .anim-btn,
+  .ig-primary {
+    min-height: 44px;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .arena-editor,
+  .arena-repl-input,
+  .ig-editor,
+  .ig-input,
+  .sess-field textarea,
+  .ig-cloze input {
+    font-size: 16px; /* prevents iOS Safari zoom-on-focus */
+  }
+
+  .arena-editor {
+    min-height: 12rem;
+  }
+
+  .arena-coach {
+    margin: 0.75rem;
+    max-height: none;
+  }
+
+  .arena-coach-body {
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+  .sess-panel,
+  .sess-gate,
+  .sess-report-slot {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .arena-modes-help .callout {
+    font-size: 0.88rem;
+  }
+
+  .arena-pattern-label select {
+    max-width: 100%;
+  }
+
+  #arena-run.primary,
+  #arena-run.anim-btn.primary {
+    flex: 1 1 100%;
+    font-weight: 700;
+  }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+  .arena-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .arena-editor {
+    min-height: 8rem;
+  }
+}

@@ -2,9 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Practice Arena — In-Browser Python</title>
-    <link rel="stylesheet" href="css/style.css?v=13" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Practice Arena — Coached Session</title>
+    <link rel="stylesheet" href="css/style.css?v=19" />
   </head>
   <body>
     <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
@@ -14,32 +17,95 @@
         <div class="content-wrapper arena-page">
           <h1>Practice Arena</h1>
           <p>
-            Visual + do-first drills: micro-quiz → code → run → diff feedback +
-            model trace, with a text coach under the REPL. Full CPython in the
-            browser (Pyodide). No network after vendoring.
+            A coached session, not a problem dump. The system hands you a puzzle,
+            makes you commit to a plan, reviews your attempt, and teaches the
+            specific gap it finds — escalating until you clear the bar. Full
+            CPython in the browser (Pyodide). No network after vendoring.
           </p>
 
           <div class="callout callout-success">
-            <div class="callout-title">How to use</div>
+            <div class="callout-title">The coached loop</div>
+            <ol>
+              <li>
+                <strong>Start a session</strong> — it picks your weakest patterns
+                as targets.
+              </li>
+              <li>
+                <strong>Micro-drill</strong> — one question to confirm you know
+                the move for this pattern.
+              </li>
+              <li>
+                <strong>Plan gate</strong> — write your approach and commit to
+                time/space complexity <em>before</em> the editor unlocks. You
+                then see the canonical plan and the invariant.
+              </li>
+              <li>
+                <strong>Code and Run</strong> — the coach diffs your output and
+                classifies the gap.
+              </li>
+              <li>
+                <strong>Escalating coaching</strong> on repeat failures:
+                diagnose-it-yourself → targeted hint → micro-lesson →
+                guided repair.
+              </li>
+              <li>
+                <strong>Repeat until satisfactory</strong> — a pattern clears at
+                <strong>2 clean solves in a row</strong> (first Run passes, no
+                hints, no reveals). Then the session moves to the next target and
+                ends with a gap report.
+              </li>
+            </ol>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Coached vs free play</div>
             <p>
-              1) Answer the <strong>micro-drill</strong> (unlocks editor) →
-              2) Code (Skeleton + Tab for next model line) →
-              3) <strong>Run tests</strong> → read the coach + expected/got diff →
-              4) Replay model trace if you miss. Deliberate mode keeps a pattern
-              until 3 correct in a row.
+              <strong>Coached</strong> is on by default. Uncheck it in the toolbar
+              for free play: pick any pattern, no plan gate, no session bar — the
+              old drill-and-diff behaviour with Deliberate, Skeleton and Interview
+              modes intact.
             </p>
           </div>
 
           <div class="callout callout-info">
-            <div class="callout-title">How to open (WASM needs a local server)</div>
+            <div class="callout-title">iPhone / mobile</div>
             <p>
-              Do not open this file via <code>file://</code>. From the repo root:
+              Works in <strong>Safari</strong> over HTTPS (GitHub Pages). First
+              Python load can take 1–2 minutes on cellular — wait for
+              <em>Python ready</em> before coding. Use landscape for the editor
+              if the keyboard feels cramped. Progress saves in your browser
+              (<code>localStorage</code>).
+            </p>
+            <p>
+              Tip: Share → <strong>Add to Home Screen</strong> for one-tap access
+              to coached practice.
+            </p>
+          </div>
+
+          <div class="callout callout-info">
+            <div class="callout-title">Online (GitHub Pages) vs local server</div>
+            <p>
+              This site is published at
+              <a href="https://chamath-w.github.io/algorithms_gaps_analysis/practice.html"
+                >GitHub Pages</a
+              >. Pyodide loads from the bundled vendor pack (or CDN fallback).
+              For offline flight mode, use <strong>Prepare for flight</strong> on
+              the home page while online, or run
+              <code>python scripts/serve_course.py</code> locally.
+            </p>
+          </div>
+
+          <div class="callout callout-info callout-legacy-local">
+            <div class="callout-title">Local dev server (optional)</div>
+            <p>
+              Do not open via <code>file://</code>. From the repo root:
             </p>
             <pre><code>python scripts/serve_course.py
-# opens http://127.0.0.1:8765/practice.html</code></pre>
+# -> http://127.0.0.1:8765/practice.html</code></pre>
             <p>
-              Offline: <code>python scripts/vendor_pyodide.py</code> once (if
-              <code>html/vendor/pyodide/</code> is missing).
+              Offline vendor once:
+              <code>python scripts/vendor_pyodide.py</code> if
+              <code>html/vendor/pyodide/</code> is missing.
             </p>
           </div>
 
@@ -50,6 +116,7 @@
 
           <p>
             <a href="algo_memory.html">Algorithm Memory Lab</a> ·
+            <a href="games.html">Implementation Games</a> ·
             <a href="progress.html">Progress</a> ·
             <a href="catalog.html">Catalog</a>
           </p>
@@ -59,7 +126,8 @@
     <script src="js/nav.js"></script>
     <script src="js/animations.js"></script>
     <script src="js/course.js"></script>
-    <script src="js/arena-coach.js?v=13"></script>
-    <script src="js/practice-arena.js?v=14"></script>
+    <script src="js/arena-coach.js?v=19"></script>
+    <script src="js/arena-session.js?v=19"></script>
+    <script src="js/practice-arena.js?v=19"></script>
   </body>
 </html>

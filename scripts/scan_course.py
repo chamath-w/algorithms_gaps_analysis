@@ -89,6 +89,18 @@ def main() -> None:
     for pid in sorted(movie_ids - pattern_ids):
         issues.append(f"Orphan movie id: {pid}")
 
+    sess_path = HTML / "js" / "arena-session.js"
+    if not sess_path.exists():
+        issues.append("Missing html/js/arena-session.js (coached session engine)")
+    else:
+        sess_txt = sess_path.read_text(encoding="utf-8")
+        kb_ids = set(re.findall(r"^    ([a-z_]+):\s*\{$", sess_txt, re.M))
+        for pid in sorted(pattern_ids - kb_ids):
+            issues.append(f"Coached session KB missing pattern: {pid}")
+        practice = (HTML / "practice.html").read_text(encoding="utf-8")
+        if "arena-session.js" not in practice:
+            issues.append("practice.html does not load js/arena-session.js")
+
     impl_path = HTML / "js" / "impl-templates.js"
     if not impl_path.exists():
         issues.append("Missing html/js/impl-templates.js — run scripts/export_impl_templates.py")

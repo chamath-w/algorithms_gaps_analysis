@@ -39,6 +39,7 @@
     "js/course.js",
     "js/practice-arena.js",
     "js/arena-coach.js",
+    "js/arena-session.js",
     "js/algo-memory-data.js",
     "js/algo-memory-movies.js",
     "js/algo-memory.js",

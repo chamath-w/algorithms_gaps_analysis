@@ -2,7 +2,29 @@
 
 Interactive undergrad-shaped computer science and software engineering textbook, plus staff-level practice. Static HTML (animations, quizzes, algorithm memory lab, in-browser Python Practice Arena) with an optional stdlib-only Python CLI.
 
-Works the same on **Windows** and **macOS**. Designed so you can prepare once while online, then study on a long flight with no network.
+Works the same on **Windows**, **macOS**, and **iPhone (Safari)**. Designed so you can prepare once while online, then study on a long flight with no network.
+
+## Online (GitHub Pages)
+
+The course is published at:
+
+**https://chamath-w.github.io/algorithms_gaps_analysis/**
+
+| Page | URL |
+| --- | --- |
+| **Practice Arena (coached)** | https://chamath-w.github.io/algorithms_gaps_analysis/practice.html |
+| Home | https://chamath-w.github.io/algorithms_gaps_analysis/index.html |
+| Implementation Games | https://chamath-w.github.io/algorithms_gaps_analysis/games.html |
+
+### iPhone / iPad (Safari)
+
+1. Open the **Practice Arena** link above in Safari (HTTPS is required for in-browser Python).
+2. On first visit, wait for **Python ready** — Pyodide can take 1–2 minutes on cellular.
+3. Tap **Start session**, complete the micro-drill, plan gate, then code and **Run tests**.
+4. Optional: **Share → Add to Home Screen** for one-tap access (progress stays in Safari for that site).
+5. Landscape helps when the keyboard covers the editor.
+
+Coached session progress is stored in `localStorage` on your device (not synced across devices).
 
 ## Why a local server?
 
@@ -123,7 +145,7 @@ Cross-machine tip: developing on Windows and flying with a Mac is fine. Copy or 
 | Pattern trainer | **30** classification scenarios (`--train`) |
 | Coding bank | **26** fixed problems (`--list` / `--run`) |
 | HTML textbook | Full catalog tracks (discrete math → staff) + daily plan |
-| Practice Arena | Pyodide Python, micro-drills, text coach, deliberate streaks |
+| Practice Arena | **Coached session**: plan gate, gap diagnosis, escalating coaching to a clean-solve bar (plus free play) |
 | Algorithm Memory Lab | SRS + full catalog skeletons + Play/Next movie per pattern |
 | Implementation Games | Idiomatic template drills (type / scramble / cloze / bug hunt) for 21 patterns + core/eng idioms |
 
@@ -131,7 +153,7 @@ Cross-machine tip: developing on Windows and flying with a Mac is fine. Copy or 
 
 1. **Algorithm Memory Lab** — SRS flashcards, pick a pattern, play its movie, recite the skeleton.
 2. **Implementation Games** — lock the idiomatic base (Daily Workout or one pattern to 5/5).
-3. **Practice Arena** — micro-drill → code → **Run tests** (Ctrl/Cmd+Enter). Adjust the base you just recalled; read the text coach + expected/got diff.
+3. **Practice Arena (coached)** — Start session → micro-drill → **plan gate** (approach + time/space complexity) → code → **Run tests** (Ctrl/Cmd+Enter). On a miss the coach escalates: diagnose-it-yourself → targeted hint → micro-lesson → guided repair. A pattern clears at **2 clean solves in a row** (first Run passes, no hints or reveals); the session ends with a gap report. Uncheck *Coached* for free play.
 4. Study a track from the **catalog** (discrete math, theory, architecture, systems, security, staff, etc.).
 5. Optional CLI (stdlib only):
 

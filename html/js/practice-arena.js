@@ -3009,6 +3009,7 @@ def _arena_repl_exec(src: str):
   function mountCodingArena(root) {
     if (!root) return;
     const Coach = window.ArenaCoach || null;
+    const Session = window.ArenaSession || null;
 
     let seed = (Date.now() ^ Math.floor(Math.random() * 1e9)) >>> 0;
     let patternFilter = root.dataset.pattern || "";
@@ -3023,6 +3024,7 @@ def _arena_repl_exec(src: str):
     let interviewStarted = 0;
     let interviewTimer = null;
     let lastReport = null;
+    let coachedMode = !!Session;
     const skelLines = () =>
       Coach ? Coach.skeletonLines(problem) : (problem.modelAnswer || "").split("\n").filter((l) => l.trim());
 
@@ -3039,6 +3041,9 @@ def _arena_repl_exec(src: str):
                     (p) => `<option value="${p.id}">${p.name}</option>`
                   ).join("")}
                 </select>
+              </label>
+              <label class="arena-toggle" title="Coached session: plan gate, gap diagnosis, escalating coaching until you hit the bar">
+                <input type="checkbox" id="arena-coached" ${Session ? "checked" : "disabled"} /> Coached
               </label>
               <label class="arena-toggle" title="Stay on a pattern until ${Coach ? Coach.STREAK_GOAL : 3} correct in a row">
                 <input type="checkbox" id="arena-deliberate" checked /> Deliberate
@@ -3067,6 +3072,12 @@ def _arena_repl_exec(src: str):
               <div class="callout-title">Toolbar checkboxes — what they do</div>
               <ul class="arena-modes-list">
                 <li>
+                  <strong>Coached</strong> —
+                  Runs a guided session: commit a plan and complexity before the
+                  editor unlocks, then get diagnosis → hint → micro-lesson →
+                  guided repair as attempts stack up. Uncheck for free play.
+                </li>
+                <li>
                   <strong>Deliberate</strong> —
                   Stay on one pattern until you get 3 correct in a row. Misses
                   reset the streak. Use <em>Focus next</em> in the coach for weak patterns.
@@ -3087,6 +3098,10 @@ def _arena_repl_exec(src: str):
               </ul>
             </div>
           </section>
+
+          <section class="sess-panel" id="arena-session"></section>
+          <section class="sess-report-slot" id="arena-session-report" hidden></section>
+          <section class="sess-gate" id="arena-plan" hidden></section>
 
           <section class="arena-micro" id="arena-micro"></section>
 
@@ -3169,6 +3184,7 @@ def _arena_repl_exec(src: str):
             <section class="arena-worked" id="arena-worked"></section>
             <section class="arena-compare" id="arena-compare" hidden></section>
             <section class="arena-results" id="arena-results" hidden></section>
+            <section class="sess-teach-slot" id="arena-teach" hidden></section>
             <div class="tutor-slot" id="arena-tutor"></div>
             <section class="arena-checklist" id="arena-checklist" hidden></section>
           </div>
@@ -3431,7 +3447,7 @@ def _arena_repl_exec(src: str):
               ["Micro-drill correct.", drill.tip, "Editor unlocked. Code the sample, then Run tests."],
               "Implement the function. Use Skeleton Tab if stuck on syntax."
             );
-            unlockCoding();
+            gateToCoding();
           } else {
             if (Coach) Coach.playCue("fail", soundOn);
             coachSay(
@@ -3447,7 +3463,7 @@ def _arena_repl_exec(src: str):
                 b.disabled = false;
                 b.onclick = () => {
                   coachSay(["Good — proceed to code."], "Code now.");
-                  unlockCoding();
+                  gateToCoding();
                 };
               }
             });
@@ -3457,8 +3473,23 @@ def _arena_repl_exec(src: str):
       refreshStreakUI();
     }
 
+    /** Coached mode inserts the Socratic plan gate between drill and editor. */
+    function gateToCoding() {
+      if (coachedMode && Session && Session.isActive()) {
+        root.querySelector("#arena-micro").hidden = true;
+        Session.renderPlanGate(
+          root.querySelector("#arena-plan"),
+          problem,
+          unlockCoding
+        );
+        return;
+      }
+      unlockCoding();
+    }
+
     function unlockCoding() {
       codingUnlocked = true;
+      root.querySelector("#arena-plan").hidden = true;
       root.querySelector("#arena-micro").hidden = true;
       root.querySelector("#arena-coding").hidden = false;
       fillCodingPane();
@@ -3509,7 +3540,19 @@ def _arena_repl_exec(src: str):
       updateGhost();
     }
 
+    function resetSessionPanes() {
+      const teach = root.querySelector("#arena-teach");
+      if (teach) {
+        teach.hidden = true;
+        teach.innerHTML = "";
+      }
+      const gate = root.querySelector("#arena-plan");
+      if (gate) gate.hidden = true;
+      if (Session) Session.onProblemLoaded(problem);
+    }
+
     function loadProblemIntoUI() {
+      resetSessionPanes();
       renderMicroDrill();
       if (interviewOn) startInterviewTimer();
       else stopInterviewTimer();
@@ -3530,6 +3573,18 @@ def _arena_repl_exec(src: str):
 
     function nextProblem() {
       patternFilter = patternSel.value;
+      // Coached session owns pattern selection: stay on the target until cleared.
+      if (coachedMode && Session && Session.isActive()) {
+        const target = Session.nextPattern();
+        if (target) {
+          patternSel.value = target;
+          patternFilter = target;
+        }
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        problem = generateCodingProblem(seed, patternSel.value || null);
+        loadProblemIntoUI();
+        return;
+      }
       // Deliberate: keep same pattern until streak goal
       if (deliberateOn && patternFilter) {
         /* keep filter */
@@ -3754,6 +3809,7 @@ def _arena_repl_exec(src: str):
       if (!showing) {
         root.querySelector("#arena-model-answer-code").textContent =
           problem.modelAnswer || "# No model answer for this problem yet.";
+        if (Session) Session.noteAid("reveal");
         coachSay(
           ["Model answer revealed — study structure, then hide and retype from memory."],
           "Hide the answer and reconstruct without looking."
@@ -3766,6 +3822,7 @@ def _arena_repl_exec(src: str):
     };
     root.querySelector("#arena-use-answer").onclick = () => {
       if (!problem.modelAnswer) return;
+      if (Session) Session.noteAid("reveal");
       editor.value = problem.modelAnswer;
       skeletonIdx = skelLines().length;
       saveDraft();
@@ -3784,6 +3841,7 @@ def _arena_repl_exec(src: str):
         return;
       }
       const h = problem.hints[hintIdx++];
+      if (Session) Session.noteAid("hint");
       box.innerHTML += `<div class="callout callout-warning"><div class="callout-title">Hint ${hintIdx}</div><p>${escapeHtml(
         h
       )}</p></div>`;
@@ -3793,6 +3851,22 @@ def _arena_repl_exec(src: str):
     root.querySelector("#coach-clear").onclick = () => {
       root.querySelector("#coach-log").innerHTML = "";
     };
+    const coachedBox = root.querySelector("#arena-coached");
+    if (coachedBox) {
+      coachedBox.onchange = (e) => {
+        coachedMode = e.target.checked;
+        root.querySelector("#arena-session").hidden = !coachedMode;
+        if (!coachedMode) root.querySelector("#arena-plan").hidden = true;
+        coachSay(
+          [
+            coachedMode
+              ? "Coached on: plan gate before coding, gap diagnosis and escalating coaching after each Run."
+              : "Coached off: free play. No plan gate, no session bar.",
+          ],
+          coachedMode ? "Start a session in the panel above." : "Free practice."
+        );
+      };
+    }
     root.querySelector("#arena-deliberate").onchange = (e) => {
       deliberateOn = e.target.checked;
       coachSay(
@@ -3846,6 +3920,7 @@ def _arena_repl_exec(src: str):
         renderCompare(report);
         // Refresh worked example / live trace after run
         renderWorkedExample(root.querySelector("#arena-worked"), problem);
+        const coachedActive = coachedMode && Session && Session.isActive();
 
         if (report.compile_error || !report.ok) {
           if (state) {
@@ -3864,7 +3939,7 @@ def _arena_repl_exec(src: str):
             );
           }
           // Deliberate fail: nudge back to movie + optional re-drill
-          if (deliberateOn) {
+          if (deliberateOn && !coachedActive) {
             coachSay(
               [
                 "Streak reset for this pattern.",
@@ -3885,7 +3960,9 @@ def _arena_repl_exec(src: str):
           }
           refreshStreakUI();
           const goal = Coach ? Coach.STREAK_GOAL : 3;
-          if (deliberateOn && streak >= goal) {
+          if (coachedActive) {
+            /* session owns the narration + pattern selection */
+          } else if (deliberateOn && streak >= goal) {
             coachSay(
               [
                 `Streak ${streak}/${goal} on ${problem.pattern} — mastery gate cleared.`,
@@ -3903,6 +3980,10 @@ def _arena_repl_exec(src: str):
           }
         }
         showChecklist(report);
+        if (coachedActive) {
+          const verdict = Session.onAttempt(problem, report, diag);
+          if (verdict && verdict.verdict === "session-complete") Session.showReport();
+        }
       } catch (err) {
         resultsEl.innerHTML = `
           <div class="quiz-feedback bad">
@@ -3953,6 +4034,24 @@ def _arena_repl_exec(src: str):
         saveDraft();
       }
     });
+
+    if (Session) {
+      Session.attach({
+        panelEl: root.querySelector("#arena-session"),
+        gateEl: root.querySelector("#arena-plan"),
+        teachEl: root.querySelector("#arena-teach"),
+        reportEl: root.querySelector("#arena-session-report"),
+        coachSay,
+        getProblem: () => problem,
+        loadPattern: (p) => {
+          patternSel.value = p || "";
+          patternFilter = p || "";
+          seed = (seed * 1664525 + 1013904223) >>> 0;
+          problem = generateCodingProblem(seed, patternSel.value || null);
+          loadProblemIntoUI();
+        },
+      });
+    }
 
     loadProblemIntoUI();
     ensurePyodide(statusEl)

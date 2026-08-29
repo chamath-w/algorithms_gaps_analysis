@@ -16,6 +16,9 @@ Thumbs.db
 .idea/
 .vscode/
 .claude/
+.cursor/
+node_modules/
+scripts/results/
 *.swp
 
 # Large vendored runtime — optional to commit; regenerate with scripts/vendor_pyodide.py

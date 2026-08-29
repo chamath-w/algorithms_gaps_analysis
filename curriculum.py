@@ -119,7 +119,7 @@ TRACKS: list[Track] = [
                     Lesson("dsa_05", "Algorithm Memory Lab", "SRS flashcards + reconstruct-from-blank drills.", "algo_memory.html", ("memory", "patterns"), 60, "drill"),
                     Lesson("dsa_05b", "Implementation Memory Games", "Drill idiomatic templates into long-term memory (type/scramble/cloze/bug hunt).", "games.html", ("memory", "patterns"), 45, "drill"),
                     Lesson("dsa_06", "Pattern Training", "CLI classification trainer.", None, ("patterns",), 45, "practice"),
-                    Lesson("dsa_07", "Dynamic Practice Arena", "Generated problems, offline.", "practice.html", ("practice",), 60, "practice"),
+                    Lesson("dsa_07", "Coached Practice Arena", "Generated problems with plan gate, gap diagnosis, and escalating coaching until each pattern is cleared.", "practice.html", ("practice",), 60, "practice"),
                 ),
             ),
             Module(
