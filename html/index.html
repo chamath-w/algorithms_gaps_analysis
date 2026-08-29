@@ -2,28 +2,79 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Staff SDE Course — Algorithm Gaps Analysis</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
-      rel="stylesheet"
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
+    <meta name="theme-color" content="#070a0f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <title>Staff SDE Course — Algorithm Gaps Analysis</title>
+    <link rel="stylesheet" href="css/style.css?v=20" />
   </head>
   <body>
-    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="course-sidebar">
+      <span aria-hidden="true">&#9776;</span>
+    </button>
     <div class="layout">
-      <aside class="sidebar"></aside>
-      <main class="main-content">
+      <aside class="sidebar" id="course-sidebar" aria-label="Course navigation"></aside>
+      <main class="main-content" id="main-content">
         <div class="content-wrapper">
           <div class="hero">
-            <h1>Offline CS / SWE Mastery</h1>
+            <div class="hero-signal-bg" aria-hidden="true">
+              <svg viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
+                <path
+                  d="M0,120 Q200,40 400,100 T800,80"
+                  fill="none"
+                  stroke="rgba(232,168,56,0.25)"
+                  stroke-width="2"
+                  stroke-dasharray="8 6"
+                />
+                <path
+                  d="M0,140 Q250,180 500,110 T800,130"
+                  fill="none"
+                  stroke="rgba(61,191,184,0.2)"
+                  stroke-width="1.5"
+                  stroke-dasharray="6 8"
+                />
+              </svg>
+            </div>
+
+            <p class="hero-eyebrow">Offline · EE → Staff SDE</p>
+            <h1>Trace the Pattern. Ship the Code.</h1>
             <p class="tagline">
               An interactive undergrad-shaped textbook plus staff path —
-              animations, SRS algorithm memory, dynamic drills, and a local
-              tutor. Built for an EE-background engineer. Works on long flights.
+              animations, SRS algorithm memory, coached practice, and a local
+              tutor. Built for an EE-background engineer. Works on long flights
+              and on your iPhone.
             </p>
+
+            <div class="hero-pipeline" role="list" aria-label="Learning path">
+              <div class="pipeline-node" role="listitem">
+                <div class="pipeline-dot">01</div>
+                <div class="pipeline-label">Recognize pattern</div>
+              </div>
+              <div class="pipeline-node" role="listitem">
+                <div class="pipeline-dot">02</div>
+                <div class="pipeline-label">Lock template</div>
+              </div>
+              <div class="pipeline-node" role="listitem">
+                <div class="pipeline-dot">03</div>
+                <div class="pipeline-label">Adapt &amp; code</div>
+              </div>
+              <div class="pipeline-node" role="listitem">
+                <div class="pipeline-dot">04</div>
+                <div class="pipeline-label">Clean solve</div>
+              </div>
+            </div>
+
+            <div class="hero-cta-row">
+              <a class="btn-primary" href="practice.html">Start Coached Practice</a>
+              <a class="btn-secondary" href="games.html">Implementation Games</a>
+            </div>
 
             <div class="hero-stats">
               <div class="stat animate-in">
@@ -31,7 +82,7 @@
                 <div class="stat-label">Course Tracks</div>
               </div>
               <div class="stat animate-in">
-                <div class="stat-number">16</div>
+                <div class="stat-number">21</div>
                 <div class="stat-label">Algorithm Patterns</div>
               </div>
               <div class="stat animate-in">
@@ -108,8 +159,8 @@
                 <div class="card-title">Implementation Games</div>
               </div>
               <div class="card-desc">
-                Type, scramble, cloze, and bug-hunt the idiomatic base for all
-                21 patterns — then adjust from memory in the Arena.
+                Type, scramble, cloze, and bug-hunt drills for all 21 patterns —
+                burn idiomatic templates into long-term memory.
               </div>
             </a>
 
@@ -119,27 +170,12 @@
               style="text-decoration: none"
             >
               <div class="card-header">
-                <div class="card-icon green">&#9654;</div>
+                <div class="card-icon green">&#9881;</div>
                 <div class="card-title">Practice Arena</div>
               </div>
               <div class="card-desc">
-                Coached sessions: commit a plan, solve, then get the gap
-                diagnosed and taught until you clear the bar.
-              </div>
-            </a>
-
-            <a
-              href="mental_models.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon purple">&#9881;</div>
-                <div class="card-title">Mental Models</div>
-              </div>
-              <div class="card-desc">
-                6 mental model shifts from EE to SDE thinking. Bridges your
-                hardware intuition to software architecture.
+                Coached session: plan gate, in-browser Python, escalating hints,
+                and a 2-clean-solves mastery bar per pattern.
               </div>
             </a>
 
@@ -153,8 +189,8 @@
                 <div class="card-title">Algorithm Patterns</div>
               </div>
               <div class="card-desc">
-                21 patterns with templates and trigger signals. Sliding window,
-                BS-on-answer, sweep line, linked list, bits, and more.
+                All 21 patterns with recognition cues, templates, complexity,
+                and canonical problems.
               </div>
             </a>
 
@@ -164,12 +200,27 @@
               style="text-decoration: none"
             >
               <div class="card-header">
-                <div class="card-icon cyan">&#9733;</div>
-                <div class="card-title">Pattern Decision Tree</div>
+                <div class="card-icon pink">&#9672;</div>
+                <div class="card-title">Decision Tree</div>
               </div>
               <div class="card-desc">
-                Interactive flowchart: given a problem, which pattern should you
-                use? Follow the signals.
+                Interactive flowchart: given a problem description, which pattern
+                applies?
+              </div>
+            </a>
+
+            <a
+              href="mental_models.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon purple">&#9889;</div>
+                <div class="card-title">Mental Models</div>
+              </div>
+              <div class="card-desc">
+                Six shifts from EE to SDE thinking — deterministic vs eventual,
+                composition, failure as normal.
               </div>
             </a>
 
@@ -179,42 +230,12 @@
               style="text-decoration: none"
             >
               <div class="card-header">
-                <div class="card-icon green">&#9635;</div>
+                <div class="card-icon cyan">&#9632;</div>
                 <div class="card-title">Systems Design</div>
               </div>
               <div class="card-desc">
-                Building blocks, distributed systems, CAP theorem, 9 practice
-                problems, API design.
-              </div>
-            </a>
-
-            <a
-              href="software_engineering.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon orange">&#9874;</div>
-                <div class="card-title">Software Engineering</div>
-              </div>
-              <div class="card-desc">
-                SOLID, design patterns, testing pyramid, code review, git,
-                CI/CD, tech debt management.
-              </div>
-            </a>
-
-            <a
-              href="cs_fundamentals.html"
-              class="card animate-in"
-              style="text-decoration: none"
-            >
-              <div class="card-header">
-                <div class="card-icon red">&#9851;</div>
-                <div class="card-title">CS Fundamentals</div>
-              </div>
-              <div class="card-desc">
-                OS internals, networking L4-7, databases, SQL, concurrency
-                patterns in Python.
+                Building blocks, CAP, consistency, nine practice problems from
+                beginner to staff level.
               </div>
             </a>
 
@@ -224,81 +245,49 @@
               style="text-decoration: none"
             >
               <div class="card-header">
-                <div class="card-icon pink">&#9733;</div>
+                <div class="card-icon orange">&#9733;</div>
                 <div class="card-title">Staff-Level Skills</div>
               </div>
               <div class="card-desc">
-                RFC writing, technical decisions, cross-team influence,
+                RFCs, technical decisions, cross-team influence, mentoring,
                 observability, incident response.
+              </div>
+            </a>
+
+            <a
+              href="three_month_plan.html"
+              class="card animate-in"
+              style="text-decoration: none"
+            >
+              <div class="card-header">
+                <div class="card-icon green">&#128197;</div>
+                <div class="card-title">3-Month Plan</div>
+              </div>
+              <div class="card-desc">
+                Week-by-week study plan with two capstone projects and
+                milestones.
               </div>
             </a>
           </div>
 
-          <h2>Study Plan</h2>
-
-          <div class="timeline">
-            <div class="timeline-item">
-              <h4>
-                <a href="daily_month1.html">Month 1: Foundations</a>
-                <span class="badge badge-blue">Days 1-24</span>
-              </h4>
-              <p>
-                Mental models, 16 algorithm patterns, decision tree, pattern
-                training, 26 coding problems, pytest, concurrency, SQL.
-              </p>
-            </div>
-            <div class="timeline-item">
-              <h4>
-                <a href="daily_month2.html">Month 2: Architecture</a>
-                <span class="badge badge-green">Days 25-44</span>
-              </h4>
-              <p>
-                DDIA chapters 1-9, 9 system designs, Project 1 (Task Management
-                API), SOLID, design patterns, Git, CI/CD, Docker.
-              </p>
-            </div>
-            <div class="timeline-item">
-              <h4>
-                <a href="daily_month3.html">Month 3: Staff Impact</a>
-                <span class="badge badge-purple">Days 45-72</span>
-              </h4>
-              <p>
-                Staff skills (RFCs/ADRs), Project 2 (URL Shortener with
-                Analytics), load testing, observability, final assessments.
-              </p>
-            </div>
-          </div>
-
-          <h2>How to Use This Course</h2>
+          <h2>How This Course Works</h2>
 
           <div class="callout callout-info">
-            <div class="callout-title">Start with the Mental Models</div>
+            <div class="callout-title">Three layers of mastery</div>
             <p>
-              If you come from EE, begin with
-              <a href="mental_models.html">Mental Models</a> to bridge your
-              hardware intuition to software thinking. Then learn the
-              <a href="patterns.html">Algorithm Patterns</a> before attempting
-              any coding problems.
+              <strong>1. Pattern recognition</strong> — classify problems without
+              coding (<a href="decision_tree.html">decision tree</a>,
+              <code>python main.py --train</code>).
             </p>
-          </div>
-
-          <div class="callout callout-ee">
-            <div class="callout-title">EE Analogies Throughout</div>
             <p>
-              Every concept is explained with EE analogies — circuits, buses,
-              protocols, signal processing. Your hardware background is an
-              asset, not a gap.
+              <strong>2. Implementation memory</strong> — burn idiomatic
+              templates (<a href="games.html">Implementation Games</a>,
+              <a href="algo_memory.html">Memory Lab</a>).
             </p>
-          </div>
-
-          <div class="callout callout-success">
-            <div class="callout-title">Pattern Recognition Before Coding</div>
             <p>
-              The biggest interview failure mode is not recognizing the pattern.
-              Train classification separately from coding using the
-              <a href="patterns.html">pattern trainer</a> (<code
-                >python main.py --train</code
-              >).
+              <strong>3. Adaptation under pressure</strong> — coached coding in
+              <a href="practice.html">Practice Arena</a> or CLI drills
+              (<code>python main.py --drill</code>).
             </p>
           </div>
 
@@ -332,9 +321,11 @@ python main.py --report                        <span class="cm"># Full gap analy
       </main>
     </div>
 
-    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
-    <script src="js/nav.js"></script>
-    <script src="js/animations.js"></script>
+    <button class="scroll-top" aria-label="Scroll to top">
+      <span aria-hidden="true">&uarr;</span>
+    </button>
+    <script src="js/nav.js?v=20"></script>
+    <script src="js/animations.js?v=20"></script>
     <script src="js/offline-pack.js"></script>
   </body>
 </html>

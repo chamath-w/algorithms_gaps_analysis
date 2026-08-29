@@ -2,9 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>CS Fundamentals — Staff SDE Course</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <meta name="theme-color" content="#070a0f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="stylesheet" href="css/style.css?v=20" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
@@ -12,10 +15,12 @@
     />
   </head>
   <body>
-    <button class="menu-toggle" aria-label="Toggle menu">&#9776;</button>
+    <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="course-sidebar">
+      <span aria-hidden="true">&#9776;</span>
+    </button>
     <div class="layout">
-      <aside class="sidebar"></aside>
-      <main class="main-content">
+      <aside class="sidebar" id="course-sidebar" aria-label="Course navigation"></aside>
+      <main class="main-content" id="main-content">
         <div class="content-wrapper">
           <h1>CS Fundamentals</h1>
           <p>For Electrical Engineers</p>
@@ -1722,8 +1727,10 @@ asyncio.run(main())</code></pre>
         </div>
       </main>
     </div>
-    <button class="scroll-top" aria-label="Scroll to top">&uarr;</button>
-    <script src="js/nav.js"></script>
-    <script src="js/animations.js"></script>
+    <button class="scroll-top" aria-label="Scroll to top">
+      <span aria-hidden="true">&uarr;</span>
+    </button>
+    <script src="js/nav.js?v=20"></script>
+    <script src="js/animations.js?v=20"></script>
   </body>
 </html>

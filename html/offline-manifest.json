@@ -2,6 +2,7 @@
   "version": 1,
   "name": "CS/SWE Offline Course Pack",
   "pages": [
+    "404.html",
     "index.html",
     "catalog.html",
     "progress.html",

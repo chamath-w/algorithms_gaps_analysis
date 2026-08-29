@@ -2,14 +2,16 @@
  * Shared navigation sidebar — injected into every page.
  */
 function renderNav() {
+  injectSkipLink();
+
   const sidebar = document.querySelector(".sidebar");
   if (!sidebar) return;
   sidebar.innerHTML = `
     <div class="sidebar-header">
-      <h2>CS / SWE Course</h2>
-      <div class="subtitle">Offline Interactive Textbook</div>
+      <h2>Signal Trace</h2>
+      <div class="subtitle">CS / SWE Mastery</div>
     </div>
-    <nav>
+    <nav aria-label="Course sections">
       <div class="nav-section">Home</div>
       <a class="nav-link" href="index.html">Course Overview</a>
       <a class="nav-link" href="catalog.html">Full Catalog</a>
@@ -57,12 +59,22 @@ function renderNav() {
     </nav>
   `;
 
-  // Highlight active link
   const page = location.pathname.split("/").pop() || "index.html";
   sidebar.querySelectorAll(".nav-link").forEach((a) => {
-    const href = a.getAttribute("href");
-    if (href === page) a.classList.add("active");
+    if (a.getAttribute("href") === page) {
+      a.classList.add("active");
+      a.setAttribute("aria-current", "page");
+    }
   });
+}
+
+function injectSkipLink() {
+  if (document.querySelector(".skip-link")) return;
+  const skip = document.createElement("a");
+  skip.href = "#main-content";
+  skip.className = "skip-link";
+  skip.textContent = "Skip to main content";
+  document.body.prepend(skip);
 }
 
 document.addEventListener("DOMContentLoaded", renderNav);

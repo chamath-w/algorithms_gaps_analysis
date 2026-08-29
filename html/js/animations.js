@@ -365,14 +365,33 @@ function initTabs() {
 function initSidebar() {
   const toggle = document.querySelector(".menu-toggle");
   const sidebar = document.querySelector(".sidebar");
-  if (toggle && sidebar) {
-    toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
-    document.querySelector(".main-content")?.addEventListener("click", () => {
-      sidebar.classList.remove("open");
-    });
+  if (!toggle || !sidebar) return;
+
+  let backdrop = document.querySelector(".sidebar-backdrop");
+  if (!backdrop) {
+    backdrop = document.createElement("div");
+    backdrop.className = "sidebar-backdrop";
+    backdrop.setAttribute("aria-hidden", "true");
+    document.body.appendChild(backdrop);
   }
 
-  // Highlight active nav link
+  function setOpen(open) {
+    sidebar.classList.toggle("open", open);
+    backdrop.classList.toggle("visible", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close navigation menu" : "Open navigation menu");
+  }
+
+  toggle.addEventListener("click", () => setOpen(!sidebar.classList.contains("open")));
+  backdrop.addEventListener("click", () => setOpen(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setOpen(false);
+  });
+
+  document.querySelector(".main-content")?.addEventListener("click", () => {
+    if (window.innerWidth <= 900) setOpen(false);
+  });
+
   const current = window.location.pathname.split("/").pop() || "index.html";
   document.querySelectorAll(".nav-link").forEach((link) => {
     if (link.getAttribute("href") === current) {
@@ -386,11 +405,12 @@ function initSidebar() {
 function initScrollTop() {
   const btn = document.querySelector(".scroll-top");
   if (!btn) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.addEventListener("scroll", () => {
     btn.classList.toggle("visible", window.scrollY > 400);
   });
   btn.addEventListener("click", () =>
-    window.scrollTo({ top: 0, behavior: "smooth" }),
+    window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" }),
   );
 }
 
