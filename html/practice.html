@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Practice Arena — Coached Session</title>
-    <link rel="stylesheet" href="css/style.css?v=20" />
+    <link rel="stylesheet" href="css/style.css?v=21" />
   </head>
   <body>
     <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="course-sidebar">
@@ -69,45 +69,45 @@
             </p>
           </div>
 
-          <div class="callout callout-info">
-            <div class="callout-title">iPhone / mobile</div>
+          <div class="callout callout-success">
+            <div class="callout-title">How to open</div>
             <p>
-              Works in <strong>Safari</strong> over HTTPS (GitHub Pages). First
-              Python load can take 1–2 minutes on cellular — wait for
-              <em>Python ready</em> before coding. Use landscape for the editor
-              if the keyboard feels cramped. Progress saves in your browser
-              (<code>localStorage</code>).
-            </p>
-            <p>
-              Tip: Share → <strong>Add to Home Screen</strong> for one-tap access
-              to coached practice.
-            </p>
-          </div>
-
-          <div class="callout callout-info">
-            <div class="callout-title">Online (GitHub Pages) vs local server</div>
-            <p>
-              This site is published at
+              <strong>Online (recommended):</strong>
               <a href="https://chamath-w.github.io/algorithms_gaps_analysis/practice.html"
-                >GitHub Pages</a
-              >. Pyodide loads from the bundled vendor pack (or CDN fallback).
-              For offline flight mode, use <strong>Prepare for flight</strong> on
-              the home page while online, or run
-              <code>python scripts/serve_course.py</code> locally.
+                >GitHub Pages — Practice Arena</a
+              >
+              — works in Safari on iPhone and desktop browsers. No install,
+              no local server.
+            </p>
+            <p>
+              <strong>First visit:</strong> wait until the toolbar shows
+              <em>Python ready</em> (Pyodide loads ~15&nbsp;MB; can take 1–2
+              minutes on cellular). Then tap <strong>Start session</strong> in
+              the coached panel.
+            </p>
+            <p>
+              <strong>iPhone shortcut:</strong> Share →
+              <strong>Add to Home Screen</strong> for one-tap access. Progress
+              stays in Safari for this site.
+            </p>
+            <p>
+              <strong>Offline / flight mode:</strong> while online, open
+              <a href="index.html">Home</a> and use
+              <strong>Prepare for flight</strong> to cache the site. Or clone
+              the repo and run
+              <code>python scripts/serve_course.py</code> →
+              <code>http://127.0.0.1:8765/practice.html</code> (do not open
+              via <code>file://</code>).
             </p>
           </div>
 
-          <div class="callout callout-info callout-legacy-local">
-            <div class="callout-title">Local dev server (optional)</div>
+          <div class="callout callout-info">
+            <div class="callout-title">Running code on phone or tablet</div>
             <p>
-              Do not open via <code>file://</code>. From the repo root:
-            </p>
-            <pre><code>python scripts/serve_course.py
-# -> http://127.0.0.1:8765/practice.html</code></pre>
-            <p>
-              Offline vendor once:
-              <code>python scripts/vendor_pyodide.py</code> if
-              <code>html/vendor/pyodide/</code> is missing.
+              Keyboard shortcuts are not available in mobile browsers. Use the
+              <strong>Run</strong> button under the REPL scratchpad and the
+              <strong>Run tests</strong> button under the solution editor —
+              not Ctrl/Cmd+Enter.
             </p>
           </div>
 
@@ -128,8 +128,8 @@
     <script src="js/nav.js?v=20"></script>
     <script src="js/animations.js?v=20"></script>
     <script src="js/course.js"></script>
-    <script src="js/arena-coach.js?v=19"></script>
-    <script src="js/arena-session.js?v=19"></script>
-    <script src="js/practice-arena.js?v=19"></script>
+    <script src="js/arena-coach.js?v=21"></script>
+    <script src="js/arena-session.js?v=21"></script>
+    <script src="js/practice-arena.js?v=21"></script>
   </body>
 </html>

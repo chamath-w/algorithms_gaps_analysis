@@ -2352,6 +2352,39 @@ svg .pointer-label {
   border-top: 1px solid var(--border);
 }
 
+.arena-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+
+.arena-inline-actions .anim-btn {
+  min-height: 44px;
+  flex: 1 1 auto;
+}
+
+.arena-inline-actions .anim-btn.primary {
+  flex: 1 1 100%;
+  font-weight: 700;
+}
+
+.arena-kbd-desktop {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .arena-kbd-desktop {
+    display: block;
+  }
+
+  .arena-inline-actions .anim-btn.primary {
+    flex: 0 1 auto;
+  }
+}
+
 .arena-samples {
   background: var(--bg-primary);
   border: 1px solid var(--border);

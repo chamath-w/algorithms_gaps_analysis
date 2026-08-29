@@ -3135,13 +3135,17 @@ def _arena_repl_exec(src: str):
                   <pre class="code-gutter" id="repl-gutter" aria-hidden="true">1</pre>
                   <textarea id="repl-input" class="arena-repl-input" spellcheck="false" autocomplete="off" wrap="soft" placeholder="# try ideas here"></textarea>
                 </div>
+                <div class="arena-inline-actions">
+                  <button type="button" class="anim-btn primary" id="repl-run-inline">Run</button>
+                  <button type="button" class="anim-btn" id="repl-copy-inline">Copy to solution</button>
+                </div>
               </div>
               <div class="arena-repl-pane arena-repl-pane-term">
                 <div class="arena-repl-pane-label">Terminal</div>
                 <pre class="arena-repl-out" id="repl-out">Waiting for Python runtime...</pre>
               </div>
             </div>
-            <div class="arena-kbd">Ctrl/Cmd+Enter to run · Up/Down history</div>
+            <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter to run · Up/Down history</div>
           </section>
 
           <aside class="arena-coach" id="arena-coach" aria-label="Text coach">
@@ -3178,7 +3182,12 @@ def _arena_repl_exec(src: str):
                   <pre class="arena-ghost" id="arena-ghost" aria-hidden="true"></pre>
                   <textarea id="arena-editor" class="arena-editor" spellcheck="false" autocomplete="off" wrap="soft"></textarea>
                 </div>
-                <div class="arena-kbd">Ctrl/Cmd+Enter run · Tab = next skeleton line (when Skeleton on)</div>
+                <div class="arena-inline-actions">
+                  <button type="button" class="anim-btn primary" id="arena-run-inline">Run tests</button>
+                  <button type="button" class="anim-btn" id="arena-hint-inline">Hint</button>
+                  <button type="button" class="anim-btn" id="arena-reset-inline">Reset code</button>
+                </div>
+                <div class="arena-kbd arena-kbd-desktop">Desktop: Ctrl/Cmd+Enter run · Tab = next skeleton line (when Skeleton on)</div>
               </section>
             </div>
             <section class="arena-worked" id="arena-worked"></section>
@@ -3218,11 +3227,16 @@ def _arena_repl_exec(src: str):
       replOut.scrollTop = replOut.scrollHeight;
     }
 
+    function setReplRunDisabled(disabled) {
+      root.querySelectorAll("#repl-run, #repl-run-inline").forEach((b) => {
+        b.disabled = disabled;
+      });
+    }
+
     async function onReplRun() {
       const src = replInput.value;
       if (!src.trim()) return;
-      const runBtn = root.querySelector("#repl-run");
-      runBtn.disabled = true;
+      setReplRunDisabled(true);
       try {
         await ensurePyodide(statusEl);
         if (replOut.dataset.ready !== "1") {
@@ -3240,11 +3254,12 @@ def _arena_repl_exec(src: str):
       } catch (err) {
         appendRepl(String(err.message || err), "repl-err");
       } finally {
-        runBtn.disabled = false;
+        setReplRunDisabled(false);
       }
     }
 
     root.querySelector("#repl-run").onclick = onReplRun;
+    root.querySelector("#repl-run-inline").onclick = onReplRun;
     root.querySelector("#repl-clear").onclick = () => {
       replOut.textContent = "";
       replOut.dataset.ready = "1";
@@ -3262,7 +3277,7 @@ def _arena_repl_exec(src: str):
         appendRepl(String(err.message || err), "repl-err");
       }
     };
-    root.querySelector("#repl-copy").onclick = () => {
+    function copyReplToSolution() {
       const src = replInput.value.trim();
       if (!src) return;
       const sep = editor.value && !editor.value.endsWith("\n") ? "\n\n" : "\n";
@@ -3270,7 +3285,9 @@ def _arena_repl_exec(src: str):
       editor.dispatchEvent(new Event("input"));
       editor.focus();
       appendRepl("# Copied REPL buffer into Python solution editor", "repl-meta");
-    };
+    }
+    root.querySelector("#repl-copy").onclick = copyReplToSolution;
+    root.querySelector("#repl-copy-inline").onclick = copyReplToSolution;
 
     replInput.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -3895,14 +3912,19 @@ def _arena_repl_exec(src: str):
       }
     };
 
+    function setRunButtonsDisabled(disabled) {
+      root.querySelectorAll("#arena-run, #arena-run-inline").forEach((b) => {
+        b.disabled = disabled;
+      });
+    }
+
     async function onRun() {
       if (!codingUnlocked) {
         coachSay(["Micro-drill first — then Run tests."], "Answer the micro-drill.");
         return;
       }
       const resultsEl = root.querySelector("#arena-results");
-      const runBtn = root.querySelector("#arena-run");
-      runBtn.disabled = true;
+      setRunButtonsDisabled(true);
       resultsEl.hidden = false;
       resultsEl.innerHTML = `<div class="quiz-feedback">Running tests in-browser Python...</div>`;
       root.querySelector("#arena-tutor").innerHTML = "";
@@ -3989,17 +4011,23 @@ def _arena_repl_exec(src: str):
           <div class="quiz-feedback bad">
             <strong>Python runtime failed to load.</strong>
             <p>${escapeHtml(err.message || String(err))}</p>
-            <p>Run <code>python scripts/serve_course.py</code> and ensure
-            <code>html/vendor/pyodide/</code> exists.</p>
+            <p>Ensure you are on HTTPS (GitHub Pages or
+            <code>python scripts/serve_course.py</code>). Pyodide loads from the
+            bundled vendor pack or CDN fallback.</p>
           </div>`;
         statusEl.textContent = "Python runtime unavailable";
-        coachSay([String(err.message || err)], "Fix the local server / Pyodide vendor pack.");
+        coachSay([String(err.message || err)], "Reload the page and wait for Python ready.");
       } finally {
-        runBtn.disabled = false;
+        setRunButtonsDisabled(false);
       }
     }
 
     root.querySelector("#arena-run").onclick = onRun;
+    root.querySelector("#arena-run-inline").onclick = onRun;
+    root.querySelector("#arena-hint-inline").onclick = () =>
+      root.querySelector("#arena-hint").click();
+    root.querySelector("#arena-reset-inline").onclick = () =>
+      root.querySelector("#arena-reset").click();
     editor.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
         e.preventDefault();
@@ -4058,14 +4086,14 @@ def _arena_repl_exec(src: str):
       .then(() => {
         if (replOut.dataset.ready !== "1") {
           replOut.textContent =
-            "Python ready. Type code below and press Ctrl/Cmd+Enter.";
+            "Python ready. Type code above and tap Run.";
         }
       })
       .catch((err) => {
         statusEl.textContent =
-          "Python not loaded — click Run tests for details. " + (err.message || "");
+          "Python not loaded — tap Run tests for details. " + (err.message || "");
         replOut.textContent =
-          "Python runtime unavailable. Start serve_course.py and ensure vendor/pyodide exists.";
+          "Python runtime unavailable. Reload on HTTPS (GitHub Pages) or run scripts/serve_course.py locally.";
       });
   }
 
